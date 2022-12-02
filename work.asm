@@ -13,35 +13,28 @@ ShowMessage MACRO MyMessage ;PRINT STRING
                 ENDM        ShowMessage
 
 DRAW MACRO        ;DRAW IMAGE
-                ADD  DI,-64D ; dump fixing
-                MOV AX,0A000H
-                MOV ES,AX
-                MOV  DX,imgheight
+                LOCAL drawLoop
+                LOCAL innerloop
                 
-                CMP CX,0
-                JE SKIP
-                XLP:
-                ADD DI,320D
-                DEC CX
-                JNZ XLP
-                SKIP:
-
                 LEA BX,imgdata
         ; Drawing loop
+                      mov di,0
         drawLoop:     
-                      MOV  CX,imgwidth
-                      
+                      mov si,0
                       innerloop:
-                      MOV  AL,0FH;[BX]
-                      STOSB       
+                      MOV  AL,[BX]
+                      MOV AH,0ch
+                      INT 10H
                       INC BX
-                      DEC CX
-                      JNZ innerloop
-                      
-                      ADD DI,320D  
-                      SUB DI,imgwidth
-                      DEC DX
-                      JNZ  drawLoop
+                      INC CX
+                      INC SI
+                      CMP SI,imgwidth
+                      JNE innerloop
+                      SUB CX,SI
+                      INC DX
+                      INC DI
+                      CMP DI,imgheight
+                      JNE  drawLoop
                 ENDM        DRAW
 
 .MODEL SMALL
@@ -65,11 +58,11 @@ MAIN PROC FAR
                       CALL OpenFile
                       CALL ReadData
         ;-----------------------------------------
-                      MOV  CX,20D                       ;ROW
-                      ADD  DI,20D                       ;COL
+                      MOV  CX,0D                        ;COL
+                      MOV  DX,0D                        ;ROW
                       DRAW
 
-        ;-----------------------------------------
+        ;------------------------------------------------------------------------------
                       call CloseFile
                       EXT
 MAIN ENDP
@@ -89,7 +82,8 @@ CLS PROC                                                ;CLEAR SCREEN
 CLS ENDP
 
 EnterGraphics PROC                                      ;ENTER GRAPHICS MODE
-                      MOV  AX,13H                       ;(320*200) pixel
+                      MOV  AX,4F02H
+                      MOV  BX,105H                      ;(1024*768) pixel
                       INT  10H
                       ret
 EnterGraphics ENDP
