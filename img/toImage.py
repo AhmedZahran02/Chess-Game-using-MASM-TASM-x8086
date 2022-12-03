@@ -1,5 +1,5 @@
-imageWidth = 1200;
-imageHeight = 620;
+imageWidth = 526;
+imageHeight = 935;
 numColor = 3;
 
 import numpy

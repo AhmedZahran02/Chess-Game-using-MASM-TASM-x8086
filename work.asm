@@ -83,7 +83,7 @@ CLS ENDP
 
 EnterGraphics PROC                                      ;ENTER GRAPHICS MODE
                       MOV  AX,4F02H
-                      MOV  BX,105H                      ;(1024*768) pixel
+                      MOV  BX,107H                      ;105(1024*768) pixel
                       INT  10H
                       ret
 EnterGraphics ENDP
