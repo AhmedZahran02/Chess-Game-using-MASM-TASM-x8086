@@ -1,6 +1,6 @@
-imageWidth = 1200;
-imageHeight = 620;
-numColor = 3;
+imageWidth = 245;
+imageHeight = 200;
+numColor = 1;
 
 import numpy
 import cv2
