@@ -121,8 +121,8 @@ MAIN PROC FAR
                       CALL ReadData
                       CALL EnterGraphics
         ;-----------------------------------------
-                      MOV  CX,0D                        ;COL
-                      MOV  DX,0D                        ;ROW
+                      MOV  CX,500D                      ;COL
+                      MOV  DX,500D                      ;ROW
                       DRAW
 
         ;------------------------------------------------------------------------------
