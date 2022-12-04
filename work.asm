@@ -12,6 +12,69 @@ ShowMessage MACRO MyMessage ;PRINT STRING
                 INT         21H
                 ENDM        ShowMessage
 
+ShowCMessage MACRO MyMessage ;X ;PRINT STRING WITH COLOR X
+                local clp 
+                LOCAL otc
+                mov SI,offset MyMessage
+                
+           clp: 
+                MOV AL,[SI]
+                cmp al,'$'
+                je otc
+                mov ah,9 ;Display
+                mov bh,0 ;Page 0
+                mov cx,1h ;1 times
+                ; mov bl,X ;Green (A) on white(F) background
+                int 10h
+                inc SI
+                
+                cmp [si],'$'
+                je otc
+                mov ah,3h
+                mov bh,0h
+                int 10h
+                
+                mov ah,2
+                INC DL
+                int 10h
+                
+                jmp clp
+                otc: 
+                mov ah,3h
+                mov bh,0h
+                int 10h
+                
+                mov ah,2
+                INC DL
+                int 10h
+ENDM        ShowCMessage
+
+TOSTRING MACRO OutMessage
+    
+    MOV SI,0
+    divide:
+        mov cl, 10D
+        div cl         ; div number(in ax) by 10 
+        add ah, '0'     ;Make into a character
+        MOV BX,AX
+        PUSH BX
+        INC SI 
+        MOV AH,0 
+        cmp AL, 0
+        jne divide
+        
+    mov di,offset OutMessage    
+    MAKESTR:
+    CMP SI,0
+    JE OUTH
+    DEC SI
+    POP BX
+    mov [di],BH
+    INC DI
+    JMP MAKESTR
+    OUTH:
+ENDM TOSTRING
+
 DRAW MACRO        ;DRAW IMAGE
                 LOCAL drawLoop
                 LOCAL innerloop
@@ -54,9 +117,9 @@ DRAW MACRO        ;DRAW IMAGE
 MAIN PROC FAR
                       call GETDATA
                       CALL CLS
-                      CALL EnterGraphics
                       CALL OpenFile
                       CALL ReadData
+                      CALL EnterGraphics
         ;-----------------------------------------
                       MOV  CX,0D                        ;COL
                       MOV  DX,0D                        ;ROW
