@@ -104,76 +104,75 @@ DRAW MACRO        ;DRAW IMAGE
 .STACK 64
 ;-----------
 .Data
-        imgwidth      equ 26D
-        imgheight     equ 25D
+    imgwidth      equ 283D
+    imgheight     equ 200D
 
-        imgfilename   db  'myking.bin',0
-        imgfilehandle DW  ?
-        imgdata       db  imgwidth*imgheight dup(0)
-        ;-----------------------------
+    imgfilename   db  'test.bin',0
+    imgfilehandle DW  ?
+    imgdata       db  imgwidth*imgheight dup(0)
+    ;-----------------------------
 
 
 .CODE
 MAIN PROC FAR
-                      call GETDATA
-                      CALL CLS
-                      CALL OpenFile
-                      CALL ReadData
-                      CALL EnterGraphics
-        ;-----------------------------------------
-                      MOV  CX,500D                      ;COL
-                      MOV  DX,500D                      ;ROW
-                      DRAW
+                  call GETDATA
+                  CALL CLS
+                  CALL OpenFile
+                  CALL ReadData
+                  CALL EnterGraphics
+    ;-----------------------------------------
+                  MOV  CX,0D                    ;COL
+                  MOV  DX,0D                    ;ROW
+                  DRAW
 
-        ;------------------------------------------------------------------------------
-                      call CloseFile
-                      EXT
+    ;------------------------------------------------------------------------------
+                  call CloseFile
+                  EXT
 MAIN ENDP
 
 
-        ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                            ;GET DATA
-                      MOV  AX,@DATA
-                      MOV  DS,AX
-                      ret
+    ;--------------------------------------------------Functions---------------------------------------------------------
+GETDATA PROC                                    ;GET DATA
+                  MOV  AX,@DATA
+                  MOV  DS,AX
+                  ret
 GETDATA ENDP
 
-CLS PROC                                                ;CLEAR SCREEN
-                      MOV  AX,0003H
-                      INT  10H
-                      ret
+CLS PROC                                        ;CLEAR SCREEN
+                  MOV  AX,0003H
+                  INT  10H
+                  ret
 CLS ENDP
 
-EnterGraphics PROC                                      ;ENTER GRAPHICS MODE
-                      MOV  AX,4F02H
-                      MOV  BX,107H                      ;105(1024*768) pixel
-                      INT  10H
-                      ret
+EnterGraphics PROC                              ;ENTER GRAPHICS MODE
+                  MOV  Ax,0013H                 ;(320*200) pixel
+                  INT  10H
+                  ret
 EnterGraphics ENDP
 
-OpenFile PROC                                           ;OPEN FILE
-                      MOV  AH, 3Dh
-                      MOV  AL, 0                        ; read only
-                      LEA  DX, imgfilename              ;GET NAME
-                      INT  21h
-                      MOV  [imgfilehandle], AX          ;GET HANDLE OF THE FILE
-                      RET
+OpenFile PROC                                   ;OPEN FILE
+                  MOV  AH, 3Dh
+                  MOV  AL, 0                    ; read only
+                  LEA  DX, imgfilename          ;GET NAME
+                  INT  21h
+                  MOV  [imgfilehandle], AX      ;GET HANDLE OF THE FILE
+                  RET
 OpenFile ENDP
 
-ReadData PROC                                           ;READ FILE CONTENT
-                      MOV  AH,3Fh
-                      MOV  BX, [imgfilehandle]
-                      MOV  CX,imgwidth*imgheight        ; number of bytes to read
-                      LEA  DX, imgdata                  ;PUT DATA IN IMGDATA
-                      INT  21h
-                      RET
+ReadData PROC                                   ;READ FILE CONTENT
+                  MOV  AH,3Fh
+                  MOV  BX, [imgfilehandle]
+                  MOV  CX,imgwidth*imgheight    ; number of bytes to read
+                  LEA  DX, imgdata              ;PUT DATA IN IMGDATA
+                  INT  21h
+                  RET
 ReadData ENDP
 
-CloseFile PROC                                          ;CLOSE FILE
-                      MOV  AH, 3Eh
-                      MOV  BX, [imgfilehandle]
-                      INT  21h
-                      RET
+CloseFile PROC                                  ;CLOSE FILE
+                  MOV  AH, 3Eh
+                  MOV  BX, [imgfilehandle]
+                  INT  21h
+                  RET
 CloseFile ENDP
 
 END MAIN

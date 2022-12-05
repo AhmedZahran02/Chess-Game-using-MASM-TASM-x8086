@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Image2VgaHexConverter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Image2VgaHexConverter_jar</output-path>
+    <root id="archive" name="Image2VgaHexConverter.jar">
+      <element id="module-output" name="Image2VgaHexConverter" />
+    </root>
+  </artifact>
+</component>
