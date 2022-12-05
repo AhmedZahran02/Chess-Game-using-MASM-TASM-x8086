@@ -12,23 +12,23 @@ ShowMessage MACRO MyMessage ;PRINT STRING
                 INT         21H
                 ENDM        ShowMessage
 
-ShowCMessage MACRO MyMessage ;X ;PRINT STRING WITH COLOR X
+ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
                 local clp 
                 LOCAL otc
                 mov SI,offset MyMessage
                 
            clp: 
-                MOV AL,[SI]
+                MOV AL,byte ptr [SI]
                 cmp al,'$'
                 je otc
                 mov ah,9 ;Display
                 mov bh,0 ;Page 0
                 mov cx,1h ;1 times
-                ; mov bl,X ;Green (A) on white(F) background
+                mov bl,X ;Green (A) on white(F) background
                 int 10h
                 inc SI
                 
-                cmp [si],'$'
+                cmp byte ptr [si],'$'
                 je otc
                 mov ah,3h
                 mov bh,0h
@@ -75,10 +75,12 @@ TOSTRING MACRO OutMessage
     OUTH:
 ENDM TOSTRING
 
-DRAW MACRO        ;DRAW IMAGE
+DRAW MACRO imgdata,imgwidth,imgheight,X,Y       ;DRAW IMAGE
                 LOCAL drawLoop
                 LOCAL innerloop
                 
+                mov cx,X
+                mov dx,Y
                 LEA BX,imgdata
         ; Drawing loop
                       mov di,0
@@ -100,79 +102,85 @@ DRAW MACRO        ;DRAW IMAGE
                       JNE  drawLoop
                 ENDM        DRAW
 
-.MODEL SMALL
-.STACK 64
-;-----------
-.Data
-    imgwidth      equ 283D
-    imgheight     equ 200D
-
-    imgfilename   db  'test.bin',0
-    imgfilehandle DW  ?
-    imgdata       db  imgwidth*imgheight dup(0)
-    ;-----------------------------
-
-
-.CODE
-MAIN PROC FAR
-                  call GETDATA
-                  CALL CLS
-                  CALL OpenFile
-                  CALL ReadData
-                  CALL EnterGraphics
-    ;-----------------------------------------
-                  MOV  CX,0D                    ;COL
-                  MOV  DX,0D                    ;ROW
-                  DRAW
-
-    ;------------------------------------------------------------------------------
-                  call CloseFile
-                  EXT
-MAIN ENDP
-
-
-    ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                    ;GET DATA
-                  MOV  AX,@DATA
-                  MOV  DS,AX
-                  ret
-GETDATA ENDP
-
-CLS PROC                                        ;CLEAR SCREEN
-                  MOV  AX,0003H
-                  INT  10H
-                  ret
-CLS ENDP
-
-EnterGraphics PROC                              ;ENTER GRAPHICS MODE
-                  MOV  Ax,0013H                 ;(320*200) pixel
-                  INT  10H
-                  ret
-EnterGraphics ENDP
-
-OpenFile PROC                                   ;OPEN FILE
+OpenFile MACRO  imgfilename, imgfilehandle                                ;OPEN FILE
                   MOV  AH, 3Dh
                   MOV  AL, 0                    ; read only
                   LEA  DX, imgfilename          ;GET NAME
                   INT  21h
                   MOV  [imgfilehandle], AX      ;GET HANDLE OF THE FILE
-                  RET
-OpenFile ENDP
+ENDM OpenFile
 
-ReadData PROC                                   ;READ FILE CONTENT
-                  MOV  AH,3Fh
-                  MOV  BX, [imgfilehandle]
-                  MOV  CX,imgwidth*imgheight    ; number of bytes to read
-                  LEA  DX, imgdata              ;PUT DATA IN IMGDATA
-                  INT  21h
-                  RET
-ReadData ENDP
+ReadData MACRO imgfilehandle ,imgwidth,imgheight,imgdata                                        ;READ FILE CONTENT
+                  MOV      AH,3Fh
+                  MOV      BX, [imgfilehandle]
+                  MOV      CX,imgwidth*imgheight         ; number of bytes to read
+                  LEA      DX, imgdata                   ;PUT DATA IN IMGDATA
+                  INT      21h
+ENDM ReadData
 
-CloseFile PROC                                  ;CLOSE FILE
-                  MOV  AH, 3Eh
-                  MOV  BX, [imgfilehandle]
-                  INT  21h
-                  RET
-CloseFile ENDP
+CloseFile MACRO imgfilehandle                                          ;CLOSE FILE
+                  MOV      AH, 3Eh
+                  MOV      BX, [imgfilehandle]
+                  INT      21h
+
+ENDM CloseFile
+
+.MODEL SMALL
+.STACK 64
+;-----------
+.Data
+    imgwidth1      equ 150D
+    imgheight1     equ 155D
+    imgfilename1   db  'test.bin',0
+    imgfilehandle1 DW  ?
+    imgdata1       db  imgwidth1*imgheight1 dup(0)
+
+    imgwidth2      equ 150D
+    imgheight2     equ 155D
+    imgfilename2   db  'test2.bin',0
+    imgfilehandle2 DW  ?
+    imgdata2       db  imgwidth2*imgheight2 dup(0)
+    ;-----------------------------
+
+
+.CODE
+MAIN PROC FAR
+                  call      GETDATA
+                  CALL      CLS
+                  OpenFile  imgfilename1, imgfilehandle1
+                  ReadData  imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
+                  OpenFile  imgfilename2, imgfilehandle2
+                  ReadData  imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
+                  CALL      EnterGraphics
+    ;-----------------------------------------
+                  DRAW      imgdata1,imgwidth1,imgheight1,220D,0D            ; col,row
+                  DRAW      imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
+
+    ;------------------------------------------------------------------------------
+                  CloseFile imgfilehandle1
+                  CloseFile imgfilehandle2
+                  EXT
+MAIN ENDP
+
+
+    ;--------------------------------------------------Functions---------------------------------------------------------
+GETDATA PROC                                                                 ;GET DATA
+                  MOV       AX,@DATA
+                  MOV       DS,AX
+                  ret
+GETDATA ENDP
+
+CLS PROC                                                                     ;CLEAR SCREEN
+                  MOV       AX,0003H
+                  INT       10H
+                  ret
+CLS ENDP
+
+EnterGraphics PROC                                                           ;ENTER GRAPHICS MODE
+                  MOV       AX,4F02H
+                  MOV       BX,100H                                          ;(320*200) pixel
+                  INT       10H
+                  ret
+EnterGraphics ENDP
 
 END MAIN
