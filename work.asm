@@ -6,6 +6,19 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 INT         21H
                 ENDM        EXT
 
+movecursor MACRO x,y ;move cursor
+                mov         ah,2
+                mov         dh,y
+                mov         dl,x
+                int         10h
+                ENDM        movecursor
+
+cin MACRO MyMessage ;cin STRING
+                mov ah,0AH
+                mov dx,offset MyMessage
+                int 21h
+                ENDM        cin
+
 ShowMessage MACRO MyMessage ;PRINT STRING
                 MOV         AH,9H
                 MOV         DX,offset MyMessage
@@ -129,6 +142,9 @@ ENDM CloseFile
 .STACK 64
 ;-----------
 .Data
+    nameq          db  'Please enter your name:','$'
+    thename        db  15 dup('$')
+    proceed        db  'Please Enter key to continue','$'
     imgwidth1      equ 150D
     imgheight1     equ 155D
     imgfilename1   db  'test.bin',0
@@ -140,47 +156,87 @@ ENDM CloseFile
     imgfilename2   db  'test2.bin',0
     imgfilehandle2 DW  ?
     imgdata2       db  imgwidth2*imgheight2 dup(0)
-    ;-----------------------------
+    ;---------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 .CODE
 MAIN PROC FAR
-                  call      GETDATA
-                  CALL      CLS
-                  OpenFile  imgfilename1, imgfilehandle1
-                  ReadData  imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
-                  OpenFile  imgfilename2, imgfilehandle2
-                  ReadData  imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
-                  CALL      EnterGraphics
-    ;-----------------------------------------
-                  DRAW      imgdata1,imgwidth1,imgheight1,220D,0D            ; col,row
-                  DRAW      imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
+                  call        GETDATA
+                  CALL        CLS
+                  OpenFile    imgfilename1, imgfilehandle1
+                  ReadData    imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
+                  OpenFile    imgfilename2, imgfilehandle2
+                  ReadData    imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
+    ;start menu
+                  ShowMessage nameq
+                  movecursor  00H,01H
+                  cin         thename
+                  movecursor  00H,0AH
+                  ShowMessage proceed
+                  call        waitkey
+    ;game screen
+                  CALL        EnterGraphics
+                  DRAW        imgdata1,imgwidth1,imgheight1,220D,0D            ; col,row
+                  DRAW        imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
 
     ;------------------------------------------------------------------------------
-                  CloseFile imgfilehandle1
-                  CloseFile imgfilehandle2
+                  CloseFile   imgfilehandle1
+                  CloseFile   imgfilehandle2
                   EXT
 MAIN ENDP
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    ;----------------------------------------------------------------------------------------------------------------
+
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                 ;GET DATA
-                  MOV       AX,@DATA
-                  MOV       DS,AX
+GETDATA PROC                                                                   ;GET DATA
+                  MOV         AX,@DATA
+                  MOV         DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                     ;CLEAR SCREEN
-                  MOV       AX,0003H
-                  INT       10H
+CLS PROC                                                                       ;CLEAR SCREEN
+                  MOV         AX,0003H
+                  INT         10H
                   ret
 CLS ENDP
 
-EnterGraphics PROC                                                           ;ENTER GRAPHICS MODE
-                  MOV       AX,4F02H
-                  MOV       BX,100H                                          ;(320*200) pixel
-                  INT       10H
+EnterGraphics PROC                                                             ;ENTER GRAPHICS MODE
+                  MOV         AX,4F02H
+                  MOV         BX,100H                                          ;(320*200) pixel
+                  INT         10H
                   ret
 EnterGraphics ENDP
+
+waitkey PROC                                                                   ;ENTER GRAPHICS MODE
+                  MOV         AH , 0
+                  INT         16h
+                  ret
+waitkey ENDP
 
 END MAIN
