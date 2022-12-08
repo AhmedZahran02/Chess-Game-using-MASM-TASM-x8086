@@ -145,6 +145,10 @@ ENDM CloseFile
     nameq          db  'Please enter your name:','$'
     thename        db  15 dup('$')
     proceed        db  'Please Enter key to continue','$'
+    op1            db  'To start chatting press F1','$'
+    op2            db  'To start the game press F1','$'
+    op3            db  'To end the program press ESC','$'
+
     imgwidth1      equ 150D
     imgheight1     equ 155D
     imgfilename1   db  'test.bin',0
@@ -181,16 +185,27 @@ MAIN PROC FAR
                   OpenFile    imgfilename2, imgfilehandle2
                   ReadData    imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
     ;start menu
+                  movecursor  17H,05H
                   ShowMessage nameq
-                  movecursor  00H,01H
+                  movecursor  17H,06H
                   cin         thename
-                  movecursor  00H,0AH
+                  movecursor  17H,0AH
                   ShowMessage proceed
+                  call        waitkey
+    ;choice menu
+                  call        CLS
+                  movecursor  17H,03H
+                  ShowMessage op1
+                  movecursor  17H,08H
+                  ShowMessage op2
+                  movecursor  17H,0DH
+                  ShowMessage op3
                   call        waitkey
     ;game screen
                   CALL        EnterGraphics
-                  DRAW        imgdata1,imgwidth1,imgheight1,220D,0D            ; col,row
-                  DRAW        imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
+    ;drawall
+    ;DRAW        imgdata1,imgwidth1,imgheight1,0D,0D              ; col,row
+    ;DRAW        imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
 
     ;------------------------------------------------------------------------------
                   CloseFile   imgfilehandle1
@@ -228,15 +243,17 @@ CLS ENDP
 
 EnterGraphics PROC                                                             ;ENTER GRAPHICS MODE
                   MOV         AX,4F02H
-                  MOV         BX,100H                                          ;(320*200) pixel
+                  MOV         BX,100H                                          ;(640*480) pixel ;grid =400*440; char=55*55
                   INT         10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                   ;ENTER GRAPHICS MODE
+waitkey PROC                                                                   ;wait for key
                   MOV         AH , 0
                   INT         16h
                   ret
 waitkey ENDP
 
 END MAIN
+
+;http://www.wagemakers.be/english/doc/vgas
