@@ -138,7 +138,7 @@ CloseFile MACRO imgfilehandle                                          ;CLOSE FI
 
 ENDM CloseFile
 
-DRAWCELL MACRO X,Y       ;DRAW WHITE CELL
+DRAWCELL MACRO X,Y,Z       ;DRAW colored CELL WITH COLOR Z
         LOCAL drawLoop
         LOCAL innerloop
                 
@@ -149,7 +149,7 @@ DRAWCELL MACRO X,Y       ;DRAW WHITE CELL
         drawLoop:     
             mov si,0
             innerloop:
-            MOV  AL,0FH
+            MOV  AL,Z
             MOV AH,0ch
             INT 10H
             INC BX
@@ -164,7 +164,7 @@ DRAWCELL MACRO X,Y       ;DRAW WHITE CELL
             JNE  drawLoop
 ENDM        DRAWCELL
 
-DrawGrid MACRO X,Y                                           ;CLOSE FILE
+DrawGrid MACRO X,Y,A,B                                           ;DRAW WHITE GRID
         LOCAL BIGGERLOOP
         LOCAL BIGGERLOOP2
         LOCAL BIGGERLOOP3
@@ -183,7 +183,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -201,7 +209,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,-60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -219,7 +235,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -237,16 +261,24 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,-60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP4     
+        JNE  BIGGERLOOP4        
 
-        MOV AX,X
+            MOV AX,X
             MOV BX,Y 
             MOV CX,0
             ADD AX,0D
@@ -255,7 +287,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -264,7 +304,7 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             CMP CX,4D
         JNE  BIGGERLOOP5
 
-        MOV AX,X
+            MOV AX,X
             MOV BX,Y 
             MOV CX,0
             ADD AX,60D
@@ -273,7 +313,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,-60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -282,7 +330,7 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             CMP CX,4D
         JNE  BIGGERLOOP6
 
-        MOV AX,X
+            MOV AX,X
             MOV BX,Y 
             MOV CX,0
             ADD AX,0D
@@ -291,7 +339,15 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
@@ -300,7 +356,7 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             CMP CX,4D
         JNE  BIGGERLOOP7
 
-        MOV AX,X
+            MOV AX,X
             MOV BX,Y 
             MOV CX,0
             ADD AX,60D
@@ -309,14 +365,23 @@ DrawGrid MACRO X,Y                                           ;CLOSE FILE
             PUSH AX
             PUSH BX
             PUSH CX
-            DRAWCELL AX,BX
+            DRAWCELL AX,BX,A
+            POP CX
+            POP BX
+            POP AX
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            ADD AX,-60D
+            DRAWCELL AX,BX,B
             POP CX
             POP BX
             POP AX
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP8      
+        JNE  BIGGERLOOP8 
+
 ENDM DrawGrid
 
 .MODEL SMALL
@@ -384,8 +449,9 @@ MAIN PROC FAR
     ;call        waitkey
     ;game screen
                   CALL     EnterGraphics
-    ;drawall
-                  DrawGrid 0D,0D
+    ;   drawall
+                  DrawGrid 0D,0D,0EH,0CH
+    ;DrawHGrid2 0D,0D
     ;DRAW        imgdata1,imgwidth1,imgheight1,150D,0D            ; col,row
     ;DRAW        imgdata2,imgwidth2,imgheight2,0D,0D              ; col,row
 
