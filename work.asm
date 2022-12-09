@@ -138,6 +138,187 @@ CloseFile MACRO imgfilehandle                                          ;CLOSE FI
 
 ENDM CloseFile
 
+DRAWCELL MACRO X,Y       ;DRAW WHITE CELL
+        LOCAL drawLoop
+        LOCAL innerloop
+                
+        mov cx,X
+        mov dx,Y
+        ; Drawing loop
+        mov di,0
+        drawLoop:     
+            mov si,0
+            innerloop:
+            MOV  AL,0FH
+            MOV AH,0ch
+            INT 10H
+            INC BX
+            INC CX
+            INC SI
+            CMP SI,60D
+            JNE innerloop
+            SUB CX,SI
+            INC DX
+            INC DI
+            CMP DI,60D
+            JNE  drawLoop
+ENDM        DRAWCELL
+
+DrawGrid MACRO X,Y                                           ;CLOSE FILE
+        LOCAL BIGGERLOOP
+        LOCAL BIGGERLOOP2
+        LOCAL BIGGERLOOP3
+        LOCAL BIGGERLOOP4
+        LOCAL BIGGERLOOP5
+        LOCAL BIGGERLOOP6
+        LOCAL BIGGERLOOP7
+        LOCAL BIGGERLOOP8
+
+            MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,0D
+            ADD BX,0D  
+        BIGGERLOOP:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP
+
+            MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,60D
+            ADD BX,60D
+        BIGGERLOOP2:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP2
+
+            MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,0D
+            ADD BX,120D
+        BIGGERLOOP3:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP3
+
+            MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,60D
+            ADD BX,180D
+        BIGGERLOOP4:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP4     
+
+        MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,0D
+            ADD BX,240D
+        BIGGERLOOP5:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP5
+
+        MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,60D
+            ADD BX,300D
+        BIGGERLOOP6:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP6
+
+        MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,0D
+            ADD BX,360D
+        BIGGERLOOP7:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP7
+
+        MOV AX,X
+            MOV BX,Y 
+            MOV CX,0
+            ADD AX,60D
+            ADD BX,420D
+        BIGGERLOOP8:
+            PUSH AX
+            PUSH BX
+            PUSH CX
+            DRAWCELL AX,BX
+            POP CX
+            POP BX
+            POP AX
+            ADD AX,120D
+            INC CX
+            CMP CX,4D
+        JNE  BIGGERLOOP8      
+ENDM DrawGrid
+
 .MODEL SMALL
 .STACK 64
 ;-----------
@@ -178,38 +359,39 @@ ENDM CloseFile
 
 .CODE
 MAIN PROC FAR
-                  call        GETDATA
-                  CALL        CLS
-                  OpenFile    imgfilename1, imgfilehandle1
-                  ReadData    imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
-                  OpenFile    imgfilename2, imgfilehandle2
-                  ReadData    imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
+                  call     GETDATA
+                  CALL     CLS
+    ;OpenFile    imgfilename1, imgfilehandle1
+    ;ReadData    imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
+    ;OpenFile    imgfilename2, imgfilehandle2
+    ;ReadData    imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
     ;start menu
-                  movecursor  17H,05H
-                  ShowMessage nameq
-                  movecursor  17H,06H
-                  cin         thename
-                  movecursor  17H,0AH
-                  ShowMessage proceed
-                  call        waitkey
+    ;movecursor  17H,05H
+    ;ShowMessage nameq
+    ;movecursor  17H,06H
+    ;cin         thename
+    ;movecursor  17H,0AH
+    ;ShowMessage proceed
+    ;call        waitkey
     ;choice menu
-                  call        CLS
-                  movecursor  17H,03H
-                  ShowMessage op1
-                  movecursor  17H,08H
-                  ShowMessage op2
-                  movecursor  17H,0DH
-                  ShowMessage op3
-                  call        waitkey
+    ;call        CLS
+    ;movecursor  17H,03H
+    ;ShowMessage op1
+    ;movecursor  17H,08H
+    ;ShowMessage op2
+    ;movecursor  17H,0DH
+    ;ShowMessage op3
+    ;call        waitkey
     ;game screen
-                  CALL        EnterGraphics
+                  CALL     EnterGraphics
     ;drawall
-    ;DRAW        imgdata1,imgwidth1,imgheight1,0D,0D              ; col,row
-    ;DRAW        imgdata2,imgwidth2,imgheight2,10D,0D             ; col,row
+                  DrawGrid 0D,0D
+    ;DRAW        imgdata1,imgwidth1,imgheight1,150D,0D            ; col,row
+    ;DRAW        imgdata2,imgwidth2,imgheight2,0D,0D              ; col,row
 
     ;------------------------------------------------------------------------------
-                  CloseFile   imgfilehandle1
-                  CloseFile   imgfilehandle2
+    ;CloseFile   imgfilehandle1
+    ;CloseFile   imgfilehandle2
                   EXT
 MAIN ENDP
 
@@ -229,31 +411,31 @@ MAIN ENDP
     ;----------------------------------------------------------------------------------------------------------------
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                   ;GET DATA
-                  MOV         AX,@DATA
-                  MOV         DS,AX
+GETDATA PROC                                ;GET DATA
+                  MOV      AX,@DATA
+                  MOV      DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                       ;CLEAR SCREEN
-                  MOV         AX,0003H
-                  INT         10H
+CLS PROC                                    ;CLEAR SCREEN
+                  MOV      AX,0003H
+                  INT      10H
                   ret
 CLS ENDP
 
-EnterGraphics PROC                                                             ;ENTER GRAPHICS MODE
-                  MOV         AX,4F02H
-                  MOV         BX,100H                                          ;(640*480) pixel ;grid =400*440; char=55*55
-                  INT         10H
+EnterGraphics PROC                          ;ENTER GRAPHICS MODE
+                  MOV      AX,4F02H
+                  MOV      BX,103H          ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT      10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                   ;wait for key
-                  MOV         AH , 0
-                  INT         16h
+waitkey PROC                                ;wait for key
+                  MOV      AH , 0
+                  INT      16h
                   ret
 waitkey ENDP
 
 END MAIN
 
-;http://www.wagemakers.be/english/doc/vgas
+;http://www.wagemakers.be/english/doc/vga
