@@ -388,6 +388,8 @@ DrawGrid MACRO X,Y,A,B                                           ;DRAW WHITE GRI
 
 ENDM DrawGrid
 
+
+
 ;(0,0),(0,1)
 ;(1,0)......
 ;      (7,7)
@@ -407,6 +409,22 @@ ENDM getDrawPosition
 ;-----------
 .Data
     nameq             db  'Please enter your name:','$'
+
+    wrockdata         db  60D*60D dup(0)
+    wkingdata         db  60D*60D dup(0)
+    wbishopdata       db  60D*60D dup(0)
+    wqueendata        db  60D*60D dup(0)
+    wknightdata       db  60D*60D dup(0)
+    wpawndata         db  60D*60D dup(0)
+    bpawndata         db  60D*60D dup(0)
+    brockdata         db  60D*60D dup(0)
+    bknightdata       db  60D*60D dup(0)
+    bbishopdata       db  60D*60D dup(0)
+    bqueendata        db  60D*60D dup(0)
+    bkingdata         db  60D*60D dup(0)
+
+
+
     thename           db  15 dup('$')
     proceed           db  'Please Enter key to continue','$'
     op1               db  'To start chatting press F1','$'
@@ -417,80 +435,77 @@ ENDM getDrawPosition
     bbishopheight     equ 60D
     bbishopfilename   db  'bbishop.bin',0
     bbishopfilehandle DW  ?
-    bbishopdata       db  bbishopwidth*bbishopheight dup(0)
 
     bkingwidth        equ 60D
     bkingheight       equ 60D
     bkingfilename     db  'bking.bin',0
     bkingfilehandle   DW  ?
-    bkingdata         db  bkingwidth*bkingheight dup(0)
 
     bknightwidth      equ 60D
     bknightheight     equ 60D
     bknightfilename   db  'bknight.bin',0
     bknightfilehandle DW  ?
-    bknightdata       db  bknightwidth*bknightheight dup(0)
 
     bpawnwidth        equ 60D
     bpawnheight       equ 60D
     bpawnfilename     db  'bpawn.bin',0
     bpawnfilehandle   DW  ?
-    bpawndata         db  bpawnwidth*bpawnheight dup(0)
 
     bqueenwidth       equ 60D
     bqueenheight      equ 60D
     bqueenfilename    db  'bqueen.bin',0
     bqueenfilehandle  DW  ?
-    bqueendata        db  bqueenwidth*bqueenheight dup(0)
 
     brockwidth        equ 60D
     brockheight       equ 60D
     brockfilename     db  'brock.bin',0
     brockfilehandle   DW  ?
-    brockdata         db  brockwidth*brockheight dup(0)
 
     ;------------white pieces---------------
     wbishopwidth      equ 60D
     wbishopheight     equ 60D
     wbishopfilename   db  'wbishop.bin',0
     wbishopfilehandle DW  ?
-    wbishopdata       db  wbishopwidth*wbishopheight dup(0)
 
     wkingwidth        equ 60D
     wkingheight       equ 60D
     wkingfilename     db  'wking.bin',0
     wkingfilehandle   DW  ?
-    wkingdata         db  wkingwidth*wkingheight dup(0)
 
     wknightwidth      equ 60D
     wknightheight     equ 60D
     wknightfilename   db  'wknight.bin',0
     wknightfilehandle DW  ?
-    wknightdata       db  wknightwidth*wknightheight dup(0)
 
     wpawnwidth        equ 60D
     wpawnheight       equ 60D
     wpawnfilename     db  'wpawn.bin',0
     wpawnfilehandle   DW  ?
-    wpawndata         db  wpawnwidth*wpawnheight dup(0)
 
     wqueenwidth       equ 60D
     wqueenheight      equ 60D
     wqueenfilename    db  'wqueen.bin',0
     wqueenfilehandle  DW  ?
-    wqueendata        db  wqueenwidth*wqueenheight dup(0)
 
     wrockwidth        equ 60D
     wrockheight       equ 60D
     wrockfilename     db  'wrock.bin',0
     wrockfilehandle   DW  ?
-    wrockdata         db  wrockwidth*wrockheight dup(0)
     ;--------------
     borderwidth       equ 60D
     borderheight      equ 60D
     borderfilename    db  'border.bin',0
     borderfilehandle  DW  ?
     borderdata        db  borderwidth*borderheight dup(0)
+
+    curentCursorX     DW  0D
+    curentCursorY     DW  0D
+
+    gridState         DW  128  dup(0)
+
+    currrow           db  0
+    currcol           db  0
+
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -498,107 +513,329 @@ ENDM getDrawPosition
 .CODE
 MAIN PROC FAR
     ;INITIALIZING
-                  call            GETDATA
-                  CALL            CLS
+                  call        GETDATA
+                  CALL        CLS
     ;OPENING AND READING BIN FILES
-                  OpenFile        bbishopfilename, bbishopfilehandle
-                  ReadData        bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile        bkingfilename, bkingfilehandle
-                  ReadData        bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile        bknightfilename, bknightfilehandle
-                  ReadData        bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile        bpawnfilename, bpawnfilehandle
-                  ReadData        bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile        bqueenfilename, bqueenfilehandle
-                  ReadData        bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile        brockfilename, brockfilehandle
-                  ReadData        brockfilehandle ,brockwidth,brockheight,brockdata
+                  OpenFile    bbishopfilename, bbishopfilehandle
+                  ReadData    bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                  OpenFile    bkingfilename, bkingfilehandle
+                  ReadData    bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                  OpenFile    bknightfilename, bknightfilehandle
+                  ReadData    bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                  OpenFile    bpawnfilename, bpawnfilehandle
+                  ReadData    bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                  OpenFile    bqueenfilename, bqueenfilehandle
+                  ReadData    bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                  OpenFile    brockfilename, brockfilehandle
+                  ReadData    brockfilehandle ,brockwidth,brockheight,brockdata
     ;--white piecies----
-                  OpenFile        wbishopfilename, wbishopfilehandle
-                  ReadData        wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile        wkingfilename, wkingfilehandle
-                  ReadData        wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile        wknightfilename, wknightfilehandle
-                  ReadData        wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile        wpawnfilename, wpawnfilehandle
-                  ReadData        wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile        wqueenfilename, wqueenfilehandle
-                  ReadData        wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile        wrockfilename, wrockfilehandle
-                  ReadData        wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                  OpenFile    wbishopfilename, wbishopfilehandle
+                  ReadData    wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                  OpenFile    wkingfilename, wkingfilehandle
+                  ReadData    wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                  OpenFile    wknightfilename, wknightfilehandle
+                  ReadData    wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                  OpenFile    wpawnfilename, wpawnfilehandle
+                  ReadData    wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                  OpenFile    wqueenfilename, wqueenfilehandle
+                  ReadData    wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                  OpenFile    wrockfilename, wrockfilehandle
+                  ReadData    wrockfilehandle ,wrockwidth,wrockheight,wrockdata
     ;--border-----
-                  OpenFile        borderfilename, borderfilehandle
-                  ReadData        borderfilehandle ,borderwidth,borderheight,borderdata
+                  OpenFile    borderfilename, borderfilehandle
+                  ReadData    borderfilehandle ,borderwidth,borderheight,borderdata
+
+    ;------------------------------------------------------------------------------------------------
+    ;------------------------------------------------------------------------------------------------
+    ;------------------------------------------------------------------------------------------------
+
+    
+
+                  mov         SI,offset wrockdata
+                  mov         gridState[1],SI
+                  mov         SI,offset wknightdata
+                  mov         gridState[3],SI
+                  mov         SI,offset wbishopdata
+                  mov         gridState[5],SI
+                  mov         SI,offset wqueendata
+                  mov         gridState[7],SI
+                  mov         SI,offset wkingdata
+                  mov         gridState[9],SI
+                  mov         SI,offset wbishopdata
+                  mov         gridState[11],SI
+                  mov         SI,offset wknightdata
+                  mov         gridState[13],SI
+                  mov         SI,offset wrockdata
+                  mov         gridState[15],SI
+                  mov         SI,offset wpawndata
+                  mov         gridState[17],SI
+                  mov         gridState[19],SI
+                  mov         gridState[21],SI
+                  mov         gridState[23],SI
+                  mov         gridState[25],SI
+                  mov         gridState[27],SI
+                  mov         gridState[29],SI
+                  mov         gridState[31],SI
+
+                  mov         gridState[33],0
+                  mov         gridState[35],0
+                  mov         gridState[37],0
+                  mov         gridState[39],0
+                  mov         gridState[41],0
+                  mov         gridState[43],0
+                  mov         gridState[45],0
+                  mov         gridState[47],0
+                  mov         gridState[49],0
+                  mov         gridState[51],0
+                  mov         gridState[53],0
+                  mov         gridState[55],0
+                  mov         gridState[57],0
+                  mov         gridState[59],0
+                  mov         gridState[61],0
+                  mov         gridState[63],0
+
+                  mov         gridState[65],0
+                  mov         gridState[67],0
+                  mov         gridState[69],0
+                  mov         gridState[71],0
+                  mov         gridState[73],0
+                  mov         gridState[75],0
+                  mov         gridState[77],0
+                  mov         gridState[79],0
+                  mov         gridState[81],0
+                  mov         gridState[83],0
+                  mov         gridState[85],0
+                  mov         gridState[87],0
+                  mov         gridState[89],0
+                  mov         gridState[91],0
+                  mov         gridState[93],0
+                  mov         gridState[95],0
+ 
+                  mov         SI,offset bpawndata
+                  mov         gridState[97],SI
+                  mov         gridState[99],SI
+                  mov         gridState[101],SI
+                  mov         gridState[103],SI
+                  mov         gridState[105],SI
+                  mov         gridState[107],SI
+                  mov         gridState[109],SI
+                  mov         gridState[111],SI
+                  mov         SI,offset brockdata
+                  mov         gridState[113],SI
+                  mov         SI,offset bknightdata
+                  mov         gridState[115],SI
+                  mov         SI,offset bbishopdata
+                  mov         gridState[117],SI
+                  mov         SI,offset bqueendata
+                  mov         gridState[119],SI
+                  mov         SI,offset bkingdata
+                  mov         gridState[121],SI
+                  mov         SI,offset bbishopdata
+                  mov         gridState[123],SI
+                  mov         SI,offset bknightdata
+                  mov         gridState[125],SI
+                  mov         SI,offset brockdata
+                  mov         gridState[127],SI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ;------------------------------------------------------------------------------------------------
+    ;------------------------------------------------------------------------------------------------
+    ;------------------------------------------------------------------------------------------------
+
     ;START MENU
-                  movecursor      17H,05H
-                  ShowMessage     nameq
-                  movecursor      17H,06H
-                  cin             thename
-                  movecursor      17H,0AH
-                  ShowMessage     proceed
-                  call            waitkey
+                  movecursor  17H,05H
+                  ShowMessage nameq
+                  movecursor  17H,06H
+                  cin         thename
+                  movecursor  17H,0AH
+                  ShowMessage proceed
+                  call        waitkey
     ;CHOICE MENU
-                  call            CLS
-                  movecursor      17H,03H
-                  ShowMessage     op1
-                  movecursor      17H,08H
-                  ShowMessage     op2
-                  movecursor      17H,0DH
-                  ShowMessage     op3
-                  call            waitkey
+                  call        CLS
+                  movecursor  17H,03H
+                  ShowMessage op1
+                  movecursor  17H,08H
+                  ShowMessage op2
+                  movecursor  17H,0DH
+                  ShowMessage op3
+                  call        waitkey
     ;GAME SCREEN
-                  CALL            EnterGraphics
-                  DrawGrid        0D,0D,0FH,08H
+                  CALL        EnterGraphics
+                  DrawGrid    0D,0D,0FH,08H
     ;white
-                  DRAW            wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
-                  getDrawPosition 0D ,1D
-                  DRAW            wknightdata,wknightwidth,wknightheight,CX,DX                 ; col,row
-                  DRAW            wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
-                  DRAW            wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
-                  DRAW            wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
-                  DRAW            wbishopdata,wbishopwidth,wbishopheight,300D,0D               ; col,row
-                  DRAW            wknightdata,wknightwidth,wknightheight,360D,0D               ; col,row
-                  DRAW            wrockdata,wrockwidth,wrockheight,420D,0D                     ; col,row
 
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,0D,60D                      ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,60D,60D                     ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,120D,60D                    ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,180D,60D                    ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,240D,60D                    ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,300D,60D                    ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,360D,60D                    ; col,row
-                  DRAW            wpawndata,wpawnwidth,wpawnheight,420D,60D                    ; col,row
-    ;black
-                  DRAW            brockdata,brockwidth,brockheight,0D,420D                     ; col,row
-                  DRAW            bknightdata,bknightwidth,bknightheight,60D,420D              ; col,row
-                  DRAW            bbishopdata,bbishopwidth,bbishopheight,120D,420D             ; col,row
-                  DRAW            bqueendata,bqueenwidth,bqueenheight,180D,420D                ; col,row
-                  DRAW            bkingdata,bkingwidth,bkingheight,240D,420D                   ; col,row
-                  DRAW            bbishopdata,bbishopwidth,bbishopheight,300D,420D             ; col,row
-                  DRAW            bknightdata,bknightwidth,bknightheight,360D,420D             ; col,row
-                  DRAW            brockdata,brockwidth,brockheight,420D,420D                   ; col,row
 
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,0D,360D                     ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,60D,360D                    ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,120D,360D                   ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,180D,360D                   ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,240D,360D                   ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,300D,360D                   ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
+                  mov         SI,gridState[117]
+    
+    ;DRAW            [SI],wrockwidth,wrockheight,0D,0D                       ; col,row
+
+               
+
+                 
     ;border
                 
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+
+    cursorLoop:   
+
+                  DrawGrid    0D,0D,0FH,08H
+
+                  mov         di,1D
+                  mov         bh,0
+                  mov         bl,0
+
+    loop1:        
+
+                  mov         bh,0
+
+    loop2:        
+
+                  mov         SI,gridState[di]
+                  
+                  MOV         AL,bl
+                  MOV         CL,60D
+                  MUL         CL
+                  MOV         dx,ax
+                  MOV         AL,bh
+                  MUL         CL
+                  MOV         CX,Ax
+
+                  cmp         SI,0
+                  jz          skip
+                  push        BX
+                  push        di
+                  DRAW        [SI],wrockwidth,wrockheight,CX,DX                                  ; col,row
+                  pop         di
+                  pop         BX
+    skip:         
+                  add         di,2
+                  add         bh,1
+                  cmp         bh,8
+                  jnz         loop2
+                  add         bL,1
+                  cmp         bL,8
+                  jnz         loop1
+
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+
+                  mov         ah,0
+                  int         16h
+
+                  cmp         ah,11h
+                  jnz         label6
+                  jmp         up
+    label6:       
+
+                  cmp         ah,1eh
+                  jnz         label7
+                  jmp         left
+    label7:       
+
+                  cmp         ah,20h
+                  jnz         label8
+                  jmp         right
+    label8:       
+
+                  cmp         ah,1fh
+                  jnz         label9
+                  jmp         down
+    label9:       
+
+                  cmp         ah,1ch
+                  jz          temp19
+                  jmp         cursorLoop
+    temp19:       
+                  
+                  cmp         ah,1ch
+                  jnz         temp1
+                  jmp         label3
+    temp1:        
+
+    left:         
+                  mov         DX,curentCursorX
+                  cmp         DX,0D
+                  jnz         temp20
+
+                  jmp         cursorLoop
+    temp20:       
+                  sub         DX,60D
+
+                  mov         curentCursorX,DX
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+                  cmp         ah,11h
+                  jz          label5
+
+                  jmp         cursorLoop
+    label5:       
 
 
+    right:        
+                  mov         DX,curentCursorX
+                  cmp         DX,420D
+                  jnz         temp22
+                  jmp         cursorLoop
+    temp22:       
+                  add         DX,60D
+                  mov         curentCursorX,DX
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+                  cmp         ah,20h
+                  jz          label4
+                  jmp         cursorLoop
+    label4:       
+
+    up:           
+                  mov         DX,curentCursorY
+                  cmp         DX,0D
+                  jnz         label10
+                  jmp         cursorLoop
+    label10:      
+
+                  mov         bl,currrow
+                  dec         bl
+                  mov         currrow,bl
+                  sub         DX,60D
+
+                  mov         curentCursorY,DX
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+                  cmp         ah,11h
+                  jz          label2
+
+                  jmp         cursorLoop
+    label2:       
 
 
+    down:         
+                  mov         DX,curentCursorY
+                  cmp         DX,420D
+                  jnz         label11
+                  jmp         cursorLoop
+    label11:      
+                  add         DX,60D
+                  mov         curentCursorY,DX
+                  DRAW        borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+                  cmp         ah,1fh
+                  jz          label1
+                  jmp         cursorLoop
+    label1:       
 
 
+                  cmp         ah,1ch
+                  jz          label3
 
-
-
-
-
+                  jmp         cursorLoop
+    label3:       
 
 
 
@@ -613,28 +850,28 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                   ;GET DATA
-                  MOV             AX,@DATA
-                  MOV             DS,AX
+GETDATA PROC                                                                                     ;GET DATA
+                  MOV         AX,@DATA
+                  MOV         DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                       ;CLEAR SCREEN
-                  MOV             AX,0003H
-                  INT             10H
+CLS PROC                                                                                         ;CLEAR SCREEN
+                  MOV         AX,0003H
+                  INT         10H
                   ret
 CLS ENDP
 
-EnterGraphics PROC                                                                             ;ENTER GRAPHICS MODE
-                  MOV             AX,4F02H
-                  MOV             BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT             10H
+EnterGraphics PROC                                                                               ;ENTER GRAPHICS MODE
+                  MOV         AX,4F02H
+                  MOV         BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT         10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                   ;wait for key
-                  MOV             AH , 0
-                  INT             16h
+waitkey PROC                                                                                     ;wait for key
+                  MOV         AH , 0
+                  INT         16h
                   ret
 waitkey ENDP
 
