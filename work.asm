@@ -534,7 +534,7 @@ MAIN PROC FAR
                   call        waitkey
     ;GAME SCREEN
                   CALL        EnterGraphics
-                  DrawGrid    0D,0D,01H,0CH
+                  DrawGrid    0D,0D,0FH,08H
     ;white
                   DRAW        wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
                   DRAW        wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
@@ -572,7 +572,7 @@ MAIN PROC FAR
                   DRAW        bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
                   DRAW        bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
     ;border
-                  DRAW        borderdata,borderwidth,borderheight,180D,360D                ; col,row
+                  DRAW        borderdata,borderwidth,borderheight,240D,360D                ; col,row
 
 
 
