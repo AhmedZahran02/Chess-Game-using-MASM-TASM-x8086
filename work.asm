@@ -396,10 +396,10 @@ getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the requi
 MOV AL,ROW
 MOV CL,60D
 MUL CL
-MOV DH,AL
+MOV dx,AL
 MOV AL,COL
 MUL CL
-MOV DL,AL 
+MOV CX,AL 
 ENDM getDrawPosition   
 
 .MODEL SMALL
@@ -492,7 +492,7 @@ ENDM getDrawPosition
     borderfilehandle  DW  ?
     borderdata        db  borderwidth*borderheight dup(0)
     ;---------------------------------------------------------------------------------------------------
-
+ 
 
 
 .CODE
@@ -551,7 +551,8 @@ MAIN PROC FAR
                   DrawGrid        0D,0D,0FH,08H
     ;white
                   DRAW            wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
-                  DRAW            wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
+                  getDrawPosition 0 ,1
+                  DRAW            wknightdata,wknightwidth,wknightheight,CX,DX                ; col,row
                   DRAW            wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
                   DRAW            wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
                   DRAW            wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
@@ -586,13 +587,7 @@ MAIN PROC FAR
                   DRAW            bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
                   DRAW            bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
     ;border
-                  DRAW            borderdata,borderwidth,borderheight,240D,360D                ; col,row
-                  getDrawPosition 5,5
-                  mov             al,dl
-                  mov             ah,0
-                  mov             bl,Dh
-                  mov             bh,0
-                  DRAW            bpawndata,bpawnwidth,bpawnheight,ax,bx                       ; col,row
+                
 
 
 
