@@ -91,6 +91,7 @@ ENDM TOSTRING
 DRAW MACRO imgdata,imgwidth,imgheight,X,Y       ;DRAW IMAGE
                 LOCAL drawLoop
                 LOCAL innerloop
+                LOCAL skp
                 
                 mov cx,X
                 mov dx,Y
@@ -102,7 +103,10 @@ DRAW MACRO imgdata,imgwidth,imgheight,X,Y       ;DRAW IMAGE
                       innerloop:
                       MOV  AL,[BX]
                       MOV AH,0ch
+                      cmp al,0FFH
+                      je skp
                       INT 10H
+                      skp:
                       INC BX
                       INC CX
                       INC SI
@@ -388,24 +392,18 @@ ENDM DrawGrid
 .STACK 64
 ;-----------
 .Data
-    nameq          db  'Please enter your name:','$'
-    thename        db  15 dup('$')
-    proceed        db  'Please Enter key to continue','$'
-    op1            db  'To start chatting press F1','$'
-    op2            db  'To start the game press F1','$'
-    op3            db  'To end the program press ESC','$'
+    nameq            db  'Please enter your name:','$'
+    thename          db  15 dup('$')
+    proceed          db  'Please Enter key to continue','$'
+    op1              db  'To start chatting press F1','$'
+    op2              db  'To start the game press F1','$'
+    op3              db  'To end the program press ESC','$'
 
-    imgwidth1      equ 150D
-    imgheight1     equ 155D
-    imgfilename1   db  'test.bin',0
-    imgfilehandle1 DW  ?
-    imgdata1       db  imgwidth1*imgheight1 dup(0)
-
-    imgwidth2      equ 150D
-    imgheight2     equ 155D
-    imgfilename2   db  'test2.bin',0
-    imgfilehandle2 DW  ?
-    imgdata2       db  imgwidth2*imgheight2 dup(0)
+    bqueenwidth      equ 60D
+    bqueenheight     equ 60D
+    bqueenfilename   db  'bqueen.bin',0
+    bqueenfilehandle DW  ?
+    bqueendata       db  bqueenwidth*bqueenheight dup(0)
     ;---------------------------------------------------------------------------------------------------
 
 
@@ -428,10 +426,8 @@ MAIN PROC FAR
                   call        GETDATA
                   CALL        CLS
     ;OPENING AND READING BIN FILES
-                  OpenFile    imgfilename1, imgfilehandle1
-                  ReadData    imgfilehandle1 ,imgwidth1,imgheight1,imgdata1
-                  OpenFile    imgfilename2, imgfilehandle2
-                  ReadData    imgfilehandle2 ,imgwidth2,imgheight2,imgdata2
+                  OpenFile    bqueenfilename, bqueenfilehandle
+                  ReadData    bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
     ;START MENU
                   movecursor  17H,05H
                   ShowMessage nameq
@@ -452,8 +448,7 @@ MAIN PROC FAR
     ;GAME SCREEN
                   CALL        EnterGraphics
                   DrawGrid    0D,0D,0EH,0CH
-    ;DRAW        imgdata1,imgwidth1,imgheight1,150D,0D            ; col,row
-    ;DRAW        imgdata2,imgwidth2,imgheight2,0D,0D              ; col,row
+                  DRAW        bqueendata,bqueenwidth,bqueenheight,0D,0D                ; col,row
 
 
 
@@ -481,26 +476,26 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                   ;GET DATA
+GETDATA PROC                                                                           ;GET DATA
                   MOV         AX,@DATA
                   MOV         DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                       ;CLEAR SCREEN
+CLS PROC                                                                               ;CLEAR SCREEN
                   MOV         AX,0003H
                   INT         10H
                   ret
 CLS ENDP
 
-EnterGraphics PROC                                                             ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                     ;ENTER GRAPHICS MODE
                   MOV         AX,4F02H
-                  MOV         BX,103H                                          ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV         BX,103H                                                  ;(800x600) pixel ;grid =480*480; char=60*60
                   INT         10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                   ;wait for key
+waitkey PROC                                                                           ;wait for key
                   MOV         AH , 0
                   INT         16h
                   ret
