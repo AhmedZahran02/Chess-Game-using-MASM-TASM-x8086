@@ -551,8 +551,8 @@ MAIN PROC FAR
                   DrawGrid        0D,0D,0FH,08H
     ;white
                   DRAW            wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
-                  getDrawPosition 0 ,1
-                  DRAW            wknightdata,wknightwidth,wknightheight,CX,DX                ; col,row
+                  getDrawPosition 0D ,1D
+                  DRAW            wknightdata,wknightwidth,wknightheight,CX,DX                 ; col,row
                   DRAW            wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
                   DRAW            wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
                   DRAW            wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
