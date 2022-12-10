@@ -9,9 +9,9 @@ public class Main {
 	
     public static void main(String [] args) throws IOException {
         BufferedImage img = ImageIO.read(new File("Colors/palette.png"));
-        CreateResFile("InputFile/" , "res" , img );
-        FileOutputStream out = new FileOutputStream("OutputFile/test.bin");
-        WriteBinaryHexImage(out , new File("InputFile/queen.png") , img);
+        //CreateResFile("InputFile/" , "res" , img );
+        FileOutputStream out = new FileOutputStream("OutputFile/wrock.bin");
+        WriteBinaryHexImage(out , new File("InputFile/wrock.png") , img);
     }
 
 
