@@ -471,6 +471,12 @@ ENDM DrawGrid
     wrockfilename     db  'wrock.bin',0
     wrockfilehandle   DW  ?
     wrockdata         db  wrockwidth*wrockheight dup(0)
+    ;--------------
+    borderwidth       equ 60D
+    borderheight      equ 60D
+    borderfilename    db  'border.bin',0
+    borderfilehandle  DW  ?
+    borderdata        db  borderwidth*borderheight dup(0)
     ;---------------------------------------------------------------------------------------------------
 
 
@@ -506,6 +512,9 @@ MAIN PROC FAR
                   ReadData    wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
                   OpenFile    wrockfilename, wrockfilehandle
                   ReadData    wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+    ;--border-----
+                  OpenFile    borderfilename, borderfilehandle
+                  ReadData    borderfilehandle ,borderwidth,borderheight,borderdata
     ;START MENU
                   movecursor  17H,05H
                   ShowMessage nameq
@@ -525,7 +534,7 @@ MAIN PROC FAR
                   call        waitkey
     ;GAME SCREEN
                   CALL        EnterGraphics
-                  DrawGrid    0D,0D,0EH,0CH
+                  DrawGrid    0D,0D,01H,0CH
     ;white
                   DRAW        wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
                   DRAW        wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
@@ -562,6 +571,8 @@ MAIN PROC FAR
                   DRAW        bpawndata,bpawnwidth,bpawnheight,300D,360D                   ; col,row
                   DRAW        bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
                   DRAW        bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
+    ;border
+                  DRAW        borderdata,borderwidth,borderheight,180D,360D                ; col,row
 
 
 

@@ -10,8 +10,8 @@ public class Main {
     public static void main(String [] args) throws IOException {
         BufferedImage img = ImageIO.read(new File("Colors/palette.png"));
         //CreateResFile("InputFile/" , "res" , img );
-        FileOutputStream out = new FileOutputStream("OutputFile/wrock.bin");
-        WriteBinaryHexImage(out , new File("InputFile/wrock.png") , img);
+        FileOutputStream out = new FileOutputStream("OutputFile/border.bin");
+        WriteBinaryHexImage(out , new File("InputFile/border.png") , img);
     }
 
 
