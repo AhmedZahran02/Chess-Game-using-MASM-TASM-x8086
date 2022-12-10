@@ -6,6 +6,30 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 INT         21H
                 ENDM        EXT
 
+
+MOVECURSORAPPLY MACRO  
+MOV AH,2  
+INT 10H 
+
+ENDM MOVECURSOR
+
+;(0,0),(0,1)
+;(1,0)......
+;      (7,7)
+;
+getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the required values to draw
+MOV AL,ROW
+MOV CL,60D
+MUL CL
+MOV DH,AL
+MOV AL,COL
+MUL CL
+MOV DL,AL 
+ENDM getDrawPosition   
+
+
+
+
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
                 mov         dh,y
