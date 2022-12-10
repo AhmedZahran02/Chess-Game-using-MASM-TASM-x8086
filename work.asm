@@ -6,22 +6,6 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 INT         21H
                 ENDM        EXT
 
-
-;(0,0),(0,1)
-;(1,0)......
-;      (7,7)
-;
-getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the required values to draw
-MOV AL,ROW
-MOV CL,60D
-MUL CL
-MOV DH,AL
-MOV AL,COL
-MUL CL
-MOV DL,AL 
-ENDM getDrawPosition   
-
-
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
                 mov         dh,y
@@ -404,6 +388,20 @@ DrawGrid MACRO X,Y,A,B                                           ;DRAW WHITE GRI
 
 ENDM DrawGrid
 
+;(0,0),(0,1)
+;(1,0)......
+;      (7,7)
+;
+getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the required values to draw
+MOV AL,ROW
+MOV CL,60D
+MUL CL
+MOV DH,AL
+MOV AL,COL
+MUL CL
+MOV DL,AL 
+ENDM getDrawPosition   
+
 .MODEL SMALL
 .STACK 64
 ;-----------
@@ -589,7 +587,7 @@ MAIN PROC FAR
                   DRAW            bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
     ;border
                   DRAW            borderdata,borderwidth,borderheight,240D,360D                ; col,row
-                  getDrawPosition 4,5
+                  getDrawPosition 5,5
                   mov             al,dl
                   mov             ah,0
                   mov             bl,Dh
