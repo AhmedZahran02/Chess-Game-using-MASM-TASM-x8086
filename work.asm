@@ -7,12 +7,6 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 ENDM        EXT
 
 
-MOVECURSORAPPLY MACRO  
-MOV AH,2  
-INT 10H 
-
-ENDM MOVECURSOR
-
 ;(0,0),(0,1)
 ;(1,0)......
 ;      (7,7)
@@ -26,8 +20,6 @@ MOV AL,COL
 MUL CL
 MOV DL,AL 
 ENDM getDrawPosition   
-
-
 
 
 movecursor MACRO x,y ;move cursor
@@ -508,96 +500,101 @@ ENDM DrawGrid
 .CODE
 MAIN PROC FAR
     ;INITIALIZING
-                  call        GETDATA
-                  CALL        CLS
+                  call            GETDATA
+                  CALL            CLS
     ;OPENING AND READING BIN FILES
-                  OpenFile    bbishopfilename, bbishopfilehandle
-                  ReadData    bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile    bkingfilename, bkingfilehandle
-                  ReadData    bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile    bknightfilename, bknightfilehandle
-                  ReadData    bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile    bpawnfilename, bpawnfilehandle
-                  ReadData    bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile    bqueenfilename, bqueenfilehandle
-                  ReadData    bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile    brockfilename, brockfilehandle
-                  ReadData    brockfilehandle ,brockwidth,brockheight,brockdata
+                  OpenFile        bbishopfilename, bbishopfilehandle
+                  ReadData        bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                  OpenFile        bkingfilename, bkingfilehandle
+                  ReadData        bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                  OpenFile        bknightfilename, bknightfilehandle
+                  ReadData        bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                  OpenFile        bpawnfilename, bpawnfilehandle
+                  ReadData        bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                  OpenFile        bqueenfilename, bqueenfilehandle
+                  ReadData        bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                  OpenFile        brockfilename, brockfilehandle
+                  ReadData        brockfilehandle ,brockwidth,brockheight,brockdata
     ;--white piecies----
-                  OpenFile    wbishopfilename, wbishopfilehandle
-                  ReadData    wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile    wkingfilename, wkingfilehandle
-                  ReadData    wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile    wknightfilename, wknightfilehandle
-                  ReadData    wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile    wpawnfilename, wpawnfilehandle
-                  ReadData    wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile    wqueenfilename, wqueenfilehandle
-                  ReadData    wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile    wrockfilename, wrockfilehandle
-                  ReadData    wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                  OpenFile        wbishopfilename, wbishopfilehandle
+                  ReadData        wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                  OpenFile        wkingfilename, wkingfilehandle
+                  ReadData        wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                  OpenFile        wknightfilename, wknightfilehandle
+                  ReadData        wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                  OpenFile        wpawnfilename, wpawnfilehandle
+                  ReadData        wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                  OpenFile        wqueenfilename, wqueenfilehandle
+                  ReadData        wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                  OpenFile        wrockfilename, wrockfilehandle
+                  ReadData        wrockfilehandle ,wrockwidth,wrockheight,wrockdata
     ;--border-----
-                  OpenFile    borderfilename, borderfilehandle
-                  ReadData    borderfilehandle ,borderwidth,borderheight,borderdata
+                  OpenFile        borderfilename, borderfilehandle
+                  ReadData        borderfilehandle ,borderwidth,borderheight,borderdata
     ;START MENU
-                  movecursor  17H,05H
-                  ShowMessage nameq
-                  movecursor  17H,06H
-                  cin         thename
-                  movecursor  17H,0AH
-                  ShowMessage proceed
-                  call        waitkey
+                  movecursor      17H,05H
+                  ShowMessage     nameq
+                  movecursor      17H,06H
+                  cin             thename
+                  movecursor      17H,0AH
+                  ShowMessage     proceed
+                  call            waitkey
     ;CHOICE MENU
-                  call        CLS
-                  movecursor  17H,03H
-                  ShowMessage op1
-                  movecursor  17H,08H
-                  ShowMessage op2
-                  movecursor  17H,0DH
-                  ShowMessage op3
-                  call        waitkey
+                  call            CLS
+                  movecursor      17H,03H
+                  ShowMessage     op1
+                  movecursor      17H,08H
+                  ShowMessage     op2
+                  movecursor      17H,0DH
+                  ShowMessage     op3
+                  call            waitkey
     ;GAME SCREEN
-                  CALL        EnterGraphics
-                  DrawGrid    0D,0D,0FH,08H
+                  CALL            EnterGraphics
+                  DrawGrid        0D,0D,0FH,08H
     ;white
-                  DRAW        wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
-                  DRAW        wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
-                  DRAW        wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
-                  DRAW        wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
-                  DRAW        wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
-                  DRAW        wbishopdata,wbishopwidth,wbishopheight,300D,0D               ; col,row
-                  DRAW        wknightdata,wknightwidth,wknightheight,360D,0D               ; col,row
-                  DRAW        wrockdata,wrockwidth,wrockheight,420D,0D                     ; col,row
+                  DRAW            wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
+                  DRAW            wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
+                  DRAW            wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
+                  DRAW            wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
+                  DRAW            wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
+                  DRAW            wbishopdata,wbishopwidth,wbishopheight,300D,0D               ; col,row
+                  DRAW            wknightdata,wknightwidth,wknightheight,360D,0D               ; col,row
+                  DRAW            wrockdata,wrockwidth,wrockheight,420D,0D                     ; col,row
 
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,0D,60D                      ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,60D,60D                     ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,120D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,180D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,240D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,300D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,360D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,420D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,0D,60D                      ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,60D,60D                     ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,120D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,180D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,240D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,300D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,360D,60D                    ; col,row
+                  DRAW            wpawndata,wpawnwidth,wpawnheight,420D,60D                    ; col,row
     ;black
-                  DRAW        brockdata,brockwidth,brockheight,0D,420D                     ; col,row
-                  DRAW        bknightdata,bknightwidth,bknightheight,60D,420D              ; col,row
-                  DRAW        bbishopdata,bbishopwidth,bbishopheight,120D,420D             ; col,row
-                  DRAW        bqueendata,bqueenwidth,bqueenheight,180D,420D                ; col,row
-                  DRAW        bkingdata,bkingwidth,bkingheight,240D,420D                   ; col,row
-                  DRAW        bbishopdata,bbishopwidth,bbishopheight,300D,420D             ; col,row
-                  DRAW        bknightdata,bknightwidth,bknightheight,360D,420D             ; col,row
-                  DRAW        brockdata,brockwidth,brockheight,420D,420D                   ; col,row
+                  DRAW            brockdata,brockwidth,brockheight,0D,420D                     ; col,row
+                  DRAW            bknightdata,bknightwidth,bknightheight,60D,420D              ; col,row
+                  DRAW            bbishopdata,bbishopwidth,bbishopheight,120D,420D             ; col,row
+                  DRAW            bqueendata,bqueenwidth,bqueenheight,180D,420D                ; col,row
+                  DRAW            bkingdata,bkingwidth,bkingheight,240D,420D                   ; col,row
+                  DRAW            bbishopdata,bbishopwidth,bbishopheight,300D,420D             ; col,row
+                  DRAW            bknightdata,bknightwidth,bknightheight,360D,420D             ; col,row
+                  DRAW            brockdata,brockwidth,brockheight,420D,420D                   ; col,row
 
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,0D,360D                     ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,60D,360D                    ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,120D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,180D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,240D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,300D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,0D,360D                     ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,60D,360D                    ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,120D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,180D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,240D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,300D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
     ;border
-                  DRAW        borderdata,borderwidth,borderheight,240D,360D                ; col,row
-
+                  DRAW            borderdata,borderwidth,borderheight,240D,360D                ; col,row
+                  getDrawPosition 4,5
+                  mov             al,dl
+                  mov             ah,0
+                  mov             bl,Dh
+                  mov             bh,0
+                  DRAW            bpawndata,bpawnwidth,bpawnheight,ax,bx                       ; col,row
 
 
 
@@ -623,28 +620,28 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                               ;GET DATA
-                  MOV         AX,@DATA
-                  MOV         DS,AX
+GETDATA PROC                                                                                   ;GET DATA
+                  MOV             AX,@DATA
+                  MOV             DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                   ;CLEAR SCREEN
-                  MOV         AX,0003H
-                  INT         10H
+CLS PROC                                                                                       ;CLEAR SCREEN
+                  MOV             AX,0003H
+                  INT             10H
                   ret
 CLS ENDP
 
-EnterGraphics PROC                                                                         ;ENTER GRAPHICS MODE
-                  MOV         AX,4F02H
-                  MOV         BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT         10H
+EnterGraphics PROC                                                                             ;ENTER GRAPHICS MODE
+                  MOV             AX,4F02H
+                  MOV             BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT             10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                               ;wait for key
-                  MOV         AH , 0
-                  INT         16h
+waitkey PROC                                                                                   ;wait for key
+                  MOV             AH , 0
+                  INT             16h
                   ret
 waitkey ENDP
 
