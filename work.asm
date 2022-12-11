@@ -395,13 +395,13 @@ ENDM DrawGrid
 ;      (7,7)
 ;
 getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the required values to draw
-MOV AL,ROW
-MOV CL,60D
-MUL CL
-MOV dx,AL
-MOV AL,COL
-MUL CL
-MOV CX,AL 
+ MOV         AL,ROW
+ MOV         CL,60D
+ MUL         CL
+ MOV         dx,ax
+ MOV         AL,COL
+ MUL         CL
+ MOV         CX,Ax
 ENDM getDrawPosition   
 
 .MODEL SMALL
@@ -704,13 +704,9 @@ MAIN PROC FAR
 
                   mov         SI,gridState[di]
                   
-                  MOV         AL,bl
-                  MOV         CL,60D
-                  MUL         CL
-                  MOV         dx,ax
-                  MOV         AL,bh
-                  MUL         CL
-                  MOV         CX,Ax
+                 
+                  getDrawPosition bl,bh
+                 
 
                   cmp         SI,0
                   jz          skip
