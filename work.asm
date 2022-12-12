@@ -402,13 +402,55 @@ getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the requi
  MOV         AL,COL
  MUL         CL
  MOV         CX,Ax
-ENDM getDrawPosition   
+ENDM getDrawPosition
+
+validateName MACRO entermsg,name,strFailed
+LOCAL repeatt
+LOCAL biggerthana
+LOCAL outOfTheValidation
+LOCAL fistcheck
+
+movecursor  17H,05H
+ShowMessage entermsg
+movecursor  17H,06H
+cin         name
+;movecursor  17H,0AH
+jmp fistcheck
+;---------fist check with enter message-----------;
+repeatt:
+;; clear screen
+mov ax, 2
+int 10h
+movecursor  17H,05H
+ShowMessage strFailed
+movecursor  17H,06H
+cin         name
+;movecursor  17H,0AH
+fistcheck:
+;---------other checks with error message-----------;
+mov bx,offset name + 2
+mov al,[bx]
+mov bl,122;;== z 
+cmp bl,al;;if greater than z jmp
+jc repeatt
+cmp al,65;;== A
+jc repeatt;;if less than A jmp
+mov bl,90;;== Z 
+cmp bl,al;;if greater than Z jmp
+jc biggerthana
+jmp outOfTheValidation
+biggerthana:
+cmp al,97;;== a
+jc repeatt;;if less than a jmp
+outOfTheValidation:
+ENDM validateName
 
 .MODEL SMALL
 .STACK 64
 ;-----------
 .Data
     nameq             db  'Please enter your name:','$'
+    erroname          db  'Please write a valid name :','$'
 
     wrockdata         db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
@@ -425,7 +467,7 @@ ENDM getDrawPosition
 
 
 
-    thename           db  15 dup('$')
+    thename           db  16,?,16 dup('$'); max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
     op1               db  'To start chatting press F1','$'
     op2               db  'To start the game press F1','$'
@@ -655,10 +697,11 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                  movecursor  17H,05H
-                  ShowMessage nameq
-                  movecursor  17H,06H
-                  cin         thename
+                  ;movecursor  17H,05H
+                  ;ShowMessage nameq
+                  ;movecursor  17H,06H
+                  ;cin         thename
+                  validateName nameq,thename,erroname
                   movecursor  17H,0AH
                   ShowMessage proceed
                   call        waitkey
