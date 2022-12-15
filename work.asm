@@ -133,6 +133,7 @@ DRAW MACRO imgdata,imgwidth,imgheight,X,Y       ;DRAW IMAGE
                 
                 mov cx,X
                 mov dx,Y
+                ;HERE U SHOULD CALL GETIMGDATA X,Y AND BX WILL HAVE THE CORRESPONDING IMAGE ON GRID[X][Y] SO THAT U DONT NEED TO SEND IS AS A PARAMTER
                 LEA BX,imgdata
         ; Drawing loop
                       mov di,0
