@@ -7,6 +7,42 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 MOV         AH,4CH
                 INT         21H
                 ENDM        EXT
+GETIMGDATA MACRO X,Y
+    ; GETS THE NUMBER IN GRID[X][Y]
+    ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
+    ;RETURNS THE IMAGE DATA IN BX 
+    
+    ; CONVERTING 2D TO 1D 
+    MOV AX,X 
+    MOV BL , 8D
+    MUL BL 
+    ADD AX , Y 
+
+    ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
+    LEA SI,gridState
+    ADD SI,AX
+    MOV AX,[SI]
+
+    CMP AX,0
+    ;JE EMPTY
+    
+    DEC AX 
+    MOV BX,360D
+    MUL BX
+    
+    ; LOADING THE IMG DATA 
+    LEA SI,BROCKDATA
+    ADD SI,AX
+    MOV BX,SI
+    
+
+
+    EMPTY:
+    
+
+
+
+ENDM GETIMGDATA
 
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
