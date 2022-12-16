@@ -6,45 +6,7 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 INT  16h
                 MOV         AH,4CH
                 INT         21H
-                ENDM        EXT
-GETIMGDATA MACRO X,Y
-    ; GETS THE NUMBER IN GRID[X][Y]
-    ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
-    ;RETURNS THE IMAGE DATA IN BX 
-    
-    ; CONVERTING 2D TO 1D 
-    MOV AX,X 
-    MOV BL , 8D
-    MUL BL 
-    ADD AX , Y 
-
-    ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
-    LEA SI,gridState
-    ADD SI,AX
-    MOV AX,[SI]
-
-    CMP AX,0
-    ;JE EMPTY
-    
-    DEC AX 
-    MOV BX,360D
-    MUL BX
-    
-    ; LOADING THE IMG DATA 
-    LEA SI,BROCKDATA
-    ADD SI,AX
-    MOV BX,SI
-    JMP RETURN 
-
-    
-    EMPTY:
-    MOV BX,0
-
-    RETURN:
-    ;JMP RETIMGDATA
-
-
-ENDM GETIMGDATA
+ENDM        EXT
 
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
@@ -472,7 +434,7 @@ ENDM DrawPiecies
 ;(1,0)......
 ;      (7,7)
 ;
-getDrawPosition MACRO ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
+getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
  MOV         AL,ROW
  MOV         CL,60D
  MUL         CL
@@ -480,6 +442,8 @@ getDrawPosition MACRO ROW,COL ;Takes the row and col and set the cx and dx to th
  MOV         AL,COL
  MUL         CL
  MOV         CX,Ax
+ ADD CX,A
+ ADD DX,B
 ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B
@@ -627,6 +591,44 @@ cmp al,97;;== a
 jc repeatt;;if less than a jmp
 outOfTheValidation:
 ENDM validateName
+
+GETIMGDATA MACRO X,Y
+    LOCAL RETURN
+    LOCAL EMPTY
+    ; GETS THE NUMBER IN GRID[X][Y]
+    ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
+    ;RETURNS THE IMAGE DATA IN BX 
+    
+    ; CONVERTING 2D TO 1D 
+    MOV AX,X 
+    MOV BL , 8D
+    MUL BL 
+    ADD AX , Y 
+
+    ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
+    LEA SI,gridState
+    ADD SI,AX
+    MOV AX,[SI]
+
+    CMP AX,0
+    JE EMPTY
+    
+    DEC AX 
+    MOV BX,360D
+    MUL BX
+    
+    ; LOADING THE IMG DATA 
+    LEA SI,BROCKDATA
+    ADD SI,AX
+    MOV BX,SI
+    JMP RETURN 
+    
+    EMPTY:
+    MOV BX,0
+
+    RETURN:
+
+ENDM GETIMGDATA
 
 .MODEL SMALL
 .STACK 64
@@ -803,9 +805,10 @@ MAIN PROC FAR
                   DrawGrid       150D,0D,colorState[0],colorState[1]
                   DrawPiecies    150D,0D
     ;border
-                  DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
 
 
+
+    ;   DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
 
     ; cursorLoop:
 
@@ -978,32 +981,32 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                        ;GET DATA
+GETDATA PROC                                                                                  ;GET DATA
                   MOV            AX,@DATA
                   MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                            ;CLEAR SCREEN
+CLS PROC                                                                                      ;CLEAR SCREEN
                   MOV            AX,0003H
                   INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                      ;ENTER TEXT MODE
+EnterText PROC                                                                                ;ENTER TEXT MODE
                   MOV            AX,3H
                   INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                  ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                            ;ENTER GRAPHICS MODE
                   MOV            AX,4F02H
-                  MOV            BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV            BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
                   INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                        ;wait for key
+waitkey PROC                                                                                  ;wait for key
                   MOV            AH , 0
                   INT            16h
                   ret
