@@ -93,13 +93,13 @@ TOSTRING MACRO OutMessage
     OUTH:
 ENDM TOSTRING
 
-DRAW MACRO imgwidth,imgheight,X,Y       ;DRAW IMAGE
+DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                 LOCAL drawLoop
                 LOCAL innerloop
                 LOCAL skp
                 LOCAL GOAWAY
                 
-                getDrawPosition 0D,0D,X,Y
+                getDrawPosition A,B,X,Y
                 PUSH CX
                 PUSH DX
                 GETIMGDATA X,Y
@@ -402,41 +402,41 @@ ENDM DrawGrid
 
 DrawPiecies MACRO A,B
         ;white
-                  DRAW        wrockwidth,wrockheight,0,0                       ; col,row
-                  DRAW        wknightwidth,wknightheight,0,1                ; col,row
-                  DRAW        wbishopwidth,wbishopheight,0,2               ; col,row
-                  DRAW        wqueenwidth,wqueenheight,0,3                  ; col,row
-                  DRAW        wkingwidth,wkingheight,0,4                     ; col,row
-                  DRAW        wbishopwidth,wbishopheight,0,5               ; col,row
-                  DRAW        wknightwidth,wknightheight,0,6               ; col,row
-                  DRAW        wrockwidth,wrockheight,0,7                     ; col,row
+                  DRAW        wrockwidth,wrockheight,0,0,A,B                       ; col,row
+                  DRAW        wknightwidth,wknightheight,0,1,A,B                 ; col,row
+                  DRAW        wbishopwidth,wbishopheight,0,2,A,B                ; col,row
+                  DRAW        wqueenwidth,wqueenheight,0,3,A,B                   ; col,row
+                  DRAW        wkingwidth,wkingheight,0,4,A,B                      ; col,row
+                  DRAW        wbishopwidth,wbishopheight,0,5,A,B                ; col,row
+                  DRAW        wknightwidth,wknightheight,0,6,A,B                ; col,row
+                  DRAW        wrockwidth,wrockheight,0,7,A,B                      ; col,row
 
-                  DRAW        wpawnwidth,wpawnheight,1,0                      ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,1                     ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,2                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,3                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,4                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,5                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,6                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,7                    ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,0,A,B                       ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,1,A,B                      ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,2,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,3,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,4,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,5,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,6,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,7,A,B                     ; col,row
         ;black
-                  DRAW        brockwidth,brockheight,7,0                     ; col,row
-                  DRAW        bknightwidth,bknightheight,7,1              ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,2             ; col,row
-                  DRAW        bqueenwidth,bqueenheight,7,3                ; col,row
-                  DRAW        bkingwidth,bkingheight,7,4                   ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,5             ; col,row
-                  DRAW        bknightwidth,bknightheight,7,6             ; col,row
-                  DRAW        brockwidth,brockheight,7,7                   ; col,row
+                  DRAW        brockwidth,brockheight,7,0,A,B                      ; col,row
+                  DRAW        bknightwidth,bknightheight,7,1,A,B               ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,2,A,B              ; col,row
+                  DRAW        bqueenwidth,bqueenheight,7,3,A,B                 ; col,row
+                  DRAW        bkingwidth,bkingheight,7,4,A,B                    ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,5,A,B              ; col,row
+                  DRAW        bknightwidth,bknightheight,7,6,A,B              ; col,row
+                  DRAW        brockwidth,brockheight,7,7,A,B                    ; col,row
 
-                  DRAW        bpawnwidth,bpawnheight,6,0                    ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,1                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,2                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,3                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,4                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,5                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,6                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,7                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,0,A,B                     ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,1,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,2,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,3,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,4,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,5,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,6,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,7,A,B                   ; col,row
 ENDM DrawPiecies
 
 ;(0,0),(0,1)
@@ -646,9 +646,9 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
-UPDATECELL MACRO X,Y
+UPDATECELL MACRO X,Y,A,B
     LOCAL NOPE
-    getDrawPosition 0D,0D,X,Y
+    getDrawPosition A,B,X,Y
     PUSH CX
     PUSH DX
     GETARINDEX X,Y
@@ -656,7 +656,7 @@ UPDATECELL MACRO X,Y
     DRAWCELL CX,DX,AL
     POP DX
     POP CX
-    DRAW 60D,60D,X,Y
+    DRAW 60D,60D,X,Y,A,B
     NOPE:
 ENDM UPDATECELL
 
@@ -922,31 +922,31 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-    ;   movecursor     17H,05H
-    ;   ShowMessage    nameq
-    ;   movecursor     17H,06H
-    ;   cin            thename
-    ;validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
-    ;movecursor     17H,0AH
-    ;ShowMessage    proceed
-    ;call           waitkey
+                  movecursor     17H,05H
+                  ShowMessage    nameq
+                  movecursor     17H,06H
+                  cin            thename
+                  validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
+                  movecursor     17H,0AH
+                  ShowMessage    proceed
+                  call           waitkey
     ;CHOICE MENU
-    ;   call           CLS
-    ;   movecursor     17H,03H
-    ;   ShowMessage    op1
-    ;   movecursor     17H,08H
-    ;   ShowMessage    op2
-    ;   movecursor     17H,0DH
-    ;   ShowMessage    op3
-    ;   call           waitkey
+                  call           CLS
+                  movecursor     17H,03H
+                  ShowMessage    op1
+                  movecursor     17H,08H
+                  ShowMessage    op2
+                  movecursor     17H,0DH
+                  ShowMessage    op3
+                  call           waitkey
     ;GAME SCREEN
                   CALL           EnterGraphics
-                  DrawGrid       0D,0D,colorState[0],colorState[1]
-                  DrawPiecies    0D,0D
+                  DrawGrid       150D,0D,colorState[0],colorState[1]
+                  DrawPiecies    150D,0D
 
                   MOV            colorState[0],0CH
                   MOV            gridState[0],3D
-                  UPDATECELL     0D,0D
+                  UPDATECELL     0D,0D,150D,0
 
     ;               getDrawPosition 0D,0D,0D,0D
     ;               PUSH            CX
