@@ -996,7 +996,7 @@ GETDATA PROC                                                                    
 GETDATA ENDP
 
 CLS PROC                                                                                      ;CLEAR SCREEN
-                  MOV            AX,0003H
+                  MOV            AX,0003H;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
