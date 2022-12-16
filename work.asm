@@ -802,11 +802,11 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                  movecursor     17H,05H
-                  ShowMessage    nameq
-                  movecursor     17H,06H
-                  cin            thename
-    ;   validateName    nameq,thename,erroname ; STILL UNSTABLE
+                ;   movecursor     17H,05H
+                ;   ShowMessage    nameq
+                ;   movecursor     17H,06H
+                ;   cin            thename
+       validateName    nameq,thename,erroname ; STILL UNSTABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
