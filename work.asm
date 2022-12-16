@@ -552,20 +552,7 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-eraseline MACRO lineBytes;This micro erases two lines only can be extended
-    LOCAL loopxx
-mov ax,0b800h
-mov es,ax
-mov bx,lineBytes
-mov cx,160
-loopxx:
-mov es:[bx],BYTE PTR 0
-inc bx
-inc bx
 
-loop loopxx
-
-ENDM eraseline
 
 
 validateName MACRO entermsg,name,strFailed
@@ -584,8 +571,10 @@ jmp fistcheck
 ;---------fist check with enter message-----------;
 repeatt:
 
-eraseline 960
-eraseline 800
+; eraseline 960
+; eraseline 800
+call CLS
+
 
 movecursor  17H,05H
 ShowMessage strFailed
