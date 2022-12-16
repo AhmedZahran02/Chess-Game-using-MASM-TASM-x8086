@@ -6,45 +6,7 @@ EXT MACRO ;PRESS ANY KEY TO EXIT APPLICATION
                 INT  16h
                 MOV         AH,4CH
                 INT         21H
-                ENDM        EXT
-GETIMGDATA MACRO X,Y
-    ; GETS THE NUMBER IN GRID[X][Y]
-    ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
-    ;RETURNS THE IMAGE DATA IN BX 
-    
-    ; CONVERTING 2D TO 1D 
-    MOV AX,X 
-    MOV BL , 8D
-    MUL BL 
-    ADD AX , Y 
-
-    ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
-    LEA SI,gridState
-    ADD SI,AX
-    MOV AX,[SI]
-
-    CMP AX,0
-    ;JE EMPTY
-    
-    DEC AX 
-    MOV BX,360D
-    MUL BX
-    
-    ; LOADING THE IMG DATA 
-    LEA SI,BROCKDATA
-    ADD SI,AX
-    MOV BX,SI
-    JMP RETURN 
-
-    
-    EMPTY:
-    MOV BX,0
-
-    RETURN:
-    ;JMP RETIMGDATA
-
-
-ENDM GETIMGDATA
+ENDM        EXT
 
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
@@ -430,50 +392,50 @@ DrawGrid MACRO X,Y,A,B                                           ;DRAW grid at x
 
 ENDM DrawGrid
 
-DrawPiecies MACRO
+DrawPiecies MACRO A,B
         ;white
-                  DRAW        wrockdata,wrockwidth,wrockheight,0D,0D                       ; col,row
-                  DRAW        wknightdata,wknightwidth,wknightheight,60D,0D                ; col,row
-                  DRAW        wbishopdata,wbishopwidth,wbishopheight,120D,0D               ; col,row
-                  DRAW        wqueendata,wqueenwidth,wqueenheight,180D,0D                  ; col,row
-                  DRAW        wkingdata,wkingwidth,wkingheight,240D,0D                     ; col,row
-                  DRAW        wbishopdata,wbishopwidth,wbishopheight,300D,0D               ; col,row
-                  DRAW        wknightdata,wknightwidth,wknightheight,360D,0D               ; col,row
-                  DRAW        wrockdata,wrockwidth,wrockheight,420D,0D                     ; col,row
+                  DRAW        wrockdata,wrockwidth,wrockheight,A+0D,B+0D                       ; col,row
+                  DRAW        wknightdata,wknightwidth,wknightheight,A+60D,B+0D                ; col,row
+                  DRAW        wbishopdata,wbishopwidth,wbishopheight,A+120D,B+0D               ; col,row
+                  DRAW        wqueendata,wqueenwidth,wqueenheight,A+180D,B+0D                  ; col,row
+                  DRAW        wkingdata,wkingwidth,wkingheight,A+240D,B+0D                     ; col,row
+                  DRAW        wbishopdata,wbishopwidth,wbishopheight,A+300D,B+0D               ; col,row
+                  DRAW        wknightdata,wknightwidth,wknightheight,A+360D,B+0D               ; col,row
+                  DRAW        wrockdata,wrockwidth,wrockheight,A+420D,B+0D                     ; col,row
 
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,0D,60D                      ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,60D,60D                     ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,120D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,180D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,240D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,300D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,360D,60D                    ; col,row
-                  DRAW        wpawndata,wpawnwidth,wpawnheight,420D,60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+0D,B+60D                      ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+60D,B+60D                     ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+120D,B+60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+180D,B+60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+240D,B+60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+300D,B+60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+360D,B+60D                    ; col,row
+                  DRAW        wpawndata,wpawnwidth,wpawnheight,A+420D,B+60D                    ; col,row
         ;black
-                  DRAW        brockdata,brockwidth,brockheight,0D,420D                     ; col,row
-                  DRAW        bknightdata,bknightwidth,bknightheight,60D,420D              ; col,row
-                  DRAW        bbishopdata,bbishopwidth,bbishopheight,120D,420D             ; col,row
-                  DRAW        bqueendata,bqueenwidth,bqueenheight,180D,420D                ; col,row
-                  DRAW        bkingdata,bkingwidth,bkingheight,240D,420D                   ; col,row
-                  DRAW        bbishopdata,bbishopwidth,bbishopheight,300D,420D             ; col,row
-                  DRAW        bknightdata,bknightwidth,bknightheight,360D,420D             ; col,row
-                  DRAW        brockdata,brockwidth,brockheight,420D,420D                   ; col,row
+                  DRAW        brockdata,brockwidth,brockheight,A+0D,B+420D                     ; col,row
+                  DRAW        bknightdata,bknightwidth,bknightheight,A+60D,B+420D              ; col,row
+                  DRAW        bbishopdata,bbishopwidth,bbishopheight,A+120D,B+420D             ; col,row
+                  DRAW        bqueendata,bqueenwidth,bqueenheight,A+180D,B+420D                ; col,row
+                  DRAW        bkingdata,bkingwidth,bkingheight,A+240D,B+420D                   ; col,row
+                  DRAW        bbishopdata,bbishopwidth,bbishopheight,A+300D,B+420D             ; col,row
+                  DRAW        bknightdata,bknightwidth,bknightheight,A+360D,B+420D             ; col,row
+                  DRAW        brockdata,brockwidth,brockheight,A+420D,B+420D                   ; col,row
 
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,0D,360D                     ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,60D,360D                    ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,120D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,180D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,240D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,300D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,360D,360D                   ; col,row
-                  DRAW        bpawndata,bpawnwidth,bpawnheight,420D,360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+0D,B+360D                     ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+60D,B+360D                    ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+120D,B+360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+180D,B+360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+240D,B+360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+300D,B+360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+360D,B+360D                   ; col,row
+                  DRAW        bpawndata,bpawnwidth,bpawnheight,A+420D,B+360D                   ; col,row
 ENDM DrawPiecies
 
 ;(0,0),(0,1)
 ;(1,0)......
 ;      (7,7)
 ;
-getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the required values to draw
+getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
  MOV         AL,ROW
  MOV         CL,60D
  MUL         CL
@@ -481,6 +443,8 @@ getDrawPosition MACRO ROW,COL ;Takes the row and col and set the dx to the requi
  MOV         AL,COL
  MUL         CL
  MOV         CX,Ax
+ ADD CX,A
+ ADD DX,B
 ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B
@@ -593,16 +557,12 @@ eraseline MACRO lineBytes;This micro erases two lines only can be extended
 mov ax,0b800h
 mov es,ax
 mov bx,lineBytes
-;mov si,800
 mov cx,160
 loopxx:
 mov es:[bx],BYTE PTR 0
-;mov es:[si],BYTE PTR 0
-;mov es:[bx + 1],BYTE PTR 0
 inc bx
 inc bx
-;inc si
-;inc si
+
 loop loopxx
 
 ENDM eraseline
@@ -650,6 +610,44 @@ cmp al,97;;== a
 jc repeatt;;if less than a jmp
 outOfTheValidation:
 ENDM validateName
+
+GETIMGDATA MACRO X,Y
+    LOCAL RETURN
+    LOCAL EMPTY
+    ; GETS THE NUMBER IN GRID[X][Y]
+    ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
+    ;RETURNS THE IMAGE DATA IN BX 
+    
+    ; CONVERTING 2D TO 1D 
+    MOV AX,X 
+    MOV BL , 8D
+    MUL BL 
+    ADD AX , Y 
+
+    ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
+    LEA SI,gridState
+    ADD SI,AX
+    MOV AX,[SI]
+
+    CMP AX,0
+    JE EMPTY
+    
+    DEC AX 
+    MOV BX,360D
+    MUL BX
+    
+    ; LOADING THE IMG DATA 
+    LEA SI,BROCKDATA
+    ADD SI,AX
+    MOV BX,SI
+    JMP RETURN 
+    
+    EMPTY:
+    MOV BX,0
+
+    RETURN:
+
+ENDM GETIMGDATA
 
 .MODEL SMALL
 .STACK 64
@@ -804,29 +802,32 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                ;   movecursor     17H,05H
-                ;   ShowMessage    nameq
-                ;   movecursor     17H,06H
-                ;   cin            thename
-       validateName    nameq,thename,erroname ; STILL UNSTABLE
+                  movecursor     17H,05H
+                  ShowMessage    nameq
+                  movecursor     17H,06H
+                  cin            thename
+    ;   validateName    nameq,thename,erroname ; STILL UNSTABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
     ;CHOICE MENU
-                  call           CLS
-                  movecursor     17H,03H
-                  ShowMessage    op1
-                  movecursor     17H,08H
-                  ShowMessage    op2
-                  movecursor     17H,0DH
-                  ShowMessage    op3
-                  call           waitkey
+    ;   call           CLS
+    ;   movecursor     17H,03H
+    ;   ShowMessage    op1
+    ;   movecursor     17H,08H
+    ;   ShowMessage    op2
+    ;   movecursor     17H,0DH
+    ;   ShowMessage    op3
+    ;   call           waitkey
     ;GAME SCREEN
                   CALL           EnterGraphics
-                  DrawGrid       0D,0D,colorState[0],colorState[1]
-                  DrawPiecies
+                  DrawGrid       150D,0D,colorState[0],colorState[1]
+                  DrawPiecies    150D,0D
     ;border
-                  DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
+
+
+
+    ;   DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
 
     ; cursorLoop:
 
@@ -999,32 +1000,32 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                        ;GET DATA
+GETDATA PROC                                                                                  ;GET DATA
                   MOV            AX,@DATA
                   MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                            ;CLEAR SCREEN
+CLS PROC                                                                                      ;CLEAR SCREEN
                   MOV            AX,0003H
                   INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                      ;ENTER TEXT MODE
+EnterText PROC                                                                                ;ENTER TEXT MODE
                   MOV            AX,3H
                   INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                  ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                            ;ENTER GRAPHICS MODE
                   MOV            AX,4F02H
-                  MOV            BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV            BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
                   INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                        ;wait for key
+waitkey PROC                                                                                  ;wait for key
                   MOV            AH , 0
                   INT            16h
                   ret
