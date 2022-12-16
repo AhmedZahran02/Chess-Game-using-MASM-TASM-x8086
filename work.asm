@@ -671,17 +671,71 @@ GETIMGDATA MACRO X,Y
     CMP AX,0
     JE EMPTY
     
-    DEC AX 
-    MOV BX,360D
-    MUL BX
+    ; DEC AX 
+    ; MOV BX,360D
+    ; MUL BX
 
-    ; LOADING THE IMG DATA 
-    LEA SI,BROCKDATA
-    ADD SI,AX
+    ; ; LOADING THE IMG DATA 
+    ; LEA SI,BROCKDATA
+    ; ADD SI,AX
 
-    MOV BX,SI
-    JMP RETURN 
+    ; MOV BX,SI
+    ; JMP RETURN 
     
+    CMP AX,1D
+    JE B1
+
+   CMP AX,2D
+   JE B2
+   CMP AX,3D
+   JE B3
+   CMP AX,4D
+   JE B4
+   CMP AX,5D
+   JE B5
+   CMP AX,6D
+   JE B6
+   CMP AX,7D
+   JE B7
+   CMP AX,8D
+   JE B8
+   CMP AX,9D
+   JE B9
+   CMP AX,10D
+   JE B10
+   CMP AX,11D
+   JE B11
+   CMP AX,12D
+   JE B12
+
+   JMP EMPTY
+       
+
+    B1: MOV BX,brockdata
+    JMP RETURN
+        B2: MOV BX,bknightdata       
+    JMP RETURN
+        B3: MOV BX,bbishopdata       
+    JMP RETURN
+        B4: MOV BX,bqueendata        
+    JMP RETURN
+        B5: MOV BX,bkingdata         
+    JMP RETURN
+        B6: MOV BX,bpawndata         
+    JMP RETURN
+        B7: MOV BX,wpawndata         
+    JMP RETURN
+        B8: MOV BX,wrockdata         
+    JMP RETURN
+        B9: MOV BX,wknightdata       
+    JMP RETURN
+        B10: MOV BX,wbishopdata       
+    JMP RETURN
+        B11: MOV BX,wqueendata        
+    JMP RETURN
+        B12: MOV BX,wkingdata         
+    JMP RETURN
+
     EMPTY:
     MOV BX,0
 
