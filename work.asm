@@ -420,14 +420,14 @@ DrawPiecies MACRO A,B
                   DRAW        wpawnwidth,wpawnheight,1,6                    ; col,row
                   DRAW        wpawnwidth,wpawnheight,1,7                    ; col,row
         ;black
-                  DRAW        brockwidth,brockheight,7,B+420D                     ; col,row
-                  DRAW        bknightwidth,bknightheight,7,B+420D              ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,B+420D             ; col,row
-                  DRAW        bqueenwidth,bqueenheight,7,B+420D                ; col,row
-                  DRAW        bkingwidth,bkingheight,7,B+420D                   ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,B+420D             ; col,row
-                  DRAW        bknightwidth,bknightheight,7,B+420D             ; col,row
-                  DRAW        brockwidth,brockheight,7,B+420D                   ; col,row
+                  DRAW        brockwidth,brockheight,7,0                     ; col,row
+                  DRAW        bknightwidth,bknightheight,7,1              ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,2             ; col,row
+                  DRAW        bqueenwidth,bqueenheight,7,3                ; col,row
+                  DRAW        bkingwidth,bkingheight,7,4                   ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,5             ; col,row
+                  DRAW        bknightwidth,bknightheight,7,6             ; col,row
+                  DRAW        brockwidth,brockheight,7,7                   ; col,row
 
                   DRAW        bpawnwidth,bpawnheight,6,0                    ; col,row
                   DRAW        bpawnwidth,bpawnheight,6,1                  ; col,row
@@ -858,14 +858,14 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                ;   movecursor     17H,05H
-                ;   ShowMessage    nameq
-                ;   movecursor     17H,06H
-                ;   cin            thename
-       validateName    nameq,thename,erroname ;Veryyyyyyyyyyyyyyyy STABLE
-                  movecursor     17H,0AH
-                  ShowMessage    proceed
-                  call           waitkey
+    ;   movecursor     17H,05H
+    ;   ShowMessage    nameq
+    ;   movecursor     17H,06H
+    ;   cin            thename
+    ;validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
+    ;movecursor     17H,0AH
+    ;ShowMessage    proceed
+    ;call           waitkey
     ;CHOICE MENU
     ;   call           CLS
     ;   movecursor     17H,03H
@@ -878,8 +878,8 @@ MAIN PROC FAR
     ;GAME SCREEN
                   CALL           EnterGraphics
                   DrawGrid       0D,0D,colorState[0],colorState[1]
-    ;   DrawPiecies    150D,0D
-                  DRAW           60D,60D,6D,7D
+                  DrawPiecies    150D,0D
+    ;DRAW           60D,60D,6D,7D
     ;border
     ;mov             colorState[0],0CH
     ;UPDATECELL     0D,0D
@@ -1083,7 +1083,7 @@ GETDATA PROC                                                                    
 GETDATA ENDP
 
 CLS PROC                                                                                      ;CLEAR SCREEN
-                  MOV            AX,0003H;;ah == 0 set to graph mod the al = 3 return to text mode
+                  MOV            AX,0003H                                                     ;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
