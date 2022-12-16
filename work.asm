@@ -131,6 +131,36 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       GOAWAY:
                 ENDM        DRAW
 
+DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
+                LOCAL drawLoop
+                LOCAL innerloop
+                LOCAL skp
+                
+                getDrawPosition A,B,X,Y
+                LEA BX,imgdata
+        ; Drawing loop
+                      mov di,0
+        drawLoop:     
+                      mov si,0
+                      innerloop:
+                      MOV  AL,[BX]
+                      MOV AH,0ch
+                      cmp al,0FFH
+                      je skp
+                      INT 10H
+                      skp:
+                      INC BX
+                      INC CX
+                      INC SI
+                      CMP SI,imgwidth
+                      JNE innerloop
+                      SUB CX,SI
+                      INC DX
+                      INC DI
+                      CMP DI,imgheight
+                      JNE  drawLoop
+                ENDM        DRAWWITHSOURCE
+
 OpenFile MACRO  imgfilename, imgfilehandle                                ;OPEN FILE
                   MOV  AH, 3Dh
                   MOV  AL, 0                    ; read only
@@ -944,80 +974,14 @@ MAIN PROC FAR
                   DrawGrid       150D,0D,colorState[0],colorState[1]
                   DrawPiecies    150D,0D
 
-                  MOV            colorState[0],0CH
-                  MOV            gridState[0],3D
+    ;   MOV            colorState[0],0CH
+    ;   MOV            gridState[0],3D
                   UPDATECELL     0D,0D,150D,0
 
-    ;               getDrawPosition 0D,0D,0D,0D
-    ;               PUSH            CX
-    ;               PUSH            DX
-    ;               GETIMGDATA      0D,0D
-    ;               POP             DX
-    ;               POP             CX
-    ;               CMP             BX,0H
-    ;               JE              GOAWAY
-    ; ; Drawing loop
-    ;               mov             di,0
-    ; drawLoop:
-    ;               mov             si,0
-    ; innerloop:
-    ;               MOV             AL,[BX]
-    ;               MOV             AH,0ch
-    ;               cmp             al,0FFH
-    ;               je              skp
-    ;               INT             10H
-    ; skp:
-    ;               INC             BX
-    ;               INC             CX
-    ;               INC             SI
-    ;               CMP             SI,60D
-    ;               JNE             innerloop
-    ;               SUB             CX,SI
-    ;               INC             DX
-    ;               INC             DI
-    ;               CMP             DI,60D
-    ;               JNE             drawLoop
-    ; GOAWAY:
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,1D,1D,150D,0D            ; col,row
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,5D,5D,150D,0D            ; col,row
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ;DrawPiecies    150D,0D
-    ;DRAW           60D,60D,6D,7D
-    ;border
-    ;mov             colorState[0],0CH
-    ;UPDATECELL     0D,0D
-
-    ;   getDrawPosition 150D,0D,1D,0D
-    ;   PUSH            CX
-    ;   PUSH            DX
-    ;   GETARINDEX      1D,0D
-    ;   mov             al,byte ptr colorState[bx]
-    ;   mov             ah,0
-    ;   DRAWCELL        CX,DX,al
-
-    ;   GETIMGDATA      1D,0D
-    ;   CMP             byte ptr [BX],0H
-    ;   JE              NOPE
-    ;   POP             DX
-    ;   POP             CX
-    ;   DRAW            [BX],60D,60D,CX,DX
-    ; NOPE:
-
-
-
-
-    ;   DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
 
     ; cursorLoop:
 
