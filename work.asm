@@ -10,6 +10,7 @@ ENDM        EXT
 
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
+                mov         bh,0
                 mov         dh,y
                 mov         dl,x
                 int         10h
@@ -592,28 +593,35 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
+
+
+
 validateName MACRO entermsg,name,strFailed
 LOCAL repeatt
 LOCAL biggerthana
 LOCAL outOfTheValidation
 LOCAL fistcheck
 
+
 movecursor  17H,05H
 ShowMessage entermsg
 movecursor  17H,06H
 cin         name
-movecursor  17H,0AH
+;movecursor  17H,0AH
 jmp fistcheck
 ;---------fist check with enter message-----------;
 repeatt:
-;; clear screen
-mov ax, 2
-int 10h
+
+; eraseline 960
+; eraseline 800
+call CLS
+
+
 movecursor  17H,05H
 ShowMessage strFailed
 movecursor  17H,06H
 cin         name
-movecursor  17H,0AH
+
 fistcheck:
 ;---------other checks with error message-----------;
 mov bx,offset name + 2
@@ -850,14 +858,14 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-    ;   movecursor     17H,05H
-    ;   ShowMessage    nameq
-    ;   movecursor     17H,06H
-    ;   cin            thename
-    ;   validateName    nameq,thename,erroname ; STILL UNSTABLE
-    ;   movecursor     17H,0AH
-    ;   ShowMessage    proceed
-    ;   call           waitkey
+                ;   movecursor     17H,05H
+                ;   ShowMessage    nameq
+                ;   movecursor     17H,06H
+                ;   cin            thename
+       validateName    nameq,thename,erroname ;Veryyyyyyyyyyyyyyyy STABLE
+                  movecursor     17H,0AH
+                  ShowMessage    proceed
+                  call           waitkey
     ;CHOICE MENU
     ;   call           CLS
     ;   movecursor     17H,03H
@@ -1075,7 +1083,7 @@ GETDATA PROC                                                                    
 GETDATA ENDP
 
 CLS PROC                                                                                      ;CLEAR SCREEN
-                  MOV            AX,0003H
+                  MOV            AX,0003H;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
