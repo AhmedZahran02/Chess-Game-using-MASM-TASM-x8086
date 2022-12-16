@@ -593,9 +593,6 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-
-
-
 validateName MACRO entermsg,name,strFailed
 LOCAL repeatt
 LOCAL biggerthana
@@ -649,9 +646,37 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
+UPDATECELL MACRO X,Y
+    LOCAL NOPE
+    getDrawPosition 0D,0D,X,Y
+    PUSH CX
+    PUSH DX
+    GETARINDEX X,Y
+    MOV AL,BYTE PTR colorState[BX]
+    DRAWCELL CX,DX,AL
+    POP DX
+    POP CX
+    DRAW 60D,60D,X,Y
+    NOPE:
+ENDM UPDATECELL
+
 GETIMGDATA MACRO X,Y
     LOCAL RETURN
     LOCAL EMPTY
+    LOCAL EMPTY2
+    LOCAL B1
+    LOCAL B2
+    LOCAL B3
+    LOCAL B4
+    LOCAL B5
+    LOCAL B6
+    LOCAL B7
+    LOCAL B8
+    LOCAL B9
+    LOCAL B10
+    LOCAL B11
+    LOCAL B12
+
     ; GETS THE NUMBER IN GRID[X][Y]
     ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
     ;RETURNS THE IMAGE DATA IN BX 
@@ -669,7 +694,7 @@ GETIMGDATA MACRO X,Y
     MOV AH,0H
 
     CMP AX,0
-    JE EMPTY
+    JE EMPTY2
     
     ; DEC AX 
     ; MOV BX,360D
@@ -708,32 +733,32 @@ GETIMGDATA MACRO X,Y
    CMP AX,12D
    JE B12
 
-   JMP EMPTY
+   EMPTY2: JMP EMPTY
        
 
-    B1: MOV BX,brockdata
+    B1: LEA BX,brockdata
     JMP RETURN
-        B2: MOV BX,bknightdata       
+        B2: LEA BX,bknightdata       
     JMP RETURN
-        B3: MOV BX,bbishopdata       
+        B3: LEA BX,bbishopdata       
     JMP RETURN
-        B4: MOV BX,bqueendata        
+        B4: LEA BX,bqueendata        
     JMP RETURN
-        B5: MOV BX,bkingdata         
+        B5: LEA BX,bkingdata         
     JMP RETURN
-        B6: MOV BX,bpawndata         
+        B6: LEA BX,bpawndata         
     JMP RETURN
-        B7: MOV BX,wpawndata         
+        B7: LEA BX,wpawndata         
     JMP RETURN
-        B8: MOV BX,wrockdata         
+        B8: LEA BX,wrockdata         
     JMP RETURN
-        B9: MOV BX,wknightdata       
+        B9: LEA BX,wknightdata       
     JMP RETURN
-        B10: MOV BX,wbishopdata       
+        B10: LEA BX,wbishopdata       
     JMP RETURN
-        B11: MOV BX,wqueendata        
+        B11: LEA BX,wqueendata        
     JMP RETURN
-        B12: MOV BX,wkingdata         
+        B12: LEA BX,wkingdata         
     JMP RETURN
 
     EMPTY:
@@ -743,23 +768,8 @@ GETIMGDATA MACRO X,Y
 
 ENDM GETIMGDATA
 
-UPDATECELL MACRO X,Y
-    LOCAL NOPE
-    getDrawPosition 0D,0D,X,Y
-    PUSH CX
-    PUSH DX
-    GETARINDEX X,Y
-    DRAWCELL CX,DX,colorState[BX]
-    GETIMGDATA X,Y
-    CMP BX,0h
-    JE NOPE
-    POP DX
-    POP CX
-    ;DRAW [BX],60D,60D,CX,DX
-    NOPE:
-ENDM UPDATECELL
-
 .MODEL SMALL
+.286
 .STACK 64
 ;-----------
 .Data
@@ -932,7 +942,57 @@ MAIN PROC FAR
     ;GAME SCREEN
                   CALL           EnterGraphics
                   DrawGrid       0D,0D,colorState[0],colorState[1]
-                  DrawPiecies    150D,0D
+                  DrawPiecies    0D,0D
+
+                  MOV            colorState[0],0CH
+                  MOV            gridState[0],3D
+                  UPDATECELL     0D,0D
+
+    ;               getDrawPosition 0D,0D,0D,0D
+    ;               PUSH            CX
+    ;               PUSH            DX
+    ;               GETIMGDATA      0D,0D
+    ;               POP             DX
+    ;               POP             CX
+    ;               CMP             BX,0H
+    ;               JE              GOAWAY
+    ; ; Drawing loop
+    ;               mov             di,0
+    ; drawLoop:
+    ;               mov             si,0
+    ; innerloop:
+    ;               MOV             AL,[BX]
+    ;               MOV             AH,0ch
+    ;               cmp             al,0FFH
+    ;               je              skp
+    ;               INT             10H
+    ; skp:
+    ;               INC             BX
+    ;               INC             CX
+    ;               INC             SI
+    ;               CMP             SI,60D
+    ;               JNE             innerloop
+    ;               SUB             CX,SI
+    ;               INC             DX
+    ;               INC             DI
+    ;               CMP             DI,60D
+    ;               JNE             drawLoop
+    ; GOAWAY:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ;DrawPiecies    150D,0D
     ;DRAW           60D,60D,6D,7D
     ;border
     ;mov             colorState[0],0CH
