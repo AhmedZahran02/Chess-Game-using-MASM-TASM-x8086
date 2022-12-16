@@ -795,7 +795,7 @@ MAIN PROC FAR
                 ;   ShowMessage    nameq
                 ;   movecursor     17H,06H
                 ;   cin            thename
-       validateName    nameq,thename,erroname ; STILL UNSTABLE
+       validateName    nameq,thename,erroname ;Veryyyyyyyyyyyyyyyy STABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
