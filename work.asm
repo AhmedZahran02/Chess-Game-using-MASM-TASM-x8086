@@ -429,6 +429,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
         JNE  BIGGERLOOP8 
 
 ENDM DrawGrid
+
 FIRSTQHANDLE MACRO
 
     GETARINDEX curRowCursor,curColCursor
@@ -441,6 +442,7 @@ FIRSTQHANDLE MACRO
     MOV colorState[bx],0CH 
     pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
                   popa
                   mov bl,stateOfQ
 
@@ -1097,18 +1099,18 @@ ENDM GETIMGDATA
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
     
-    curRowCursor           dw  0
-    curColCursor           dw  0
+    curRowCursor      dw  0
+    curColCursor      dw  0
 
-    startRowCursor         dw  0
-    startColCursor         dw  0
+    startRowCursor    dw  0
+    startColCursor    dw  0
 
-    endRowCursor           dw  0
-    endColCursor           dw  0
+    endRowCursor      dw  0
+    endColCursor      dw  0
 
-    cellColorState db 0
+    cellColorState    db  0
 
-    stateOfQ  db 0
+    stateOfQ          db  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -1181,7 +1183,7 @@ MAIN PROC FAR
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
 
 
-                 CURSORMOV
+                  CURSORMOV
 
    
     ;----------------------------closing files--------------------------------------------------
