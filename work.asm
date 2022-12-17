@@ -1180,12 +1180,7 @@ MAIN PROC FAR
                   DrawGrid       150D,0D,colorState[1],colorState[0]
                   DrawPiecies    150D,0D
 
-    ;   MOV            colorState[0],0CH
-    ;   MOV            gridState[0],3D
-                  UPDATECELL     0D,0D,150D,0
-
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
-
 
                   CURSORMOV
 
