@@ -112,7 +112,7 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
         drawLoop:     
                       mov si,0
                       innerloop:
-                      MOV  AL,byte ptr[BX]
+                      MOV  AL,[BX]
                       MOV AH,0ch
                       cmp al,0FFH
                       je skp
@@ -429,8 +429,80 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
         JNE  BIGGERLOOP8 
 
 ENDM DrawGrid
+FIRSTQHANDLE MACRO
+
+    GETARINDEX curRowCursor,curColCursor
+    MOV cl,colorState[bx] 
+    mov cellColorState,cl
+    mov cl,curRowCursor
+    mov ch,curColCursor
+    mov startRowCursor,cl
+    mov startColCursor,ch
+    MOV colorState[bx],0CH 
+    pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+                  mov bl,stateOfQ
+
+                  inc bl
+                  mov stateOfQ,bl
+              ENDM FIRSTQHANDLE
+    SECONDQHANDLE MACRO
+        GETARINDEX startRowCursor,startColCursor
+
+    MOV cl,cellColorState
+    mov colorState[bx],cl
+    mov cl,curRowCursor
+    mov ch,curColCursor
+    mov endRowCursor,cl
+    mov endColCursor,ch
+    mov cx,bx
+GETARINDEX endRowCursor,endColCursor
+mov si,cx
+mov dh,gridState[si]
+mov gridState[si],0
+mov si,bx
+mov gridState[si],dh
+pusha
+                  UPDATECELL     startRowCursor,startColCursor,150D,0D
+                  popa
+
+                  pusha
+                  UPDATECELL     endRowCursor,endColCursor,150D,0D
+                  popa
+                DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+
+
+                 mov bl,stateOfQ
+                 dec bl
+                  mov stateOfQ,bl
+ENDM SECONDQHANDLE
+
 CURSORMOV MACRO 
-     cursorLoop:
+  LOCAL cursorLoop
+  LOCAL tmplabel10
+  LOCAL label6
+  LOCAL label7
+  LOCAL label8
+  LOCAL label9
+  LOCAL left
+  LOCAL temp20
+  LOCAL label5
+  LOCAL right
+  LOCAL temp22
+  LOCAL label4
+  LOCAL up
+  LOCAL label10
+  LOCAL label2
+  LOCAL down
+  LOCAL label11
+  LOCAL label1
+  LOCAL qpressed
+  LOCAL tmplabel20
+  LOCAL firsrQ
+  
+
+cursorLoop:
 
 
                   mov             ah,0
@@ -542,46 +614,19 @@ tmplabel10:
     qpressed:
     mov bl,stateOfQ
     cmp bl,0
-    jz firsrQ
+    jnz tmplabel20
+    jmp firsrQ
+    tmplabel20:
 
 
-GETARINDEX startRowCursor,startColCursor
-    MOV cl,cellColorState
-    mov colorState[bx],cl
-    mov cl,curRowCursor
-    mov ch,curColCursor
-    mov endRowCursor,cl
-    mov endColCursor,ch
-    pusha
-                  UPDATECELL     startRowCursor,startColCursor,150D,0D
-                  popa
-                  dec bl
-                  mov stateOfQ,bl
+   SECONDQHANDLE
+    jmp   cursorLoop   
 
-
-
-
-cmp bl,1
-jz secondQ
     firsrQ:
-    GETARINDEX curRowCursor,curColCursor
-    MOV cl,colorState[bx] 
-    mov cellColorState,cl
-    mov cl,curRowCursor
-    mov ch,curColCursor
-    mov startRowCursor,cl
-    mov startColCursor,ch
-    MOV colorState[bx],0CH 
-    pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-                  inc bl
-                  mov stateOfQ,bl
+    FIRSTQHANDLE
+                 jmp             cursorLoop   
 
-secondQ:
-                  jmp             cursorLoop
-
-ENDM CURSORMOVss
+ENDM CURSORMOV
 
 DrawPiecies MACRO A,B
         ;white
@@ -1049,25 +1094,21 @@ ENDM GETIMGDATA
     borderfilehandle  DW  ?
     borderdata        db  borderwidth*borderheight dup(0)
 
-    curentCursorX     DW  0D
-    curentCursorY     DW  0D
-
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
+    
+    curRowCursor           dw  0
+    curColCursor           dw  0
 
-    curRowCursor      dw  0
-    curColCursor      dw  0
+    startRowCursor         dw  0
+    startColCursor         dw  0
 
-    startRowCursor    dw  0
-    startColCursor    dw  0
+    endRowCursor           dw  0
+    endColCursor           dw  0
 
-    endRowCursor      dw  0
-    endColCursor      dw  0
+    cellColorState db 0
 
-    cellColorState    db  0
-
-    stateOfQ          db  0
-
+    stateOfQ  db 0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -1115,7 +1156,7 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                  validateName   nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
+                  validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
@@ -1133,173 +1174,16 @@ MAIN PROC FAR
                   DrawGrid       150D,0D,colorState[1],colorState[0]
                   DrawPiecies    150D,0D
 
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D                        ; col,row
+    ;   MOV            colorState[0],0CH
+    ;   MOV            gridState[0],3D
+                  UPDATECELL     0D,0D,150D,0
 
-    cursorLoop:   
-
-                  mov            ah,0
-                  int            16h
-
-                  cmp            ah,10h
-                  jnz            tmplabel10
-                  jmp            qpressed
-    tmplabel10:   
-                  cmp            ah,11h
-                  jnz            label6
-                  jmp            up
-    label6:       
-
-                  cmp            ah,1eh
-                  jnz            label7
-                  jmp            left
-    label7:       
-
-                  cmp            ah,20h
-                  jnz            label8
-                  jmp            right
-    label8:       
-
-                  cmp            ah,1fh
-                  jnz            label9
-                  jmp            down
-    label9:       
-
-                  jmp            cursorLoop
-
-    left:         
-                  mov            dx,curColCursor
-                  cmp            dx,0D
-                  jnz            temp20
-
-                  jmp            cursorLoop
-    temp20:       
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-                  sub            dx,1D
-
-                  mov            curColCursor,dx
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp            ah,11h
-                  jz             label5
-
-                  jmp            cursorLoop
-    label5:       
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
 
 
-    right:        
-                  mov            dx,curColCursor
-                  cmp            dx,7d
-                  jnz            temp22
-                  jmp            cursorLoop
-    temp22:       
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-                  add            dx,1
-                  mov            curColCursor,dx
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp            ah,20h
-                  jz             label4
-                  jmp            cursorLoop
-    label4:       
+                 CURSORMOV
 
-    up:           
-                  mov            dx,curRowCursor
-                  cmp            dx,0D
-                  jnz            label10
-                  jmp            cursorLoop
-    label10:      
-
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-                  sub            dx,1D
-
-                  mov            curRowCursor,dx
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp            ah,11h
-                  jz             label2
-
-                  jmp            cursorLoop
-    label2:       
-
-
-    down:         
-                  mov            dx,curRowCursor
-                  cmp            dx,7D
-                  jnz            label11
-                  jmp            cursorLoop
-    label11:      
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-
-                  add            dx,1
-                  mov            curRowCursor,dx
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp            ah,1fh
-                  jz             label1
-                  jmp            cursorLoop
-    label1:       
-
-    qpressed:     
-                  mov            bl,stateOfQ
-                  cmp            bl,0
-                  jnz            tmplabel20
-                  jmp            firsrQ
-    tmplabel20:   
-
-
-                  GETARINDEX     startRowCursor,startColCursor
-
-                  MOV            cl,cellColorState
-                  mov            colorState[bx],cl
-                  mov            cl,curRowCursor
-                  mov            ch,curColCursor
-                  mov            endRowCursor,cl
-                  mov            endColCursor,ch
-                  mov            cx,bx
-                  GETARINDEX     endRowCursor,endColCursor
-                  mov            si,cx
-                  mov            dh,gridState[si]
-                  mov            gridState[si],0
-                  mov            si,bx
-                  mov            gridState[si],dh
-                  pusha
-                  UPDATECELL     startRowCursor,startColCursor,150D,0D
-                  popa
-
-                  pusha
-                  UPDATECELL     endRowCursor,endColCursor,150D,0D
-                  popa
-
-                  mov            bl,stateOfQ
-                  dec            bl
-                  mov            stateOfQ,bl
-                  jmp            cursorLoop
-
-
-    firsrQ:       
-                  GETARINDEX     curRowCursor,curColCursor
-                  MOV            cl,colorState[bx]
-                  mov            cellColorState,cl
-                  mov            cl,curRowCursor
-                  mov            ch,curColCursor
-                  mov            startRowCursor,cl
-                  mov            startColCursor,ch
-                  MOV            colorState[bx],0CH
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-                  mov            bl,stateOfQ
-
-                  inc            bl
-                  mov            stateOfQ,bl
-                  jmp            cursorLoop
-
-
-
+   
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
                   CloseFile      bkingfilehandle
@@ -1323,32 +1207,32 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                              ;GET DATA
+GETDATA PROC                                                                                  ;GET DATA
                   MOV            AX,@DATA
                   MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                                  ;CLEAR SCREEN
-                  MOV            AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC                                                                                      ;CLEAR SCREEN
+                  MOV            AX,0003H                                                     ;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                            ;ENTER TEXT MODE
+EnterText PROC                                                                                ;ENTER TEXT MODE
                   MOV            AX,3H
                   INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                        ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                            ;ENTER GRAPHICS MODE
                   MOV            AX,4F02H
-                  MOV            BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV            BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
                   INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                              ;wait for key
+waitkey PROC                                                                                  ;wait for key
                   MOV            AH , 0
                   INT            16h
                   ret
