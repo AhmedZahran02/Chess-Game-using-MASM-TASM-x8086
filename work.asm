@@ -432,15 +432,15 @@ ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
 
-    GETARINDEX curRowCursor,curColCursor
-    MOV cl,colorState[bx] 
-    mov cellColorState,cl
-    mov cl,curRowCursor
-    mov ch,curColCursor
-    mov startRowCursor,cl
-    mov startColCursor,ch
-    MOV colorState[bx],0CH 
-    pusha
+                  GETARINDEX curRowCursor,curColCursor
+                  MOV cl,colorState[bx] 
+                  mov cellColorState,cl
+                  mov cl,curRowCursor
+                  mov ch,curColCursor
+                  mov startRowCursor,cl
+                  mov startColCursor,ch
+                  MOV colorState[bx],0CH 
+                  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
                   popa
@@ -448,36 +448,40 @@ FIRSTQHANDLE MACRO
 
                   inc bl
                   mov stateOfQ,bl
-              ENDM FIRSTQHANDLE
-    SECONDQHANDLE MACRO
-        GETARINDEX startRowCursor,startColCursor
 
-    MOV cl,cellColorState
-    mov colorState[bx],cl
-    mov cl,curRowCursor
-    mov ch,curColCursor
-    mov endRowCursor,cl
-    mov endColCursor,ch
-    mov cx,bx
-GETARINDEX endRowCursor,endColCursor
-mov si,cx
-mov dh,gridState[si]
-mov gridState[si],0
-mov si,bx
-mov gridState[si],dh
-pusha
+ENDM FIRSTQHANDLE
+
+SECONDQHANDLE MACRO
+
+                  GETARINDEX startRowCursor,startColCursor
+
+                  MOV cl,cellColorState
+                  mov colorState[bx],cl
+                  mov cl,curRowCursor
+                  mov ch,curColCursor
+                  mov endRowCursor,cl
+                  mov endColCursor,ch
+                  mov cx,bx
+                  GETARINDEX endRowCursor,endColCursor
+                  mov si,cx
+                  mov dh,gridState[si]
+                  mov gridState[si],0
+                  mov si,bx
+                  mov gridState[si],dh
+                  pusha
                   UPDATECELL     startRowCursor,startColCursor,150D,0D
                   popa
 
                   pusha
                   UPDATECELL     endRowCursor,endColCursor,150D,0D
                   popa
-                DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
 
 
-                 mov bl,stateOfQ
-                 dec bl
+                  mov bl,stateOfQ
+                  dec bl
                   mov stateOfQ,bl
+
 ENDM SECONDQHANDLE
 
 CURSORMOV MACRO 
