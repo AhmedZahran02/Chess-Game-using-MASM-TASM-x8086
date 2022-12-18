@@ -112,7 +112,7 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
         drawLoop:     
                       mov si,0
                       innerloop:
-                      MOV  AL,[BX]
+                      MOV  AL,BYTE PTR[BX]
                       MOV AH,0ch
                       cmp al,0FFH
                       je skp
@@ -143,7 +143,7 @@ DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
         drawLoop:     
                       mov si,0
                       innerloop:
-                      MOV  AL,[BX]
+                      MOV  AL,BYTE PTR [BX]
                       MOV AH,0ch
                       cmp al,0FFH
                       je skp
@@ -433,21 +433,21 @@ ENDM DrawGrid
 FIRSTQHANDLE MACRO
 
                   GETARINDEX curRowCursor,curColCursor
-                  MOV cl,colorState[bx] 
-                  mov cellColorState,cl
-                  mov cl,curRowCursor
-                  mov ch,curColCursor
-                  mov startRowCursor,cl
-                  mov startColCursor,ch
-                  MOV colorState[bx],0CH 
+                  MOV cl,BYTE PTR colorState[bx] 
+                  mov BYTE PTR cellColorState,cl
+                  mov cl,BYTE PTR curRowCursor
+                  mov ch,BYTE PTR curColCursor
+                  mov BYTE PTR startRowCursor,cl
+                  mov BYTE PTR startColCursor,ch
+                  MOV BYTE PTR colorState[bx],0CH 
                   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
                   popa
-                  mov bl,stateOfQ
+                  mov bl,BYTE PTR stateOfQ
 
                   inc bl
-                  mov stateOfQ,bl
+                  mov BYTE PTR stateOfQ,bl
 
 ENDM FIRSTQHANDLE
 
@@ -515,7 +515,7 @@ cursorLoop:
                   int             16h
 
                   cmp ah,10h
-                    jnz             tmplabel10
+                  jnz             tmplabel10
                   jmp qpressed
 tmplabel10:
                   cmp             ah,11h
@@ -678,15 +678,15 @@ ENDM DrawPiecies
 ;      (7,7)
 ;
 getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
- MOV         AL,ROW
+ MOV         AL,BYTE PTR ROW
  MOV         CL,60D
  MUL         CL
  MOV         dx,ax
- MOV         AL,COL
+ MOV         AL,BYTE PTR COL
  MUL         CL
  MOV         CX,Ax
- ADD CX,A
- ADD DX,B
+ ADD CX,WORD PTR A
+ ADD DX,WORD PTR B
 ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B
@@ -1181,6 +1181,7 @@ MAIN PROC FAR
                   DrawPiecies    150D,0D
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
+
 
                   CURSORMOV
 
