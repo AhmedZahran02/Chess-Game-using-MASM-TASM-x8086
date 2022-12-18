@@ -455,16 +455,16 @@ SECONDQHANDLE MACRO
 
                   GETARINDEX startRowCursor,startColCursor
 
-                  MOV cl,cellColorState
-                  mov colorState[bx],cl
-                  mov cl,curRowCursor
-                  mov ch,curColCursor
-                  mov endRowCursor,cl
-                  mov endColCursor,ch
+                  MOV cl,BYTE PTR cellColorState
+                  mov BYTE PTR colorState[bx],cl
+                  mov cl,BYTE PTR curRowCursor
+                  mov ch,BYTE PTR curColCursor
+                  mov BYTE PTR endRowCursor,cl
+                  mov BYTE PTR endColCursor,ch
                   mov cx,bx
                   GETARINDEX endRowCursor,endColCursor
                   mov si,cx
-                  mov dh,gridState[si]
+                  mov dh,BYTE PTR gridState[si]
                   mov gridState[si],0
                   mov si,bx
                   mov gridState[si],dh
@@ -478,9 +478,9 @@ SECONDQHANDLE MACRO
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
 
 
-                  mov bl,stateOfQ
+                  mov bl,BYTE PTR stateOfQ
                   dec bl
-                  mov stateOfQ,bl
+                  mov BYTE PTR stateOfQ,bl
 
 ENDM SECONDQHANDLE
 
@@ -1182,9 +1182,7 @@ MAIN PROC FAR
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
 
-
                   CURSORMOV
-
    
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
