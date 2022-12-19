@@ -514,6 +514,12 @@ cursorLoop:
                   mov             ah,0
                   int             16h
 
+                  ;if f4 is pressed return to main screen  
+                  cmp ah,3Eh
+                  jnz dontexit
+                  jmp faraway  
+                  dontexit: 
+
                   cmp ah,10h
                   jnz             tmplabel10
                   jmp qpressed
@@ -845,7 +851,6 @@ validateName MACRO entermsg,name,strFailed
 
     call CLS
 
-
     movecursor  17H,05H
     ShowMessage strFailed
     movecursor  17H,06H
@@ -870,6 +875,93 @@ validateName MACRO entermsg,name,strFailed
     outOfTheValidation:
 ENDM validateName
 
+movecursorWithPagNumber MACRO x,y,p ;move cursor
+                mov         ah,2
+                mov         bh,p
+                mov         dh,y
+                mov         dl,x
+                int         10h
+ENDM        movecursor
+MAINMAIN MACRO player1Name,player2Name
+    LOCAL check_for_anotherkey
+    LOCAL check_for_f2
+    LOCAL check_for_esc
+
+    check_for_anotherkey:
+    mov ah,0
+    int 16h 
+    cmp ah,3bh;f1 scane code
+    jnz check_for_f2
+    ;open chat
+    OPENCHAT player1Name,player2Name
+    check_for_f2:
+    cmp ah,3ch;f2 scane code
+    jnz check_for_esc
+    ;open game
+    jmp play
+
+    check_for_esc:
+    cmp al,01Bh;esc ascii
+    jnz check_for_anotherkey
+    ;exist game
+    MOV AH, 4CH
+    MOV AL, 01 ;your return code.
+    INT 21H
+
+ENDM MAINMAIN
+
+OPENCHAT MACRO player1Name,player2Name
+LOCAL hereee
+LOCAL CHECKk
+
+mov  al, 01h   ; select display page 1
+mov  ah, 05h   ; function 05h: select active display page
+int  10h
+
+; mov ax,0700h ;scroll down
+; mov bh,07 
+; mov cx,0 
+; mov dx,184FH
+; int 10h
+; ;movecursorWithPagNumber 0,0,7
+; mov ah,2
+; mov bh,0
+; mov dx,0
+; int 10h 
+
+;display player name
+mov ah, 9
+mov dx, offset player1Name + 2
+int 21h 
+
+
+;this a local test
+hereee:
+
+mov ah,0
+int 16h
+cmp ah,3dh;f1 scane code
+jz CHECKk
+jnz hereee
+
+CHECKk: 
+mov  al, 00h   ; select display page 1
+mov  ah, 05h   ; function 05h: select active display page
+int  10h
+
+; mov ax,0600h ;scroll up
+; mov bh,07 
+; mov cx,0 
+; mov dx,184FH
+; int 10h
+
+; mov ah,2
+; mov bh,0
+; mov dx,0
+; int 10h 
+
+ENDM OPENCHAT
+                
 GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV AX,X 
     MOV BL , 8D
@@ -1165,6 +1257,8 @@ MAIN PROC FAR
                   ShowMessage    proceed
                   call           waitkey
     ;CHOICE MENU
+    faraway:
+
                   call           CLS
                   movecursor     17H,03H
                   ShowMessage    op1
@@ -1172,8 +1266,10 @@ MAIN PROC FAR
                   ShowMessage    op2
                   movecursor     17H,0DH
                   ShowMessage    op3
-                  call           waitkey
+                  ;call           waitkey
+                  MAINMAIN thename,thename
     ;GAME SCREEN
+    play:
                   CALL           EnterGraphics
                   DrawGrid       150D,0D,colorState[1],colorState[0]
                   DrawPiecies    150D,0D
