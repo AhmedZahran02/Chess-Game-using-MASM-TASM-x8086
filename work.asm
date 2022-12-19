@@ -828,48 +828,46 @@ mov gridState[63],8  ;white rook
 ENDM INITIALIZEGRID
 
 validateName MACRO entermsg,name,strFailed
-LOCAL repeatt
-LOCAL biggerthana
-LOCAL outOfTheValidation
-LOCAL fistcheck
+    LOCAL repeatt
+    LOCAL biggerthana
+    LOCAL outOfTheValidation
+    LOCAL fistcheck
 
 
-movecursor  17H,05H
-ShowMessage entermsg
-movecursor  17H,06H
-cin         name
-;movecursor  17H,0AH
-jmp fistcheck
+    movecursor  17H,05H
+    ShowMessage entermsg
+    movecursor  17H,06H
+    cin         name
+    ;movecursor  17H,0AH
+    jmp fistcheck
 ;---------fist check with enter message-----------;
-repeatt:
+    repeatt:
 
-; eraseline 960
-; eraseline 800
-call CLS
+    call CLS
 
 
-movecursor  17H,05H
-ShowMessage strFailed
-movecursor  17H,06H
-cin         name
+    movecursor  17H,05H
+    ShowMessage strFailed
+    movecursor  17H,06H
+    cin         name
 
-fistcheck:
+    fistcheck:
 ;---------other checks with error message-----------;
-mov bx,offset name + 2
-mov al,[bx]
-mov bl,122;;== z 
-cmp bl,al;;if greater than z jmp
-jc repeatt
-cmp al,65;;== A
-jc repeatt;;if less than A jmp
-mov bl,90;;== Z 
-cmp bl,al;;if greater than Z jmp
-jc biggerthana
-jmp outOfTheValidation
-biggerthana:
-cmp al,97;;== a
-jc repeatt;;if less than a jmp
-outOfTheValidation:
+    mov bx,offset name + 2
+    mov al,[bx]
+    mov bl,122;;== z 
+    cmp bl,al;;if greater than z jmp
+    jc repeatt
+    cmp al,65;;== A
+    jc repeatt;;if less than A jmp
+    mov bl,90;;== Z 
+    cmp bl,al;;if greater than Z jmp
+    jc biggerthana
+    jmp outOfTheValidation
+    biggerthana:
+    cmp al,97;;== a
+    jc repeatt;;if less than a jmp
+    outOfTheValidation:
 ENDM validateName
 
 GETARINDEX MACRO X,Y ;OUTPUT IN BX
