@@ -940,7 +940,7 @@ hereee:
 
 mov ah,0
 int 16h
-cmp ah,3dh;f1 scane code
+cmp ah,3dh;f4 scane code
 jz CHECKk
 jnz hereee
 
