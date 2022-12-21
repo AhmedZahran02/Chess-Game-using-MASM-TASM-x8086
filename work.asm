@@ -595,6 +595,34 @@ ENDM INITIALIZEGRID
 
 
 
+ENDM GETIMGDATA
+
+INSIDEGRID MACRO X , Y 
+LOCAL NOTVALID 
+LOCAL VALID 
+LOCAL RETURN 
+
+MOV AL , X 
+MOV AH , Y
+
+CMP AL , 7 
+JG NOTVALID
+CMP AL , 0 
+JL NOTVALID
+CMP AH , 7 
+JG NOTVALID
+CMP AH , 0 
+JL NOTVALID
+
+
+VALID: 
+MOV BX,1 
+JMP RETURN
+NOTVALID:
+MOV BX, 0
+RETURN: 
+
+ENDM INSIDEGRID
 
 validateName MACRO entermsg,name,strFailed
 LOCAL repeatt
@@ -780,8 +808,12 @@ ENDM UPDATECELL
     wqueendata        db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
     
-    
-    
+    king_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    king_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    queen_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    queen_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    soldier_dx 1 ,
+    soldier_dy 1 ,
 
     thename           db  16,?,16 dup('$')                      ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
@@ -861,6 +893,7 @@ ENDM UPDATECELL
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
+    corsorState        db  64  dup(0) ; 0 for not cursor 1 for cursor
 
     currrow           db  0
     currcol           db  0
