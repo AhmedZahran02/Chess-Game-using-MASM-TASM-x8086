@@ -1092,6 +1092,31 @@ GETIMGDATA MACRO X,Y
 
 ENDM GETIMGDATA
 
+ISWHITE MACRO X,Y 
+LOCAL WHITE 
+LOCAL BLACK 
+LOCAL RETURN 
+
+
+MOV AX,X
+MOV CX,Y
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+MOV CH,BYTE PTR [SI]
+CMP CH , 7 
+JL BLACK 
+
+WHITE:
+MOV BX,1 
+JMP RETURN
+BLACK: 
+MOV BX, 0
+RETURN: 
+
+
+ENDM ISWHITE
 .MODEL SMALL
 .286
 .STACK 64
@@ -1114,8 +1139,12 @@ ENDM GETIMGDATA
     wqueendata        db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
     
-    
-    
+    king_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    king_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    queen_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    queen_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    soldier_dx 1 ,
+    soldier_dy 1 ,
 
     thename           db  16,?,16 dup('$')                      ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
@@ -1192,9 +1221,10 @@ ENDM GETIMGDATA
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    
-    curRowCursor      dw  0
-    curColCursor      dw  0
+    corsorState        db  64  dup(0) ; 0 for not cursor 1 for cursor
+
+    currrow           db  0
+    currcol           db  0
 
     startRowCursor    dw  0
     startColCursor    dw  0
