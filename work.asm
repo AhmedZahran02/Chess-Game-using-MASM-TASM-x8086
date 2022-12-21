@@ -882,6 +882,7 @@ movecursorWithPagNumber MACRO x,y,p ;move cursor
                 mov         dl,x
                 int         10h
 ENDM        movecursor
+
 MAINMAIN MACRO player1Name,player2Name
     LOCAL check_for_anotherkey
     LOCAL check_for_f2
@@ -1117,6 +1118,34 @@ RETURN:
 
 
 ENDM ISWHITE
+
+INSIDEGRID MACRO X , Y 
+LOCAL NOTVALID 
+LOCAL VALID 
+LOCAL RETURN 
+
+MOV AL , X 
+MOV AH , Y
+
+CMP AL , 7 
+JG NOTVALID
+CMP AL , 0 
+JL NOTVALID
+CMP AH , 7 
+JG NOTVALID
+CMP AH , 0 
+JL NOTVALID
+
+
+VALID: 
+MOV BX,1 
+JMP RETURN
+NOTVALID:
+MOV BX, 0
+RETURN: 
+
+ENDM INSIDEGRID
+
 .MODEL SMALL
 .286
 .STACK 64
@@ -1139,12 +1168,12 @@ ENDM ISWHITE
     wqueendata        db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
     
-    king_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    king_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    queen_dx 1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    queen_dy 1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    soldier_dx 1 ,
-    soldier_dy 1 ,
+    ; king_dx           db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    ; king_dy           db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    ; soldier_dx        db  1 ,
+    ; soldier_dy        db  1 ,
 
     thename           db  16,?,16 dup('$')                      ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
@@ -1221,10 +1250,10 @@ ENDM ISWHITE
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    corsorState        db  64  dup(0) ; 0 for not cursor 1 for cursor
+    corsorState       db  64  dup(0)                            ; 0 for not cursor 1 for cursor
 
-    currrow           db  0
-    currcol           db  0
+    curRowCursor      dw  0
+    curColCursor      dw  0
 
     startRowCursor    dw  0
     startColCursor    dw  0
