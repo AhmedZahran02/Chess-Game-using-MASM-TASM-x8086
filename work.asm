@@ -11,8 +11,10 @@ ENDM        EXT
 movecursor MACRO x,y ;move cursor
                 mov         ah,2
                 mov         bh,0
-                mov         dh,y
-                mov         dl,x
+                mov cl,x
+                mov ch,y
+                mov         dh,ch
+                mov         dl,cl
                 int         10h
                 ENDM        movecursor
 
@@ -878,8 +880,10 @@ ENDM validateName
 movecursorWithPageNumber MACRO x,y,p ;move cursor
                 mov         ah,2
                 mov         bh,p
-                mov         dh,y
-                mov         dl,x
+                mov cl,x
+                mov ch,y
+                mov         dh,ch
+                mov         dl,cl
                 int         10h
 ENDM        movecursorWithPageNumber
 
@@ -921,18 +925,18 @@ OPENCHAT MACRO player1Name,player2Name
             LOCAL afterenter
             LOCAL deadmid
             local midh
-
+call CLS
                   mov  al, 01h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
 
-                  movecursorWithPageNumber  00,0AH,1
+                  movecursorWithPageNumber  00,0AH,1D
                   ShowMessage line
 
-                  movecursorWithPageNumber  00,00H,1
+                  movecursorWithPageNumber  00,00H,1D
                   ShowMessage player1Name
 
-                  movecursorWithPageNumber  00,0BH,1
+                  movecursorWithPageNumber  00,0BH,1D
                   ShowMessage player2Name
 
                   mov         dx,3fbh           ; Line Control Register
@@ -966,11 +970,12 @@ OPENCHAT MACRO player1Name,player2Name
                   mov         dl,01H
                   push        dx
 
-                  movecursorWithPageNumber  00H,01H,1
+                  movecursorWithPageNumber  00H,0bH,1D
                 
     ;program starts here
     mainloop:     
                   
+                
                   mov         ah,01
                   int         16h
                   jz          AGAIN
@@ -1057,7 +1062,7 @@ OPENCHAT MACRO player1Name,player2Name
                   pop         dx
                   push        dx
                   push        cx
-                  movecursorWithPageNumber  dh,dl,1
+                  movecursorWithPageNumber  dh,dl,1D
                   pop         cx
                   pop         dx
                   inc         dh
@@ -1071,7 +1076,7 @@ OPENCHAT MACRO player1Name,player2Name
                   pop         dx
                   push        dx
                   push        cx
-                  movecursorWithPageNumber  dh,dl,1
+                  movecursorWithPageNumber  dh,dl,1D
                   pop         cx
                   pop         dx
                   inc         dl
@@ -1107,8 +1112,7 @@ OPENCHAT MACRO player1Name,player2Name
     CHK:          
 
                   jmp         mainloop
-
-    dead: 
+    dead:  
                   mov  al, 00h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
