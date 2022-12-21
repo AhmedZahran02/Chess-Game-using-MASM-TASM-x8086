@@ -922,17 +922,17 @@ LOCAL afterenter
 LOCAL deadmid
 local midh
 
-                ;   mov  al, 01h   ; select display page 1
-                ;   mov  ah, 05h   ; function 05h: select active display page
-                ;   int  10h
+                  mov  al, 01h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
 
-                  movecursor  00,0AH
+                  movecursorWithPagNumber  00,0AH,1
                   ShowMessage line
 
-                  movecursor  00,00H
+                  movecursorWithPagNumber  00,00H,1
                   ShowMessage player1Name
 
-                  movecursor  00,0BH
+                  movecursorWithPagNumber  00,0BH,1
                   ShowMessage player2Name
 
                   mov         dx,3fbh           ; Line Control Register
@@ -966,7 +966,7 @@ local midh
                   mov         dl,01H
                   push        dx
 
-                  movecursor  00H,0bH
+                  movecursorWithPagNumber  00H,01H,1
                 
     ;program starts here
     mainloop:     
@@ -982,7 +982,7 @@ local midh
                   pop         dx
                   push        dx
                   push        ax
-                  movecursor  dh,dl
+                  movecursorWithPagNumber  dh,dl,1
                   pop         ax
                   pop         dx
                   inc         dh
@@ -1057,7 +1057,7 @@ local midh
                   pop         dx
                   push        dx
                   push        cx
-                  movecursor  dh,dl
+                  movecursorWithPagNumber  dh,dl,1
                   pop         cx
                   pop         dx
                   inc         dh
@@ -1071,7 +1071,7 @@ local midh
                   pop         dx
                   push        dx
                   push        cx
-                  movecursor  dh,dl
+                  movecursorWithPagNumber  dh,dl,1
                   pop         cx
                   pop         dx
                   inc         dl
@@ -1109,9 +1109,9 @@ local midh
                   jmp         mainloop
 
     dead: 
-                ;   mov  al, 00h   ; select display page 1
-                ;   mov  ah, 05h   ; function 05h: select active display page
-                ;   int  10h
+                  mov  al, 00h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
 
 ENDM OPENCHAT
                 
