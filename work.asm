@@ -892,9 +892,11 @@ MAINMAIN MACRO player1Name,player2Name
     mov ah,0
     int 16h 
     cmp ah,3bh;f1 scane code
-    jnz check_for_f2
+    jz skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    jmp check_for_f2
+    skipf2chk:
     ;open chat
-    ;OPENCHAT player1Name+2,player2Name+2
+    OPENCHAT player1Name+2,player2Name+2
     check_for_f2:
     cmp ah,3ch;f2 scane code
     jnz check_for_esc
@@ -903,7 +905,9 @@ MAINMAIN MACRO player1Name,player2Name
 
     check_for_esc:
     cmp al,01Bh;esc ascii
-    jnz check_for_anotherkey
+    jz skipescchk
+    jmp check_for_anotherkey;;;;;;;;;;;;;;;;;;
+    skipescchk:
     ;exist game
     MOV AH, 4CH
     MOV AL, 01 ;your return code.
