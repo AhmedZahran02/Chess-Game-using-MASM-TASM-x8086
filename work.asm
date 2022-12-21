@@ -1482,7 +1482,6 @@ MAIN PROC FAR
                   ShowMessage    op2
                   movecursor     17H,0DH
                   ShowMessage    op3
-    ;call           waitkey
                   MAINMAIN       thename,thename
     ;GAME SCREEN
     play:         
