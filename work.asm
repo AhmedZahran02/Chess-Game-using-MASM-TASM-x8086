@@ -1257,7 +1257,7 @@ MAIN PROC FAR
                   ShowMessage    proceed
                   call           waitkey
     ;CHOICE MENU
-    faraway:
+    faraway:      
 
                   call           CLS
                   movecursor     17H,03H
@@ -1266,10 +1266,10 @@ MAIN PROC FAR
                   ShowMessage    op2
                   movecursor     17H,0DH
                   ShowMessage    op3
-                  ;call           waitkey
-                  MAINMAIN thename,thename
+    ;call           waitkey
+                  MAINMAIN       thename,thename
     ;GAME SCREEN
-    play:
+    play:         
                   CALL           EnterGraphics
                   DrawGrid       150D,0D,colorState[1],colorState[0]
                   DrawPiecies    150D,0D
