@@ -922,9 +922,9 @@ LOCAL afterenter
 LOCAL deadmid
 local midh
 
-                ;   mov  al, 01h   ; select display page 1
-                ;   mov  ah, 05h   ; function 05h: select active display page
-                ;   int  10h
+                  mov  al, 01h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
 
                   movecursor  00,0AH
                   ShowMessage line
@@ -1109,9 +1109,9 @@ local midh
                   jmp         mainloop
 
     dead: 
-                ;   mov  al, 00h   ; select display page 1
-                ;   mov  ah, 05h   ; function 05h: select active display page
-                ;   int  10h
+                  mov  al, 00h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
 
 ENDM OPENCHAT
                 
