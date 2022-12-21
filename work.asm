@@ -894,7 +894,7 @@ MAINMAIN MACRO player1Name,player2Name
     cmp ah,3bh;f1 scane code
     jnz check_for_f2
     ;open chat
-    OPENCHAT player1Name,player2Name
+    ;OPENCHAT player1Name+2,player2Name+2
     check_for_f2:
     cmp ah,3ch;f2 scane code
     jnz check_for_esc
@@ -912,54 +912,202 @@ MAINMAIN MACRO player1Name,player2Name
 ENDM MAINMAIN
 
 OPENCHAT MACRO player1Name,player2Name
-LOCAL hereee
-LOCAL CHECKk
+LOCAL dead
+LOCAL mainloop
+LOCAL afterenter
+LOCAL deadmid
+local midh
 
-mov  al, 01h   ; select display page 1
-mov  ah, 05h   ; function 05h: select active display page
-int  10h
+                ;   mov  al, 01h   ; select display page 1
+                ;   mov  ah, 05h   ; function 05h: select active display page
+                ;   int  10h
 
-; mov ax,0700h ;scroll down
-; mov bh,07 
-; mov cx,0 
-; mov dx,184FH
-; int 10h
-; ;movecursorWithPagNumber 0,0,7
-; mov ah,2
-; mov bh,0
-; mov dx,0
-; int 10h 
+                  movecursor  00,0AH
+                  ShowMessage line
 
-;display player name
-mov ah, 9
-mov dx, offset player1Name + 2
-int 21h 
+                  movecursor  00,00H
+                  ShowMessage player1Name
+
+                  movecursor  00,0BH
+                  ShowMessage player2Name
+
+                  mov         dx,3fbh           ; Line Control Register
+                  mov         al,10000000b      ;Set Divisor Latch Access Bit
+                  out         dx,al
 
 
-;this a local test
-hereee:
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+                  mov         dx,3f8h
+                  mov         al,0ch
+                  out         dx,al
 
-mov ah,0
-int 16h
-cmp ah,3dh;f4 scane code
-jz CHECKk
-jnz hereee
 
-CHECKk: 
-mov  al, 00h   ; select display page 1
-mov  ah, 05h   ; function 05h: select active display page
-int  10h
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+                  mov         dx,3f9h
+                  mov         al,00h
+                  out         dx,al
 
-; mov ax,0600h ;scroll up
-; mov bh,07 
-; mov cx,0 
-; mov dx,184FH
-; int 10h
 
-; mov ah,2
-; mov bh,0
-; mov dx,0
-; int 10h 
+    ;Set port configuration
+                  mov         dx,3fbh
+                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+                  out         dx,al
+
+
+                  mov         dh,00H
+                  mov         dl,0CH
+                  push        dx
+                  mov         dh,00H
+                  mov         dl,01H
+                  push        dx
+
+                  movecursor  00H,0bH
+                
+    ;program starts here
+    mainloop:     
+                  
+                  mov         ah,01
+                  int         16h
+                  jz          AGAIN
+
+                  mov         ah,0
+                  int         16h
+                  
+
+                  pop         dx
+                  push        dx
+                  push        ax
+                  movecursor  dh,dl
+                  pop         ax
+                  pop         dx
+                  inc         dh
+                  push        dx
+
+                  push        ax
+
+                  mov         ah,2
+                  mov         dl,al
+                  int         21h
+
+                  pop         ax
+
+                  mov         bl,ah
+                  cmp         bl,3dh            ; F3 key
+                  je          deadmid
+
+                  mov         bl,al
+                  cmp         bl,13
+                  jne         afterenter
+
+                  pop         dx
+                  inc         dl
+                  mov         dh,0
+                  PUSH        dx
+
+                  cmp         dx,0009H          ;CURSOR CHECK
+                  jne         afterenter
+
+                  mov         ax,0601h
+                  mov         bh,07
+                  mov         cx,0100H
+                  mov         dx,094FH
+                  int         10h
+                  POP         DX
+                  MOV         DL,8
+                  PUSH        DX
+
+    afterenter:   
+    ;Sending a value
+
+    ;Check that Transmitter Holding Register is Empty
+                  mov         dx , 3FDH         ; Line Status Register
+
+                  In          al , dx           ;Read Line Status
+                  AND         al , 00100000b
+                  JZ          AGAIN             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov         al,bl
+                  out         dx , al
+                  jmp         AGAIN
+           
+    ;Receiving a value
+    deadmid:      
+                  jmp         dead
+                  
+    AGAIN:        
+    ;Check that Data Ready
+                  mov         dx , 3FDH         ; Line Status Register
+          
+                  in          al , dx
+                  AND         al , 00000001b
+                  JZ          CHK               ;jump untill it recive data
+
+    ;If Ready read the VALUE in Receive data register
+                  mov         dx , 03F8H
+                  in          al , dx
+                  
+                  pop         cx
+                  pop         dx
+                  push        dx
+                  push        cx
+                  movecursor  dh,dl
+                  pop         cx
+                  pop         dx
+                  inc         dh
+                  push        dx
+                  push        cx
+
+                  cmp         al,13
+                  jne         afterenter2
+
+                  pop         cx
+                  pop         dx
+                  push        dx
+                  push        cx
+                  movecursor  dh,dl
+                  pop         cx
+                  pop         dx
+                  inc         dl
+                  mov         dh,0
+                  push        dx
+                  push        cx
+
+                  cmp         dx,0017H          ;CURSOR CHECK
+                  jne         afterenter2
+                
+
+                  PUSH        BX
+                  PUSH        AX
+                  mov         ax,0601h
+                  mov         bh,07
+                  mov         cx,0C00H
+                  mov         dx,164FH
+                  int         10h
+                  POP         AX
+                  POP         BX
+                  pop         cx
+                  pop         dx
+                  MOV         DL,16H
+                  push        dx
+                  push        cx
+
+    afterenter2:  
+
+                  mov         dl,al
+                  mov         ah,2
+                  int         21h
+                  
+    CHK:          
+
+                  jmp         mainloop
+
+    dead: 
+                ;   mov  al, 00h   ; select display page 1
+                ;   mov  ah, 05h   ; function 05h: select active display page
+                ;   int  10h
 
 ENDM OPENCHAT
                 
@@ -1153,6 +1301,7 @@ ENDM INSIDEGRID
 .Data
     nameq             db  'Please enter your name:','$'
     erroname          db  'Please write a valid name :','$'
+    line              db  '---------------------------------------------------','$'
     
     brockdata         db  60D*60D dup(0)
     bknightdata       db  60D*60D dup(0)
@@ -1175,7 +1324,7 @@ ENDM INSIDEGRID
     ; soldier_dx        db  1 ,
     ; soldier_dy        db  1 ,
 
-    thename           db  16,?,16 dup('$')                      ; max size 15 char last digit for $
+    thename           db  16,?,16 dup('$')                                             ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
     op1               db  'To start chatting press F1','$'
     op2               db  'To start the game press F2','$'
@@ -1250,7 +1399,7 @@ ENDM INSIDEGRID
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    corsorState       db  64  dup(0)                            ; 0 for not cursor 1 for cursor
+    corsorState       db  64  dup(0)                                                   ; 0 for not cursor 1 for cursor
 
     curRowCursor      dw  0
     curColCursor      dw  0
@@ -1336,7 +1485,6 @@ MAIN PROC FAR
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
 
                   CURSORMOV
-   
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
                   CloseFile      bkingfilehandle
