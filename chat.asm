@@ -104,6 +104,7 @@ ENDM TOSTRING
     line   db '---------------------------------------------------','$'
     P1NAME db 'AOZ','$'
     P2NAME db 'HELMY','$'
+    VALUE  db 3dh
 
 .CODE
 MAIN PROC FAR

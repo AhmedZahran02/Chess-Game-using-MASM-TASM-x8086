@@ -875,13 +875,13 @@ validateName MACRO entermsg,name,strFailed
     outOfTheValidation:
 ENDM validateName
 
-movecursorWithPagNumber MACRO x,y,p ;move cursor
+movecursorWithPageNumber MACRO x,y,p ;move cursor
                 mov         ah,2
                 mov         bh,p
                 mov         dh,y
                 mov         dl,x
                 int         10h
-ENDM        movecursor
+ENDM        movecursorWithPageNumber
 
 MAINMAIN MACRO player1Name,player2Name
     LOCAL check_for_anotherkey
@@ -916,23 +916,23 @@ MAINMAIN MACRO player1Name,player2Name
 ENDM MAINMAIN
 
 OPENCHAT MACRO player1Name,player2Name
-LOCAL dead
-LOCAL mainloop
-LOCAL afterenter
-LOCAL deadmid
-local midh
+            LOCAL dead
+            LOCAL mainloop
+            LOCAL afterenter
+            LOCAL deadmid
+            local midh
 
                   mov  al, 01h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
 
-                  movecursorWithPagNumber  00,0AH,1
+                  movecursorWithPageNumber  00,0AH,1
                   ShowMessage line
 
-                  movecursorWithPagNumber  00,00H,1
+                  movecursorWithPageNumber  00,00H,1
                   ShowMessage player1Name
 
-                  movecursorWithPagNumber  00,0BH,1
+                  movecursorWithPageNumber  00,0BH,1
                   ShowMessage player2Name
 
                   mov         dx,3fbh           ; Line Control Register
@@ -966,7 +966,7 @@ local midh
                   mov         dl,01H
                   push        dx
 
-                  movecursorWithPagNumber  00H,01H,1
+                  movecursorWithPageNumber  00H,01H,1
                 
     ;program starts here
     mainloop:     
@@ -982,7 +982,7 @@ local midh
                   pop         dx
                   push        dx
                   push        ax
-                  movecursorWithPagNumber  dh,dl,1
+                  movecursorWithPageNumber  dh,dl,1
                   pop         ax
                   pop         dx
                   inc         dh
@@ -1057,7 +1057,7 @@ local midh
                   pop         dx
                   push        dx
                   push        cx
-                  movecursorWithPagNumber  dh,dl,1
+                  movecursorWithPageNumber  dh,dl,1
                   pop         cx
                   pop         dx
                   inc         dh
@@ -1071,7 +1071,7 @@ local midh
                   pop         dx
                   push        dx
                   push        cx
-                  movecursorWithPagNumber  dh,dl,1
+                  movecursorWithPageNumber  dh,dl,1
                   pop         cx
                   pop         dx
                   inc         dl
