@@ -93,13 +93,13 @@ TOSTRING MACRO OutMessage
     OUTH:
 ENDM TOSTRING
 
-DRAW MACRO imgwidth,imgheight,X,Y       ;DRAW IMAGE
+DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                 LOCAL drawLoop
                 LOCAL innerloop
                 LOCAL skp
                 LOCAL GOAWAY
                 
-                getDrawPosition 0D,0D,X,Y
+                getDrawPosition A,B,X,Y
                 PUSH CX
                 PUSH DX
                 GETIMGDATA X,Y
@@ -112,7 +112,7 @@ DRAW MACRO imgwidth,imgheight,X,Y       ;DRAW IMAGE
         drawLoop:     
                       mov si,0
                       innerloop:
-                      MOV  AL,[BX]
+                      MOV  AL,BYTE PTR[BX]
                       MOV AH,0ch
                       cmp al,0FFH
                       je skp
@@ -130,6 +130,36 @@ DRAW MACRO imgwidth,imgheight,X,Y       ;DRAW IMAGE
                       JNE  drawLoop
                       GOAWAY:
                 ENDM        DRAW
+
+DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
+                LOCAL drawLoop
+                LOCAL innerloop
+                LOCAL skp
+                
+                getDrawPosition A,B,X,Y
+                LEA BX,imgdata
+        ; Drawing loop
+                      mov di,0
+        drawLoop:     
+                      mov si,0
+                      innerloop:
+                      MOV  AL,BYTE PTR [BX]
+                      MOV AH,0ch
+                      cmp al,0FFH
+                      je skp
+                      INT 10H
+                      skp:
+                      INC BX
+                      INC CX
+                      INC SI
+                      CMP SI,imgwidth
+                      JNE innerloop
+                      SUB CX,SI
+                      INC DX
+                      INC DI
+                      CMP DI,imgheight
+                      JNE  drawLoop
+                ENDM        DRAWWITHSOURCE
 
 OpenFile MACRO  imgfilename, imgfilehandle                                ;OPEN FILE
                   MOV  AH, 3Dh
@@ -400,43 +430,253 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
 
 ENDM DrawGrid
 
+FIRSTQHANDLE MACRO
+
+                  GETARINDEX curRowCursor,curColCursor
+                  MOV cl,BYTE PTR colorState[bx] 
+                  mov BYTE PTR cellColorState,cl
+                  mov cl,BYTE PTR curRowCursor
+                  mov ch,BYTE PTR curColCursor
+                  mov BYTE PTR startRowCursor,cl
+                  mov BYTE PTR startColCursor,ch
+                  MOV BYTE PTR colorState[bx],0CH 
+                  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
+                  popa
+                  mov bl,BYTE PTR stateOfQ
+
+                  inc bl
+                  mov BYTE PTR stateOfQ,bl
+
+ENDM FIRSTQHANDLE
+
+SECONDQHANDLE MACRO
+
+                  GETARINDEX startRowCursor,startColCursor
+
+                  MOV cl,BYTE PTR cellColorState
+                  mov BYTE PTR colorState[bx],cl
+                  mov cl,BYTE PTR curRowCursor
+                  mov ch,BYTE PTR curColCursor
+                  mov BYTE PTR endRowCursor,cl
+                  mov BYTE PTR endColCursor,ch
+                  mov cx,bx
+                  GETARINDEX endRowCursor,endColCursor
+                  mov si,cx
+                  mov dh,BYTE PTR gridState[si]
+                  mov gridState[si],0
+                  mov si,bx
+                  mov gridState[si],dh
+                  pusha
+                  UPDATECELL     startRowCursor,startColCursor,150D,0D
+                  popa
+
+                  pusha
+                  UPDATECELL     endRowCursor,endColCursor,150D,0D
+                  popa
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+
+
+                  mov bl,BYTE PTR stateOfQ
+                  dec bl
+                  mov BYTE PTR stateOfQ,bl
+
+ENDM SECONDQHANDLE
+
+CURSORMOV MACRO 
+  LOCAL cursorLoop
+  LOCAL tmplabel10
+  LOCAL label6
+  LOCAL label7
+  LOCAL label8
+  LOCAL label9
+  LOCAL left
+  LOCAL temp20
+  LOCAL label5
+  LOCAL right
+  LOCAL temp22
+  LOCAL label4
+  LOCAL up
+  LOCAL label10
+  LOCAL label2
+  LOCAL down
+  LOCAL label11
+  LOCAL label1
+  LOCAL qpressed
+  LOCAL tmplabel20
+  LOCAL firsrQ
+  
+
+cursorLoop:
+
+
+                  mov             ah,0
+                  int             16h
+
+                  ;if f4 is pressed return to main screen  
+                  cmp ah,3Eh
+                  jnz dontexit
+                  jmp faraway  
+                  dontexit: 
+
+                  cmp ah,10h
+                  jnz             tmplabel10
+                  jmp qpressed
+tmplabel10:
+                  cmp             ah,11h
+                  jnz             label6
+                  jmp             up
+    label6:
+
+                  cmp             ah,1eh
+                  jnz             label7
+                  jmp             left
+    label7:
+
+                  cmp             ah,20h
+                  jnz             label8
+                  jmp             right
+    label8:
+
+                  cmp             ah,1fh
+                  jnz             label9
+                  jmp             down
+    label9:
+
+                  jmp             cursorLoop                  
+
+    left:
+                  mov             dx,curColCursor
+                  cmp             dx,0D
+                  jnz             temp20
+
+                  jmp             cursorLoop
+    temp20:
+ pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+                  sub             dx,1D
+
+                  mov             curColCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,11h
+                  jz              label5
+
+                  jmp             cursorLoop
+    label5:
+
+
+    right:
+                  mov             dx,curColCursor
+                  cmp             dx,7d
+                  jnz             temp22
+                  jmp             cursorLoop
+    temp22:
+ pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+                  add             dx,1
+                  mov             curColCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,20h
+                  jz              label4
+                  jmp             cursorLoop
+    label4:
+
+    up:
+                  mov             dx,curRowCursor
+                  cmp             dx,0D
+                  jnz             label10
+                  jmp             cursorLoop
+    label10:
+
+ pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+                  sub             dx,1D
+
+                  mov             curRowCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,11h
+                  jz              label2
+
+                  jmp             cursorLoop
+    label2:
+
+
+    down:
+                  mov             dx,curRowCursor
+                  cmp             dx,7D
+                  jnz             label11
+                  jmp             cursorLoop
+    label11:
+                  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+
+                  add             dx,1
+                  mov             curRowCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,1fh
+                  jz              label1
+                  jmp             cursorLoop
+    label1:
+
+    qpressed:
+    mov bl,stateOfQ
+    cmp bl,0
+    jnz tmplabel20
+    jmp firsrQ
+    tmplabel20:
+
+
+   SECONDQHANDLE
+    jmp   cursorLoop   
+
+    firsrQ:
+    FIRSTQHANDLE
+                 jmp             cursorLoop   
+
+ENDM CURSORMOV
+
 DrawPiecies MACRO A,B
         ;white
-                  DRAW        wrockwidth,wrockheight,0,0                       ; col,row
-                  DRAW        wknightwidth,wknightheight,0,1                ; col,row
-                  DRAW        wbishopwidth,wbishopheight,0,2               ; col,row
-                  DRAW        wqueenwidth,wqueenheight,0,3                  ; col,row
-                  DRAW        wkingwidth,wkingheight,0,4                     ; col,row
-                  DRAW        wbishopwidth,wbishopheight,0,5               ; col,row
-                  DRAW        wknightwidth,wknightheight,0,6               ; col,row
-                  DRAW        wrockwidth,wrockheight,0,7                     ; col,row
+                  DRAW        wrockwidth,wrockheight,0,0,A,B                       ; col,row
+                  DRAW        wknightwidth,wknightheight,0,1,A,B                 ; col,row
+                  DRAW        wbishopwidth,wbishopheight,0,2,A,B                ; col,row
+                  DRAW        wqueenwidth,wqueenheight,0,3,A,B                   ; col,row
+                  DRAW        wkingwidth,wkingheight,0,4,A,B                      ; col,row
+                  DRAW        wbishopwidth,wbishopheight,0,5,A,B                ; col,row
+                  DRAW        wknightwidth,wknightheight,0,6,A,B                ; col,row
+                  DRAW        wrockwidth,wrockheight,0,7,A,B                      ; col,row
 
-                  DRAW        wpawnwidth,wpawnheight,1,0                      ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,1                     ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,2                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,3                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,4                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,5                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,6                    ; col,row
-                  DRAW        wpawnwidth,wpawnheight,1,7                    ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,0,A,B                       ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,1,A,B                      ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,2,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,3,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,4,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,5,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,6,A,B                     ; col,row
+                  DRAW        wpawnwidth,wpawnheight,1,7,A,B                     ; col,row
         ;black
-                  DRAW        brockwidth,brockheight,7,B+420D                     ; col,row
-                  DRAW        bknightwidth,bknightheight,7,B+420D              ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,B+420D             ; col,row
-                  DRAW        bqueenwidth,bqueenheight,7,B+420D                ; col,row
-                  DRAW        bkingwidth,bkingheight,7,B+420D                   ; col,row
-                  DRAW        bbishopwidth,bbishopheight,7,B+420D             ; col,row
-                  DRAW        bknightwidth,bknightheight,7,B+420D             ; col,row
-                  DRAW        brockwidth,brockheight,7,B+420D                   ; col,row
+                  DRAW        brockwidth,brockheight,7,0,A,B                      ; col,row
+                  DRAW        bknightwidth,bknightheight,7,1,A,B               ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,2,A,B              ; col,row
+                  DRAW        bqueenwidth,bqueenheight,7,3,A,B                 ; col,row
+                  DRAW        bkingwidth,bkingheight,7,4,A,B                    ; col,row
+                  DRAW        bbishopwidth,bbishopheight,7,5,A,B              ; col,row
+                  DRAW        bknightwidth,bknightheight,7,6,A,B              ; col,row
+                  DRAW        brockwidth,brockheight,7,7,A,B                    ; col,row
 
-                  DRAW        bpawnwidth,bpawnheight,6,0                    ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,1                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,2                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,3                  ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,4                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,5                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,6                 ; col,row
-                  DRAW        bpawnwidth,bpawnheight,6,7                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,0,A,B                     ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,1,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,2,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,3,A,B                   ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,4,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,5,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,6,A,B                  ; col,row
+                  DRAW        bpawnwidth,bpawnheight,6,7,A,B                   ; col,row
 ENDM DrawPiecies
 
 ;(0,0),(0,1)
@@ -444,15 +684,15 @@ ENDM DrawPiecies
 ;      (7,7)
 ;
 getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
- MOV         AL,ROW
+ MOV         AL,BYTE PTR ROW
  MOV         CL,60D
  MUL         CL
  MOV         dx,ax
- MOV         AL,COL
+ MOV         AL,BYTE PTR COL
  MUL         CL
  MOV         CX,Ax
- ADD CX,A
- ADD DX,B
+ ADD CX,WORD PTR A
+ ADD DX,WORD PTR B
 ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B
@@ -465,14 +705,14 @@ mov colorState[4],A
 mov colorState[5],B
 mov colorState[6],A
 mov colorState[7],B
-mov colorState[8],A
-mov colorState[9],B
-mov colorState[10],A
-mov colorState[11],B
-mov colorState[12],A
-mov colorState[13],B
-mov colorState[14],A
-mov colorState[15],B
+mov colorState[8],B
+mov colorState[9],A
+mov colorState[10],B
+mov colorState[11],A
+mov colorState[12],B
+mov colorState[13],A
+mov colorState[14],B
+mov colorState[15],A
 mov colorState[16],A
 mov colorState[17],B
 mov colorState[18],A
@@ -481,14 +721,14 @@ mov colorState[20],A
 mov colorState[21],B
 mov colorState[22],A
 mov colorState[23],B
-mov colorState[24],A
-mov colorState[25],B
-mov colorState[26],A
-mov colorState[27],B
-mov colorState[28],A
-mov colorState[29],B
-mov colorState[30],A
-mov colorState[31],B
+mov colorState[24],B
+mov colorState[25],A
+mov colorState[26],B
+mov colorState[27],A
+mov colorState[28],B
+mov colorState[29],A
+mov colorState[30],B
+mov colorState[31],A
 mov colorState[32],A
 mov colorState[33],B
 mov colorState[34],A
@@ -497,14 +737,14 @@ mov colorState[36],A
 mov colorState[37],B
 mov colorState[38],A
 mov colorState[39],B
-mov colorState[40],A
-mov colorState[41],B
-mov colorState[42],A
-mov colorState[43],B
-mov colorState[44],A
-mov colorState[45],B
-mov colorState[46],A
-mov colorState[47],B
+mov colorState[40],B
+mov colorState[41],A
+mov colorState[42],B
+mov colorState[43],A
+mov colorState[44],B
+mov colorState[45],A
+mov colorState[46],B
+mov colorState[47],A
 mov colorState[48],A
 mov colorState[49],B
 mov colorState[50],A
@@ -513,14 +753,14 @@ mov colorState[52],A
 mov colorState[53],B
 mov colorState[54],A
 mov colorState[55],B
-mov colorState[56],A
-mov colorState[57],B
-mov colorState[58],A
-mov colorState[59],B
-mov colorState[60],A
-mov colorState[61],B
-mov colorState[62],A
-mov colorState[63],B
+mov colorState[56],B
+mov colorState[57],A
+mov colorState[58],B
+mov colorState[59],A
+mov colorState[60],B
+mov colorState[61],A
+mov colorState[62],B
+mov colorState[63],A
 
 mov gridState[0],1 ;black rook
 mov gridState[1],2 ;black knight
@@ -593,82 +833,135 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-
-
-ENDM GETIMGDATA
-
-INSIDEGRID MACRO X , Y 
-LOCAL NOTVALID 
-LOCAL VALID 
-LOCAL RETURN 
-
-MOV AL , X 
-MOV AH , Y
-
-CMP AL , 7 
-JG NOTVALID
-CMP AL , 0 
-JL NOTVALID
-CMP AH , 7 
-JG NOTVALID
-CMP AH , 0 
-JL NOTVALID
-
-
-VALID: 
-MOV BX,1 
-JMP RETURN
-NOTVALID:
-MOV BX, 0
-RETURN: 
-
-ENDM INSIDEGRID
-
 validateName MACRO entermsg,name,strFailed
-LOCAL repeatt
-LOCAL biggerthana
-LOCAL outOfTheValidation
-LOCAL fistcheck
+    LOCAL repeatt
+    LOCAL biggerthana
+    LOCAL outOfTheValidation
+    LOCAL fistcheck
 
 
-movecursor  17H,05H
-ShowMessage entermsg
-movecursor  17H,06H
-cin         name
-;movecursor  17H,0AH
-jmp fistcheck
+    movecursor  17H,05H
+    ShowMessage entermsg
+    movecursor  17H,06H
+    cin         name
+    ;movecursor  17H,0AH
+    jmp fistcheck
 ;---------fist check with enter message-----------;
-repeatt:
+    repeatt:
 
-; eraseline 960
-; eraseline 800
-call CLS
+    call CLS
 
+    movecursor  17H,05H
+    ShowMessage strFailed
+    movecursor  17H,06H
+    cin         name
 
-movecursor  17H,05H
-ShowMessage strFailed
-movecursor  17H,06H
-cin         name
-
-fistcheck:
+    fistcheck:
 ;---------other checks with error message-----------;
-mov bx,offset name + 2
-mov al,[bx]
-mov bl,122;;== z 
-cmp bl,al;;if greater than z jmp
-jc repeatt
-cmp al,65;;== A
-jc repeatt;;if less than A jmp
-mov bl,90;;== Z 
-cmp bl,al;;if greater than Z jmp
-jc biggerthana
-jmp outOfTheValidation
-biggerthana:
-cmp al,97;;== a
-jc repeatt;;if less than a jmp
-outOfTheValidation:
+    mov bx,offset name + 2
+    mov al,[bx]
+    mov bl,122;;== z 
+    cmp bl,al;;if greater than z jmp
+    jc repeatt
+    cmp al,65;;== A
+    jc repeatt;;if less than A jmp
+    mov bl,90;;== Z 
+    cmp bl,al;;if greater than Z jmp
+    jc biggerthana
+    jmp outOfTheValidation
+    biggerthana:
+    cmp al,97;;== a
+    jc repeatt;;if less than a jmp
+    outOfTheValidation:
 ENDM validateName
 
+movecursorWithPagNumber MACRO x,y,p ;move cursor
+                mov         ah,2
+                mov         bh,p
+                mov         dh,y
+                mov         dl,x
+                int         10h
+ENDM        movecursor
+MAINMAIN MACRO player1Name,player2Name
+    LOCAL check_for_anotherkey
+    LOCAL check_for_f2
+    LOCAL check_for_esc
+
+    check_for_anotherkey:
+    mov ah,0
+    int 16h 
+    cmp ah,3bh;f1 scane code
+    jnz check_for_f2
+    ;open chat
+    OPENCHAT player1Name,player2Name
+    check_for_f2:
+    cmp ah,3ch;f2 scane code
+    jnz check_for_esc
+    ;open game
+    jmp play
+
+    check_for_esc:
+    cmp al,01Bh;esc ascii
+    jnz check_for_anotherkey
+    ;exist game
+    MOV AH, 4CH
+    MOV AL, 01 ;your return code.
+    INT 21H
+
+ENDM MAINMAIN
+
+OPENCHAT MACRO player1Name,player2Name
+LOCAL hereee
+LOCAL CHECKk
+
+mov  al, 01h   ; select display page 1
+mov  ah, 05h   ; function 05h: select active display page
+int  10h
+
+; mov ax,0700h ;scroll down
+; mov bh,07 
+; mov cx,0 
+; mov dx,184FH
+; int 10h
+; ;movecursorWithPagNumber 0,0,7
+; mov ah,2
+; mov bh,0
+; mov dx,0
+; int 10h 
+
+;display player name
+mov ah, 9
+mov dx, offset player1Name + 2
+int 21h 
+
+
+;this a local test
+hereee:
+
+mov ah,0
+int 16h
+cmp ah,3dh;f4 scane code
+jz CHECKk
+jnz hereee
+
+CHECKk: 
+mov  al, 00h   ; select display page 1
+mov  ah, 05h   ; function 05h: select active display page
+int  10h
+
+; mov ax,0600h ;scroll up
+; mov bh,07 
+; mov cx,0 
+; mov dx,184FH
+; int 10h
+
+; mov ah,2
+; mov bh,0
+; mov dx,0
+; int 10h 
+
+ENDM OPENCHAT
+                
 GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV AX,X 
     MOV BL , 8D
@@ -677,9 +970,37 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
+UPDATECELL MACRO X,Y,A,B
+    LOCAL NOPE
+    getDrawPosition A,B,X,Y
+    PUSH CX
+    PUSH DX
+    GETARINDEX X,Y
+    MOV AL,BYTE PTR colorState[BX]
+    DRAWCELL CX,DX,AL
+    POP DX
+    POP CX
+    DRAW 60D,60D,X,Y,A,B
+    NOPE:
+ENDM UPDATECELL
+
 GETIMGDATA MACRO X,Y
     LOCAL RETURN
     LOCAL EMPTY
+    LOCAL EMPTY2
+    LOCAL B1
+    LOCAL B2
+    LOCAL B3
+    LOCAL B4
+    LOCAL B5
+    LOCAL B6
+    LOCAL B7
+    LOCAL B8
+    LOCAL B9
+    LOCAL B10
+    LOCAL B11
+    LOCAL B12
+
     ; GETS THE NUMBER IN GRID[X][Y]
     ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
     ;RETURNS THE IMAGE DATA IN BX 
@@ -697,7 +1018,7 @@ GETIMGDATA MACRO X,Y
     MOV AH,0H
 
     CMP AX,0
-    JE EMPTY
+    JE EMPTY2
     
     ; DEC AX 
     ; MOV BX,360D
@@ -736,32 +1057,32 @@ GETIMGDATA MACRO X,Y
    CMP AX,12D
    JE B12
 
-   JMP EMPTY
+   EMPTY2: JMP EMPTY
        
 
-    B1: MOV BX,brockdata
+    B1: LEA BX,brockdata
     JMP RETURN
-        B2: MOV BX,bknightdata       
+        B2: LEA BX,bknightdata       
     JMP RETURN
-        B3: MOV BX,bbishopdata       
+        B3: LEA BX,bbishopdata       
     JMP RETURN
-        B4: MOV BX,bqueendata        
+        B4: LEA BX,bqueendata        
     JMP RETURN
-        B5: MOV BX,bkingdata         
+        B5: LEA BX,bkingdata         
     JMP RETURN
-        B6: MOV BX,bpawndata         
+        B6: LEA BX,bpawndata         
     JMP RETURN
-        B7: MOV BX,wpawndata         
+        B7: LEA BX,wpawndata         
     JMP RETURN
-        B8: MOV BX,wrockdata         
+        B8: LEA BX,wrockdata         
     JMP RETURN
-        B9: MOV BX,wknightdata       
+        B9: LEA BX,wknightdata       
     JMP RETURN
-        B10: MOV BX,wbishopdata       
+        B10: LEA BX,wbishopdata       
     JMP RETURN
-        B11: MOV BX,wqueendata        
+        B11: LEA BX,wqueendata        
     JMP RETURN
-        B12: MOV BX,wkingdata         
+        B12: LEA BX,wkingdata         
     JMP RETURN
 
     EMPTY:
@@ -771,23 +1092,8 @@ GETIMGDATA MACRO X,Y
 
 ENDM GETIMGDATA
 
-UPDATECELL MACRO X,Y
-    LOCAL NOPE
-    getDrawPosition 0D,0D,X,Y
-    PUSH CX
-    PUSH DX
-    GETARINDEX X,Y
-    DRAWCELL CX,DX,colorState[BX]
-    GETIMGDATA X,Y
-    CMP BX,0h
-    JE NOPE
-    POP DX
-    POP CX
-    ;DRAW [BX],60D,60D,CX,DX
-    NOPE:
-ENDM UPDATECELL
-
 .MODEL SMALL
+.286
 .STACK 64
 ;-----------
 .Data
@@ -888,9 +1194,6 @@ ENDM UPDATECELL
     borderfilehandle  DW  ?
     borderdata        db  borderwidth*borderheight dup(0)
 
-    curentCursorX     DW  0D
-    curentCursorY     DW  0D
-
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
     corsorState        db  64  dup(0) ; 0 for not cursor 1 for cursor
@@ -898,6 +1201,15 @@ ENDM UPDATECELL
     currrow           db  0
     currcol           db  0
 
+    startRowCursor    dw  0
+    startColCursor    dw  0
+
+    endRowCursor      dw  0
+    endColCursor      dw  0
+
+    cellColorState    db  0
+
+    stateOfQ          db  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -939,207 +1251,38 @@ MAIN PROC FAR
     ;------------------------------------------------------------------------------------------------
     ;--------INITIAL GRID-----------------
     start:        
-                  INITIALIZEGRID 08H,0FH
+                  INITIALIZEGRID 0FH,08H
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                ;   movecursor     17H,05H
-                ;   ShowMessage    nameq
-                ;   movecursor     17H,06H
-                ;   cin            thename
-       validateName    nameq,thename,erroname ;Veryyyyyyyyyyyyyyyy STABLE
+                  validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
     ;CHOICE MENU
-    ;   call           CLS
-    ;   movecursor     17H,03H
-    ;   ShowMessage    op1
-    ;   movecursor     17H,08H
-    ;   ShowMessage    op2
-    ;   movecursor     17H,0DH
-    ;   ShowMessage    op3
-    ;   call           waitkey
+    faraway:
+
+                  call           CLS
+                  movecursor     17H,03H
+                  ShowMessage    op1
+                  movecursor     17H,08H
+                  ShowMessage    op2
+                  movecursor     17H,0DH
+                  ShowMessage    op3
+                  ;call           waitkey
+                  MAINMAIN thename,thename
     ;GAME SCREEN
+    play:
                   CALL           EnterGraphics
-                  DrawGrid       0D,0D,colorState[0],colorState[1]
-    ;   DrawPiecies    150D,0D
-                  DRAW           60D,60D,6D,7D
-    ;border
-    ;mov             colorState[0],0CH
-    ;UPDATECELL     0D,0D
+                  DrawGrid       150D,0D,colorState[1],colorState[0]
+                  DrawPiecies    150D,0D
 
-    ;   getDrawPosition 150D,0D,1D,0D
-    ;   PUSH            CX
-    ;   PUSH            DX
-    ;   GETARINDEX      1D,0D
-    ;   mov             al,byte ptr colorState[bx]
-    ;   mov             ah,0
-    ;   DRAWCELL        CX,DX,al
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
 
-    ;   GETIMGDATA      1D,0D
-    ;   CMP             byte ptr [BX],0H
-    ;   JE              NOPE
-    ;   POP             DX
-    ;   POP             CX
-    ;   DRAW            [BX],60D,60D,CX,DX
-    ; NOPE:
-
-
-
-
-    ;   DRAW           borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-
-    ; cursorLoop:
-
-    ;               DrawGrid        0D,0D,0FH,08H
-    ;               DrawPiecies
-    ;               mov             di,1D
-    ;               mov             bh,0
-    ;               mov             bl,0
-
-    ; loop1:
-
-    ;               mov             bh,0
-
-    ; loop2:
-
-    ;               mov             SI,word ptr gridState[di]
-                  
-                 
-    ;               getDrawPosition bl,bh
-                 
-
-    ;               cmp             SI,0
-    ;               jz              skip
-    ;               push            BX
-    ;               push            di
-    ;               DRAW            [SI],wrockwidth,wrockheight,CX,DX                                  ; col,row
-    ;               pop             di
-    ;               pop             BX
-    ; skip:
-    ;               add             di,2
-    ;               add             bh,1
-    ;               cmp             bh,8
-    ;               jnz             loop2
-    ;               add             bL,1
-    ;               cmp             bL,8
-    ;               jnz             loop1
-
-    ;               DRAW            borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-
-    ;               mov             ah,0
-    ;               int             16h
-
-    ;               cmp             ah,11h
-    ;               jnz             label6
-    ;               jmp             up
-    ; label6:
-
-    ;               cmp             ah,1eh
-    ;               jnz             label7
-    ;               jmp             left
-    ; label7:
-
-    ;               cmp             ah,20h
-    ;               jnz             label8
-    ;               jmp             right
-    ; label8:
-
-    ;               cmp             ah,1fh
-    ;               jnz             label9
-    ;               jmp             down
-    ; label9:
-
-    ;               cmp             ah,1ch
-    ;               jz              temp19
-    ;               jmp             cursorLoop
-    ; temp19:
-                  
-    ;               cmp             ah,1ch
-    ;               jnz             temp1
-    ;               jmp             label3
-    ; temp1:
-
-    ; left:
-    ;               mov             DX,curentCursorX
-    ;               cmp             DX,0D
-    ;               jnz             temp20
-
-    ;               jmp             cursorLoop
-    ; temp20:
-    ;               sub             DX,60D
-
-    ;               mov             curentCursorX,DX
-    ;               DRAW            borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-    ;               cmp             ah,11h
-    ;               jz              label5
-
-    ;               jmp             cursorLoop
-    ; label5:
-
-
-    ; right:
-    ;               mov             DX,curentCursorX
-    ;               cmp             DX,420D
-    ;               jnz             temp22
-    ;               jmp             cursorLoop
-    ; temp22:
-    ;               add             DX,60D
-    ;               mov             curentCursorX,DX
-    ;               DRAW            borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-    ;               cmp             ah,20h
-    ;               jz              label4
-    ;               jmp             cursorLoop
-    ; label4:
-
-    ; up:
-    ;               mov             DX,curentCursorY
-    ;               cmp             DX,0D
-    ;               jnz             label10
-    ;               jmp             cursorLoop
-    ; label10:
-
-    ;               mov             bl,currrow
-    ;               dec             bl
-    ;               mov             currrow,bl
-    ;               sub             DX,60D
-
-    ;               mov             curentCursorY,DX
-    ;               DRAW            borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-    ;               cmp             ah,11h
-    ;               jz              label2
-
-    ;               jmp             cursorLoop
-    ; label2:
-
-
-    ; down:
-    ;               mov             DX,curentCursorY
-    ;               cmp             DX,420D
-    ;               jnz             label11
-    ;               jmp             cursorLoop
-    ; label11:
-    ;               add             DX,60D
-    ;               mov             curentCursorY,DX
-    ;               DRAW            borderdata,borderwidth,borderheight,curentCursorX,curentCursorY    ; col,row
-    ;               cmp             ah,1fh
-    ;               jz              label1
-    ;               jmp             cursorLoop
-    ; label1:
-
-
-    ;               cmp             ah,1ch
-    ;               jz              label3
-
-    ;               jmp             cursorLoop
-    ; label3:
-
-
-
-
+                  CURSORMOV
+   
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
                   CloseFile      bkingfilehandle
@@ -1170,7 +1313,7 @@ GETDATA PROC                                                                    
 GETDATA ENDP
 
 CLS PROC                                                                                      ;CLEAR SCREEN
-                  MOV            AX,0003H;;ah == 0 set to graph mod the al = 3 return to text mode
+                  MOV            AX,0003H                                                     ;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
