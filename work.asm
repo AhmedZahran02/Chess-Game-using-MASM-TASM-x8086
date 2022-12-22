@@ -1432,6 +1432,13 @@ ENDM INSIDEGRID
     wrockfilename     db  'wrock.bin',0
     wrockfilehandle   DW  ?
     ;--------------
+    selectwidth       equ 60D
+    selectheight      equ 60D
+    selectfilename    db  'select.bin',0
+    selectfilehandle  DW  ?
+    selectdata        db  selectwidth*selectheight dup(0)
+    ;---------------
+
     borderwidth       equ 60D
     borderheight      equ 60D
     borderfilename    db  'border.bin',0
@@ -1492,6 +1499,8 @@ MAIN PROC FAR
     ;--border-----
                   OpenFile       borderfilename, borderfilehandle
                   ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
+                  OpenFile       selectfilename, selectfilehandle
+                  ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
@@ -1523,7 +1532,7 @@ MAIN PROC FAR
                   DrawPiecies    150D,0D
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-
+                  DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
                   CURSORMOV
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
