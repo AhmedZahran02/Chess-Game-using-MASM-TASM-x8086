@@ -513,34 +513,46 @@ SECONDQHANDLE MACRO
 ENDM SECONDQHANDLE
 
 CLEAR_AVAILABLE_PLACES MACRO
-    LOCAL loop9
-    LOCAL loop10
-    LOCAL break6
+    LOCAL Nloop9
+    LOCAL Nloop10
+    LOCAL TMP
+    LOCAL TMP2
+    LOCAL TMP3
+    LOCAL Nbreak6
 
-    mov al,0
-    mov ah,0
-    loop9:
-    mov al,0
-    loop10:
-     mov dummyData1,al
-     mov dummyData2,ah
-     pusha
-     GETARINDEXBYBYTE dummyData1,dummyData2
-     cmp cursorState[bx],0
-     je break6
-     popa
-     mov dummyData1,al
-     mov dummyData2,ah
-     pusha
-    UPDATECELL AL,AH,150D,0D 
-    break6:
-    popa
-    inc al
-    cmp al,8
-    jne loop10
-    inc ah
-    cmp ah,8
-    jne loop9
+                  mov                   al,0
+                  mov                   ah,0
+    Nloop9:       
+                  mov                   AL,0
+    Nloop10:      
+                  mov                   dummyData1,al
+                  mov                   dummyData2,ah
+                  pusha
+                  GETARINDEXBYBYTE      dummyData1,dummyData2
+                  cmp                   cursorState[bx],0
+                  JNE                   TMP
+                  JMP                   Nbreak6
+    TMP:          
+                  popa
+                  MOV                   dummyData3,0D
+                  MOV                   dummyData4,0D
+                  ADD                   dummyData3,al
+                  ADD                   dummyData4,ah
+                  pusha
+                  
+                  UPDATECELL            dummyData3,dummyData4,150D,0D
+    Nbreak6:      
+                  popa
+                  inc                   al
+                  cmp                   al,8
+                  JE                   TMP2
+                  JMP                   Nloop10
+    TMP2:         
+                  inc                   ah
+                  cmp                   ah,8
+                  JE                   TMP3
+                  JMP                   Nloop9
+    TMP3:
 
     ENDM CLEAR_AVAILABLE_PLACES
 
@@ -2153,6 +2165,9 @@ ENDM KnightMovements
     dummyData1        db  0
     dummyData2        db  0
 
+    dummyData3        DW  0
+    dummyData4        dW  0
+
     DUMMYX            DB  5
     DUMMYY            DB  5
     ;---------------------------------------------------------------------------------------------------
@@ -2162,96 +2177,92 @@ ENDM KnightMovements
 .CODE
 MAIN PROC FAR
     ;INITIALIZING
-                  call                  GETDATA
-                  CALL                  CLS
+                  call           GETDATA
+                  CALL           CLS
     ;OPENING AND READING BIN FILES
-                  OpenFile              bbishopfilename, bbishopfilehandle
-                  ReadData              bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile              bkingfilename, bkingfilehandle
-                  ReadData              bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile              bknightfilename, bknightfilehandle
-                  ReadData              bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile              bpawnfilename, bpawnfilehandle
-                  ReadData              bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile              bqueenfilename, bqueenfilehandle
-                  ReadData              bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile              brockfilename, brockfilehandle
-                  ReadData              brockfilehandle ,brockwidth,brockheight,brockdata
+                  OpenFile       bbishopfilename, bbishopfilehandle
+                  ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                  OpenFile       bkingfilename, bkingfilehandle
+                  ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                  OpenFile       bknightfilename, bknightfilehandle
+                  ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                  OpenFile       bpawnfilename, bpawnfilehandle
+                  ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                  OpenFile       bqueenfilename, bqueenfilehandle
+                  ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                  OpenFile       brockfilename, brockfilehandle
+                  ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
     ;--white piecies----
-                  OpenFile              wbishopfilename, wbishopfilehandle
-                  ReadData              wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile              wkingfilename, wkingfilehandle
-                  ReadData              wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile              wknightfilename, wknightfilehandle
-                  ReadData              wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile              wpawnfilename, wpawnfilehandle
-                  ReadData              wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile              wqueenfilename, wqueenfilehandle
-                  ReadData              wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile              wrockfilename, wrockfilehandle
-                  ReadData              wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                  OpenFile       wbishopfilename, wbishopfilehandle
+                  ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                  OpenFile       wkingfilename, wkingfilehandle
+                  ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                  OpenFile       wknightfilename, wknightfilehandle
+                  ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                  OpenFile       wpawnfilename, wpawnfilehandle
+                  ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                  OpenFile       wqueenfilename, wqueenfilehandle
+                  ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                  OpenFile       wrockfilename, wrockfilehandle
+                  ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
     ;--border-----
-                  OpenFile              borderfilename, borderfilehandle
-                  ReadData              borderfilehandle ,borderwidth,borderheight,borderdata
-                  OpenFile              selectfilename, selectfilehandle
-                  ReadData              selectfilehandle ,selectwidth,selectheight,selectdata
+                  OpenFile       borderfilename, borderfilehandle
+                  ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
+                  OpenFile       selectfilename, selectfilehandle
+                  ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                  validateName          nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
-                  movecursor            17H,0AH
-                  ShowMessage           proceed
-                  call                  waitkey
+                  validateName   nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
+                  movecursor     17H,0AH
+                  ShowMessage    proceed
+                  call           waitkey
     ;CHOICE MENU
     faraway:      
 
-                  call                  CLS
-                  movecursor            17H,03H
-                  ShowMessage           op1
-                  movecursor            17H,08H
-                  ShowMessage           op2
-                  movecursor            17H,0DH
-                  ShowMessage           op3
-                  MAINMAIN              thename,thename
+                  call           CLS
+                  movecursor     17H,03H
+                  ShowMessage    op1
+                  movecursor     17H,08H
+                  ShowMessage    op2
+                  movecursor     17H,0DH
+                  ShowMessage    op3
+                  MAINMAIN       thename,thename
     ;GAME SCREEN
     play:         
-                  CALL                  EnterGraphics
-                  mov                   curColCursor,00h
-                  mov                   curRowCursor,07h
-                  INITIALIZEGRID        0FH,08H
-                  DrawGrid              150D,0D,colorState[1],colorState[0]
-                  DrawPiecies           150D,0D
+                  CALL           EnterGraphics
+                  mov            curColCursor,00h
+                  mov            curRowCursor,07h
+                  INITIALIZEGRID 0FH,08H
+                  DrawGrid       150D,0D,colorState[1],colorState[0]
+                  DrawPiecies    150D,0D
 
-                  DRAWWITHSOURCE        borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-    ;DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
-                  MOV                   gridState[12],1D
-                  DRAW_AVAILABLE_PLACES
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                  
 
-    ;   CALL                   waitkey
-    ;   CLEAR_AVAILABLE_PLACES
     curs:         
                   CURSORMOV
-                  ENTERGAMECHAT         thename+2,thename+2
-                  JMP                   curs
+                  ENTERGAMECHAT  thename+2,thename+2
+                  JMP            curs
     ;----------------------------closing files--------------------------------------------------
-                  CloseFile             bbishopfilehandle
-                  CloseFile             bkingfilehandle
-                  CloseFile             bknightfilehandle
-                  CloseFile             bpawnfilehandle
-                  CloseFile             bqueenfilehandle
-                  CloseFile             brockfilehandle
+                  CloseFile      bbishopfilehandle
+                  CloseFile      bkingfilehandle
+                  CloseFile      bknightfilehandle
+                  CloseFile      bpawnfilehandle
+                  CloseFile      bqueenfilehandle
+                  CloseFile      brockfilehandle
 
-                  CloseFile             wbishopfilehandle
-                  CloseFile             wkingfilehandle
-                  CloseFile             wknightfilehandle
-                  CloseFile             wpawnfilehandle
-                  CloseFile             wqueenfilehandle
-                  CloseFile             wrockfilehandle
+                  CloseFile      wbishopfilehandle
+                  CloseFile      wkingfilehandle
+                  CloseFile      wknightfilehandle
+                  CloseFile      wpawnfilehandle
+                  CloseFile      wqueenfilehandle
+                  CloseFile      wrockfilehandle
 
-                  CloseFile             borderfilehandle
+                  CloseFile      borderfilehandle
 
                   EXT
 MAIN ENDP
@@ -2259,34 +2270,34 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                                     ;GET DATA
-                  MOV                   AX,@DATA
-                  MOV                   DS,AX
+GETDATA PROC                                                                                              ;GET DATA
+                  MOV            AX,@DATA
+                  MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                                         ;CLEAR SCREEN
-                  MOV                   AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
-                  INT                   10H
+CLS PROC                                                                                                  ;CLEAR SCREEN
+                  MOV            AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
+                  INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                                   ;ENTER TEXT MODE
-                  MOV                   AX,3H
-                  INT                   10H
+EnterText PROC                                                                                            ;ENTER TEXT MODE
+                  MOV            AX,3H
+                  INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                               ;ENTER GRAPHICS MODE
-                  MOV                   AX,4F02H
-                  MOV                   BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT                   10H
+EnterGraphics PROC                                                                                        ;ENTER GRAPHICS MODE
+                  MOV            AX,4F02H
+                  MOV            BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                                     ;wait for key
-                  MOV                   AH , 0
-                  INT                   16h
+waitkey PROC                                                                                              ;wait for key
+                  MOV            AH , 0
+                  INT            16h
                   ret
 waitkey ENDP
 
