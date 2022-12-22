@@ -435,7 +435,7 @@ ENDM DrawGrid
 FIRSTQHANDLE MACRO
                   ;if the cell is empty get out
                   isEmpty curRowCursor,curColCursor
-                  cmp bl,0
+                  cmp bl,0FFH
                   jnz getoutt
                   jmp outterr
                   getoutt:
@@ -857,7 +857,7 @@ MOV CH,BYTE PTR [SI]
 CMP CH , 0 
 jnz notEmpty 
 
-MOV BX, 0
+MOV BX, 0ffh
 notEmpty: 
 
 ENDM isEmpty
