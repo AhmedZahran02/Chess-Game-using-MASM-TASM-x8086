@@ -433,6 +433,11 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
+                  isEmpty curRowCursor,curColCursor
+                  cmp bl,0
+                  jnz getoutt
+                  jmp outterr
+                  getoutt:
 
                   GETARINDEX curRowCursor,curColCursor
                   MOV cl,BYTE PTR colorState[bx] 
@@ -451,6 +456,8 @@ FIRSTQHANDLE MACRO
                   inc bl
                   mov BYTE PTR stateOfQ,bl
 
+                  outterr:
+                  
 ENDM FIRSTQHANDLE
 
 SECONDQHANDLE MACRO
@@ -834,6 +841,25 @@ mov gridState[62],9  ;white knight
 mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
+
+
+isEmpty MACRO X,Y 
+LOCAL notEmpty 
+
+MOV AX,X
+MOV CX,Y
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+MOV CH,BYTE PTR [SI]
+CMP CH , 0 
+jnz notEmpty 
+
+MOV BX, 0
+notEmpty: 
+
+ENDM isEmpty
 
 validateName MACRO entermsg,name,strFailed
     LOCAL repeatt
