@@ -907,7 +907,7 @@ MOV [DI],AX
 ADD DI,BX
 MOV [DI],AX
 
-ADD Y,1
+
 ;DRAW        bbishopwidth,bbishopheight,X,Y,150,0
 
 ENDM PAWNAVALIABLEMOVES
