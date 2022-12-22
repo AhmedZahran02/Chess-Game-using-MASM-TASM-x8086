@@ -434,7 +434,15 @@ ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
                   ;if the cell is empty get out
+                ;   cmp bl,6
+                ;   jz isapawn
+                ;   jmp getouttt
+                ;   isapawn:  
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   getouttt: 
+
                   isEmpty curRowCursor,curColCursor
+                  KnightMovements curRowCursor,curColCursor
                   cmp bl,0FFH
                   jnz getoutt
                   jmp outterr
@@ -882,6 +890,27 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
+PAWNAVALIABLEMOVES MACRO X,Y
+MOV AX,X
+MOV CX,Y
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+
+LEA DI,corsorState
+ADD DI,BX
+ADD DI,BX
+
+MOV AX,1
+MOV [DI],AX
+ADD DI,BX
+MOV [DI],AX
+
+ADD Y,1
+;DRAW        bbishopwidth,bbishopheight,X,Y,150,0
+
+ENDM PAWNAVALIABLEMOVES
 
 isEmpty MACRO X,Y 
 LOCAL notEmpty 
@@ -913,11 +942,11 @@ validateName MACRO entermsg,name,strFailed
     movecursor  17H,06H
     cin         name
     ;movecursor  17H,0AH
-    jmp fistcheck
+    JMP fistcheck
 ;---------fist check with enter message-----------;
     repeatt:
 
-    call CLS
+    CALL CLS
 
     movecursor  17H,05H
     ShowMessage strFailed
@@ -1202,6 +1231,16 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
+GETARINDEXBYTE MACRO X,Y ;OUTPUT IN BX
+    MOV AL,X 
+    MOV BL , 8D
+    MUL BL 
+    MOV CL , Y 
+    MOV CH , 0 
+    ADD AX , CX
+    MOV BX,AX
+ENDM GETARINDEX
+
 UPDATECELL MACRO X,Y,A,B
     LOCAL NOPE
     getDrawPosition A,B,X,Y
@@ -1337,6 +1376,8 @@ LEA SI,gridState
 GETARINDEX AX,CX 
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
+CMP CH,0 
+JE WHITE
 CMP CH , 7 
 JL BLACK 
 
@@ -1349,7 +1390,34 @@ RETURN:
 
 
 ENDM ISWHITE
+ISWHITEBYTE MACRO X,Y 
+LOCAL WHITE 
+LOCAL BLACK 
+LOCAL RETURN 
 
+MOV AX ,0 
+MOV AL,X
+MOV CL,Y
+MOV CH,0
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+MOV CH,BYTE PTR [SI]
+CMP CH,0 
+JE WHITE
+CMP CH , 7 
+JL BLACK 
+
+WHITE:
+MOV BX,1 
+JMP RETURN
+BLACK: 
+MOV BX, 0
+RETURN: 
+
+
+ENDM ISWHITE
 INSIDEGRID MACRO X , Y 
 LOCAL NOTVALID 
 LOCAL VALID 
@@ -1600,6 +1668,316 @@ ENTERGAMECHAT MACRO player1Name,player2Name
 
 ENDM ENTERGAMECHAT
 
+ENTERGAMECHAT MACRO player1Name,player2Name
+                        LOCAL dead
+            LOCAL mainloop
+            LOCAL afterenter
+            local afterenter2
+            LOCAL deadmid
+            local midh
+            local CHK
+            local AGAIN
+
+                  mov  al, 01h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
+
+                ;   mov         ax,0620h ;clear page
+                ;   mov         bh,07
+                ;   mov         cx,0000H
+                ;   mov         dx,304FH
+                ;   int         10h
+
+                  movecursorWithPageNumber  00,21H,1D
+                  ShowMessage line
+
+                  movecursorWithPageNumber  00,1FH,1D
+                  ShowMessage player1Name
+
+                  movecursorWithPageNumber  00,22H,1D
+                  ShowMessage player2Name
+
+                  mov         dx,3fbh           ; Line Control Register
+                  mov         al,10000000b      ;Set Divisor Latch Access Bit
+                  out         dx,al
+
+
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+                  mov         dx,3f8h
+                  mov         al,0ch
+                  out         dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+                  mov         dx,3f9h
+                  mov         al,00h
+                  out         dx,al
+
+
+    ;Set port configuration
+                  mov         dx,3fbh
+                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+                  out         dx,al
+
+
+                  mov         dh,00H
+                  mov         dl,23H
+                  push        dx
+                  mov         dh,00H
+                  mov         dl,20H
+                  push        dx
+
+                  movecursorWithPageNumber  00H,20H,1D
+                
+    ;program starts here
+    mainloop:     
+                  
+                
+                  mov         ah,01
+                  int         16h
+                  jz          AGAIN
+
+                  mov         ah,0
+                  int         16h
+                  
+
+                  pop         dx
+                  push        dx
+                  push        ax
+                  movecursorWithPageNumber  dh,dl,1
+                  pop         ax
+                  pop         dx
+                  inc         dh
+                  push        dx
+
+                  push        ax
+
+                  mov         ah,2
+                  mov         dl,al
+                  int         21h
+
+                  pop         ax
+
+                  mov         bl,ah
+                  cmp         bl,40H            ; F6 key
+                  je          deadmid
+
+                  mov         bl,al
+                  cmp         bl,13
+                  jne         afterenter
+
+                  pop         dx
+                  inc         dl
+                  mov         dh,0
+                  PUSH        dx
+
+                  cmp         dx,0021H          ;CURSOR CHECK
+                  jne         afterenter
+
+                  pop         dx                ;clear line
+                  push        dx
+                  push        ax
+                  MOV         DL,20H
+                  movecursorWithPageNumber  dh,dl,1
+                  ShowMessage clear
+                  pop         ax
+                  pop         dx
+                  inc         dh
+                  push        dx                  
+
+                  POP         DX
+                  MOV         DL,20H
+                  PUSH        DX
+
+    afterenter:   
+    ;Sending a value
+
+    ;Check that Transmitter Holding Register is Empty
+                  mov         dx , 3FDH         ; Line Status Register
+
+                  In          al , dx           ;Read Line Status
+                  AND         al , 00100000b
+                  JZ          AGAIN             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov         al,bl
+                  out         dx , al
+                  jmp         AGAIN
+           
+    ;Receiving a value
+    deadmid:      
+                  jmp         dead
+                  
+    AGAIN:        
+    ;Check that Data Ready
+                  mov         dx , 3FDH         ; Line Status Register
+          
+                  in          al , dx
+                  AND         al , 00000001b
+                  JZ          CHK               ;jump untill it recive data
+
+    ;If Ready read the VALUE in Receive data register
+                  mov         dx , 03F8H
+                  in          al , dx
+                  
+                  pop         cx
+                  pop         dx
+                  push        dx
+                  push        cx
+                  movecursorWithPageNumber  dh,dl,1D
+                  pop         cx
+                  pop         dx
+                  inc         dh
+                  push        dx
+                  push        cx
+
+                  cmp         al,13
+                  jne         afterenter2
+
+                  pop         cx
+                  pop         dx
+                  push        dx
+                  push        cx
+                  MOV         DL,23H
+                  movecursorWithPageNumber  dh,dl,1D
+                  ShowMessage clear
+                  pop         cx
+                  pop         dx
+                  inc         dl
+                  mov         dh,0
+                  push        dx
+                  push        cx
+
+                  cmp         dx,0024H          ;CURSOR CHECK
+                  jne         afterenter2
+                
+
+                  PUSH        BX
+                  PUSH        AX
+
+                  MOV         DL,23H
+                  movecursorWithPageNumber  dh,dl,1
+                  ShowMessage clear
+
+                ;   mov         ax,0601h
+                ;   mov         bh,07
+                ;   mov         cx,0C00H ;write alot of spaces
+                ;   mov         dx,164FH
+                ;   int         10h
+
+                  POP         AX
+                  POP         BX
+                  pop         cx
+                  pop         dx
+                  MOV         DL,23H
+                  push        dx
+                  push        cx
+
+    afterenter2:  
+
+                  mov         dl,al
+                  mov         ah,2
+                  int         21h
+                  
+    CHK:          
+
+                  jmp         mainloop
+    dead:  
+                  mov  al, 00h   ; select display page 0
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
+
+ENDM ENTERGAMECHAT
+
+KnightMovements MACRO X, Y
+LOCAL VALID
+LOCAL NOTVALID
+LOCAL LOOP1 
+LOCAL CHECK2
+LOCAL WHITE 
+LOCAL BLACK
+                    MOV AX,  3 ; ROW 
+                    MOV DX , 3 ; COL
+                    MOV CX,8 
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    PUSH AX
+                    PUSH DX
+                    LOOP1:
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    MOV AX,  X ; ROW 
+                    MOV DX , Y ; COL
+                    ADD SI ,CX
+                    ADD DI, CX
+                        ADD AX , [SI]
+                        ADD DX , [DI]
+                        PUSH AX
+                        INSIDEGRID AL,DL
+                        POP AX
+                        CMP BX,0 
+                        JE NOTVALID 
+
+                        CHECK2:
+                        ; PUSH AX
+                        ; PUSH CX
+                        ; MOV DUMMYX, AL 
+                        ; MOV DUMMYY , DL
+                        ; ISWHITEBYTE DUMMYX,DUMMYY
+                        ; POP CX
+                        ; POP AX 
+                        ; CMP BX,0
+                        ; JE NOTVALID
+
+
+
+                    ; PUSHA
+                    ; ;  CODE FOR CHECKING IF WHITE   ---------------------------------------------------;                 
+                    ; LEA SI,gridState 
+                    ; ; GETARINDEX AX,DX 
+                    ;     ; MOV AX,X 
+                    ;     MOV BL , 8D
+                    ;     MUL BL 
+                    ;     ADD AX , DX
+        
+                    ; ADD SI,AX
+                    ; MOV CH,BYTE PTR [SI]
+                    ; CMP CH , 6 
+                    ; JG WHITE 
+                    ; JMP BLACK
+                    ; WHITE:
+                    ; POPA
+
+                    ; JMP NOTVALID
+                    ; BLACK: 
+
+                    ; ;-----------------------------------------------------------------------------;
+                    ; POPA
+
+
+
+
+
+
+
+
+                        VALID: 
+                        MOV DUMMYX , AL
+                        ; LEA SI , DUMMYY
+                        MOV DUMMYY ,  DL
+                        PUSHA
+                        DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
+                        POPA
+                        NOTVALID:
+                         CMP CX,0
+                        JE RETURN
+                        DEC CX
+                        JMP LOOP1
+                        RETURN:
+
+ENDM KnightMovements
 .MODEL SMALL
 .286
 .STACK 64
@@ -1623,6 +2001,17 @@ ENDM ENTERGAMECHAT
     wbishopdata       db  60D*60D dup(0)
     wqueendata        db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
+
+
+    knightdx          db  1,1,2,2,-2,-2, -1 , -1
+    knightdy          db  -2,2,1,-1,1,-1,2,-2
+    
+    ; king_dx           db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    ; king_dy           db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
+    ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+    ; soldier_dx        db  1 ,
+    ; soldier_dy        db  1 ,
 
     thename           db  16,?,16 dup('$')                                                          ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
@@ -1720,6 +2109,11 @@ ENDM ENTERGAMECHAT
     cellColorState    db  0
 
     stateOfQ          db  0
+    dummyData1        db  0
+    dummyData2        db  0
+
+    DUMMYX            DB  5
+    DUMMYY            DB  5
     ;---------------------------------------------------------------------------------------------------
  
 
