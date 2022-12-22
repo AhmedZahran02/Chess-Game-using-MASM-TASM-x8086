@@ -857,7 +857,7 @@ MOV CH,BYTE PTR [SI]
 CMP CH , 0 
 jnz notEmpty 
 
-MOV BX, 0ffh
+MOV BX, 0ffh;;to get farway from the array index 0
 notEmpty: 
 
 ENDM isEmpty
