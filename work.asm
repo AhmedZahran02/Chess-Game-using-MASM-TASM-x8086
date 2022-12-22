@@ -434,6 +434,13 @@ ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
                   ;if the cell is empty get out
+                ;   cmp bl,6
+                ;   jz isapawn
+                ;   jmp getouttt
+                ;   isapawn:  
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   getouttt: 
+
                   isEmpty curRowCursor,curColCursor
                   cmp bl,0FFH
                   jnz getoutt
@@ -843,6 +850,27 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
+PAWNAVALIABLEMOVES MACRO X,Y
+MOV AX,X
+MOV CX,Y
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+
+LEA DI,corsorState
+ADD DI,BX
+ADD DI,BX
+
+MOV AX,1
+MOV [DI],AX
+ADD DI,BX
+MOV [DI],AX
+
+ADD Y,1
+;DRAW        bbishopwidth,bbishopheight,X,Y,150,0
+
+ENDM PAWNAVALIABLEMOVES
 
 isEmpty MACRO X,Y 
 LOCAL notEmpty 
@@ -874,11 +902,11 @@ validateName MACRO entermsg,name,strFailed
     movecursor  17H,06H
     cin         name
     ;movecursor  17H,0AH
-    jmp fistcheck
+    JMP fistcheck
 ;---------fist check with enter message-----------;
     repeatt:
 
-    call CLS
+    CALL CLS
 
     movecursor  17H,05H
     ShowMessage strFailed
