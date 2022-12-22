@@ -495,7 +495,6 @@ SECONDQHANDLE MACRO
 ENDM SECONDQHANDLE
 
 CURSORMOV MACRO 
-  LOCAL cursorLoop
   LOCAL tmplabel10
   LOCAL label6
   LOCAL label7
@@ -516,7 +515,8 @@ CURSORMOV MACRO
   LOCAL qpressed
   LOCAL tmplabel20
   LOCAL firsrQ
-  
+  LOCAL temp23
+
 
 cursorLoop:
 
@@ -534,6 +534,11 @@ cursorLoop:
                   jnz             tmplabel10
                   jmp qpressed
 tmplabel10:
+
+                  cmp             ah,40h
+                  jnz             temp23
+                  jmp             gameChat
+    temp23: 
                   cmp             ah,11h
                   jnz             label6
                   jmp             up
@@ -647,6 +652,8 @@ tmplabel10:
     firsrQ:
     FIRSTQHANDLE
                  jmp             cursorLoop   
+                                  gameChat:
+
 
 ENDM CURSORMOV
 
