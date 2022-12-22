@@ -670,7 +670,7 @@ loop10:
  mov dummyData1,al
  mov dummyData2,ah
  pusha
-DRAWWITHSOURCE       borderdata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D 
+DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
 break6:
 popa
 inc al
