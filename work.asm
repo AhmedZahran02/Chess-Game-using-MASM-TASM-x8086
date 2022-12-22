@@ -1500,6 +1500,8 @@ ENDM INSIDEGRID
     cellColorState    db  0
 
     stateOfQ          db  0
+    dummyData1    db 0
+    dummyData2    db 0
     ;---------------------------------------------------------------------------------------------------
  
 
