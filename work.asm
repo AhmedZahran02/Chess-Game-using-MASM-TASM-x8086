@@ -435,6 +435,7 @@ ENDM DrawGrid
 FIRSTQHANDLE MACRO
                   ;if the cell is empty get out
                   isEmpty curRowCursor,curColCursor
+                  KnightMovements curRowCursor,curColCursor
                   cmp bl,0FFH
                   jnz getoutt
                   jmp outterr
@@ -1160,6 +1161,16 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
+GETARINDEXBYTE MACRO X,Y ;OUTPUT IN BX
+    MOV AL,X 
+    MOV BL , 8D
+    MUL BL 
+    MOV CL , Y 
+    MOV CH , 0 
+    ADD AX , CX
+    MOV BX,AX
+ENDM GETARINDEX
+
 UPDATECELL MACRO X,Y,A,B
     LOCAL NOPE
     getDrawPosition A,B,X,Y
@@ -1295,6 +1306,8 @@ LEA SI,gridState
 GETARINDEX AX,CX 
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
+CMP CH,0 
+JE WHITE
 CMP CH , 7 
 JL BLACK 
 
@@ -1307,7 +1320,34 @@ RETURN:
 
 
 ENDM ISWHITE
+ISWHITEBYTE MACRO X,Y 
+LOCAL WHITE 
+LOCAL BLACK 
+LOCAL RETURN 
 
+MOV AX ,0 
+MOV AL,X
+MOV CL,Y
+MOV CH,0
+
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+MOV CH,BYTE PTR [SI]
+CMP CH,0 
+JE WHITE
+CMP CH , 7 
+JL BLACK 
+
+WHITE:
+MOV BX,1 
+JMP RETURN
+BLACK: 
+MOV BX, 0
+RETURN: 
+
+
+ENDM ISWHITE
 INSIDEGRID MACRO X , Y 
 LOCAL NOTVALID 
 LOCAL VALID 
@@ -1335,6 +1375,93 @@ RETURN:
 
 ENDM INSIDEGRID
 
+KnightMovements MACRO X, Y
+LOCAL VALID
+LOCAL NOTVALID
+LOCAL LOOP1 
+LOCAL CHECK2
+LOCAL WHITE 
+LOCAL BLACK
+                    MOV AX,  3 ; ROW 
+                    MOV DX , 3 ; COL
+                    MOV CX,8 
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    PUSH AX
+                    PUSH DX
+                    LOOP1:
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    MOV AX,  X ; ROW 
+                    MOV DX , Y ; COL
+                    ADD SI ,CX
+                    ADD DI, CX
+                        ADD AX , [SI]
+                        ADD DX , [DI]
+                        PUSH AX
+                        INSIDEGRID AL,DL
+                        POP AX
+                        CMP BX,0 
+                        JE NOTVALID 
+
+                        CHECK2:
+                        ; PUSH AX
+                        ; PUSH CX
+                        ; MOV DUMMYX, AL 
+                        ; MOV DUMMYY , DL
+                        ; ISWHITEBYTE DUMMYX,DUMMYY
+                        ; POP CX
+                        ; POP AX 
+                        ; CMP BX,0
+                        ; JE NOTVALID
+
+
+
+                    ; PUSHA
+                    ; ;  CODE FOR CHECKING IF WHITE   ---------------------------------------------------;                 
+                    ; LEA SI,gridState 
+                    ; ; GETARINDEX AX,DX 
+                    ;     ; MOV AX,X 
+                    ;     MOV BL , 8D
+                    ;     MUL BL 
+                    ;     ADD AX , DX
+        
+                    ; ADD SI,AX
+                    ; MOV CH,BYTE PTR [SI]
+                    ; CMP CH , 6 
+                    ; JG WHITE 
+                    ; JMP BLACK
+                    ; WHITE:
+                    ; POPA
+
+                    ; JMP NOTVALID
+                    ; BLACK: 
+
+                    ; ;-----------------------------------------------------------------------------;
+                    ; POPA
+
+
+
+
+
+
+
+
+                        VALID: 
+                        MOV DUMMYX , AL
+                        ; LEA SI , DUMMYY
+                        MOV DUMMYY ,  DL
+                        PUSHA
+                        DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
+                        POPA
+                        NOTVALID:
+                         CMP CX,0
+                        JE RETURN
+                        DEC CX
+                        JMP LOOP1
+                        RETURN:
+
+ENDM KnightMovements
 .MODEL SMALL
 .286
 .STACK 64
@@ -1357,6 +1484,10 @@ ENDM INSIDEGRID
     wbishopdata       db  60D*60D dup(0)
     wqueendata        db  60D*60D dup(0)
     wkingdata         db  60D*60D dup(0)
+
+
+    knightdx db 1,1,2,2,-2,-2, -1 , -1
+    knightdy db -2,2,1,-1,1,-1,2,-2
     
     ; king_dx           db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
     ; king_dy           db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
@@ -1461,6 +1592,9 @@ ENDM INSIDEGRID
     cellColorState    db  0
 
     stateOfQ          db  0
+
+    DUMMYX DB 5 
+    DUMMYY DB 5 
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -1534,6 +1668,11 @@ MAIN PROC FAR
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                   DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
                   CURSORMOV
+                ;   KnightMovements 5,5
+                
+
+
+
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
                   CloseFile      bkingfilehandle
