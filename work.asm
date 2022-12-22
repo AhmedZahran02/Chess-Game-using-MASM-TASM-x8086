@@ -1985,7 +1985,7 @@ ENDM KnightMovements
 .Data
     nameq             db  'Please enter your name:','$'
     erroname          db  'Please write a valid name :','$'
-    clear             db  '                                                                ','$'
+    clear             db  '                                                                                                    ','$'
     line              db  '---------------------------------------------------','$'
     
     brockdata         db  60D*60D dup(0)
@@ -2013,7 +2013,7 @@ ENDM KnightMovements
     ; soldier_dx        db  1 ,
     ; soldier_dy        db  1 ,
 
-    thename           db  16,?,16 dup('$')                                                          ; max size 15 char last digit for $
+    thename           db  16,?,16 dup('$')                                                                                              ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
     op1               db  'To start chatting press F1','$'
     op2               db  'To start the game press F2','$'
@@ -2095,7 +2095,7 @@ ENDM KnightMovements
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    corsorState       db  64  dup(0)                                                                ; 0 for not cursor 1 for cursor
+    corsorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
 
     curRowCursor      dw  0
     curColCursor      dw  0
@@ -2185,7 +2185,7 @@ MAIN PROC FAR
                   DrawPiecies    150D,0D
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
+    ;DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
     curs:         
                   CURSORMOV
                   ENTERGAMECHAT  thename+2,thename+2
