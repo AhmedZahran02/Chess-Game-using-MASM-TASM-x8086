@@ -434,15 +434,7 @@ ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
                   ;if the cell is empty get out
-                ;   cmp bl,6
-                ;   jz isapawn
-                ;   jmp getouttt
-                ;   isapawn:  
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   getouttt: 
-
                   isEmpty curRowCursor,curColCursor
-                  KnightMovements curRowCursor,curColCursor
                   cmp bl,0FFH
                   jnz getoutt
                   jmp outterr
@@ -503,6 +495,7 @@ SECONDQHANDLE MACRO
 ENDM SECONDQHANDLE
 
 CURSORMOV MACRO 
+  LOCAL cursorLoop
   LOCAL tmplabel10
   LOCAL label6
   LOCAL label7
@@ -523,8 +516,7 @@ CURSORMOV MACRO
   LOCAL qpressed
   LOCAL tmplabel20
   LOCAL firsrQ
-  LOCAL temp23
-
+  
 
 cursorLoop:
 
@@ -542,11 +534,6 @@ cursorLoop:
                   jnz             tmplabel10
                   jmp qpressed
 tmplabel10:
-
-                  cmp             ah,40h
-                  jnz             temp23
-                  jmp             gameChat
-    temp23: 
                   cmp             ah,11h
                   jnz             label6
                   jmp             up
@@ -660,42 +647,8 @@ tmplabel10:
     firsrQ:
     FIRSTQHANDLE
                  jmp             cursorLoop   
-                                  gameChat:
-
 
 ENDM CURSORMOV
-
-DRAW_AVAILABLE_PLACES MACRO
-LOCAL loop9
-LOCAL loop10
-LOCAL break6
-
-mov al,0
-mov ah,0
-loop9:
-mov al,0
-loop10:
- mov dummyData1,al
- mov dummyData2,ah
- pusha
- GETARINDEXBYBYTE dummyData1,dummyData2
- cmp cursorState[bx],0
- je break6
- popa
- mov dummyData1,al
- mov dummyData2,ah
- pusha
-DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
-break6:
-popa
-inc al
-cmp al,8
-jne loop10
-inc ah
-cmp ah,8
-jne loop9
-
-ENDM DRAW_AVAILABLE_PLACES
 
 DrawPiecies MACRO A,B
         ;white
@@ -890,27 +843,6 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-PAWNAVALIABLEMOVES MACRO X,Y
-MOV AX,X
-MOV CX,Y
-
-LEA SI,gridState 
-GETARINDEX AX,CX 
-ADD SI,BX
-
-LEA DI,corsorState
-ADD DI,BX
-ADD DI,BX
-
-MOV AX,1
-MOV [DI],AX
-ADD DI,BX
-MOV [DI],AX
-
-ADD Y,1
-;DRAW        bbishopwidth,bbishopheight,X,Y,150,0
-
-ENDM PAWNAVALIABLEMOVES
 
 isEmpty MACRO X,Y 
 LOCAL notEmpty 
@@ -942,11 +874,11 @@ validateName MACRO entermsg,name,strFailed
     movecursor  17H,06H
     cin         name
     ;movecursor  17H,0AH
-    JMP fistcheck
+    jmp fistcheck
 ;---------fist check with enter message-----------;
     repeatt:
 
-    CALL CLS
+    call CLS
 
     movecursor  17H,05H
     ShowMessage strFailed
@@ -1228,16 +1160,6 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV BX,AX
 ENDM GETARINDEX
 
-GETARINDEXBYTE MACRO X,Y ;OUTPUT IN BX
-    MOV AL,X 
-    MOV BL , 8D
-    MUL BL 
-    MOV CL , Y 
-    MOV CH , 0 
-    ADD AX , CX
-    MOV BX,AX
-ENDM GETARINDEX
-
 UPDATECELL MACRO X,Y,A,B
     LOCAL NOPE
     getDrawPosition A,B,X,Y
@@ -1373,8 +1295,6 @@ LEA SI,gridState
 GETARINDEX AX,CX 
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
-CMP CH,0 
-JE WHITE
 CMP CH , 7 
 JL BLACK 
 
@@ -1387,34 +1307,7 @@ RETURN:
 
 
 ENDM ISWHITE
-ISWHITEBYTE MACRO X,Y 
-LOCAL WHITE 
-LOCAL BLACK 
-LOCAL RETURN 
 
-MOV AX ,0 
-MOV AL,X
-MOV CL,Y
-MOV CH,0
-
-LEA SI,gridState 
-GETARINDEX AX,CX 
-ADD SI,BX
-MOV CH,BYTE PTR [SI]
-CMP CH,0 
-JE WHITE
-CMP CH , 7 
-JL BLACK 
-
-WHITE:
-MOV BX,1 
-JMP RETURN
-BLACK: 
-MOV BX, 0
-RETURN: 
-
-
-ENDM ISWHITE
 INSIDEGRID MACRO X , Y 
 LOCAL NOTVALID 
 LOCAL VALID 
@@ -1442,322 +1335,101 @@ RETURN:
 
 ENDM INSIDEGRID
 
-KnightMovements MACRO X, Y
-LOCAL VALID
-LOCAL NOTVALID
-LOCAL LOOP1 
-LOCAL CHECK2
-LOCAL WHITE 
-LOCAL BLACK
-                    MOV AX,  3 ; ROW 
-                    MOV DX , 3 ; COL
-                    MOV CX,8 
-                    LEA SI , knightdx
-                    LEA DI , knightdy
-                    PUSH AX
-                    PUSH DX
-                    LOOP1:
-                    LEA SI , knightdx
-                    LEA DI , knightdy
-                    MOV AX,  X ; ROW 
-                    MOV DX , Y ; COL
-                    ADD SI ,CX
-                    ADD DI, CX
-                        ADD AX , [SI]
-                        ADD DX , [DI]
-                        PUSH AX
-                        INSIDEGRID AL,DL
-                        POP AX
-                        CMP BX,0 
-                        JE NOTVALID 
+sendchange MACRO X
+    LOCAL AGAIN1
 
-                        CHECK2:
-                        ; PUSH AX
-                        ; PUSH CX
-                        ; MOV DUMMYX, AL 
-                        ; MOV DUMMYY , DL
-                        ; ISWHITEBYTE DUMMYX,DUMMYY
-                        ; POP CX
-                        ; POP AX 
-                        ; CMP BX,0
-                        ; JE NOTVALID
+        mov dx,3fbh ; Line Control Register
+        mov al,10000000b ;Set Divisor Latch Access Bit
+        out dx,al
 
+        ;000c => 9600 baud rate
+        ;Set LSB byte of the Baud Rate Divisor Latch
+        mov dx,3f8h
+        mov al,0ch
+        out dx,al  
 
+        ;Set MSB byte of the Baud Rate Divisor Latch register.
+        mov dx,3f9h
+        mov al,00h
+        out dx,al  
 
-                    ; PUSHA
-                    ; ;  CODE FOR CHECKING IF WHITE   ---------------------------------------------------;                 
-                    ; LEA SI,gridState 
-                    ; ; GETARINDEX AX,DX 
-                    ;     ; MOV AX,X 
-                    ;     MOV BL , 8D
-                    ;     MUL BL 
-                    ;     ADD AX , DX
-        
-                    ; ADD SI,AX
-                    ; MOV CH,BYTE PTR [SI]
-                    ; CMP CH , 6 
-                    ; JG WHITE 
-                    ; JMP BLACK
-                    ; WHITE:
-                    ; POPA
+        ;Set port configuration
+        mov dx,3fbh
+        mov al,00011011b  ;011=> even parity 0=> one stop bit 11=> 8bits
+        out dx,al    
 
-                    ; JMP NOTVALID
-                    ; BLACK: 
+        ;Sending a value
 
-                    ; ;-----------------------------------------------------------------------------;
-                    ; POPA
+        ;Check that Transmitter Holding Register is Empty
+        mov dx , 3FDH ; Line Status Register
 
+        AGAIN1:
+        In al , dx ;Read Line Status
+        AND al , 00100000b
+        JZ AGAIN1  ;jump untill it is empty
 
+        ;If empty put the VALUE in Transmit data register
+        mov dx , 3F8H ; Transmit data register
+        mov al,X
+        out dx , al   
 
+ENDM sendchange
 
+recievechange MACRO X
 
+        mov dx,3fbh ; Line Control Register
+        mov al,10000000b ;Set Divisor Latch Access Bit
+        out dx,al
 
+        ;000c => 9600 baud rate
+        ;Set LSB byte of the Baud Rate Divisor Latch
+        mov dx,3f8h
+        mov al,0ch
+        out dx,al  
 
+        ;Set MSB byte of the Baud Rate Divisor Latch register.
+        mov dx,3f9h
+        mov al,00h
+        out dx,al  
 
-                        VALID: 
-                        MOV DUMMYX , AL
-                        ; LEA SI , DUMMYY
-                        MOV DUMMYY ,  DL
-                        PUSHA
-                        DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
-                        POPA
-                        NOTVALID:
-                         CMP CX,0
-                        JE RETURN
-                        DEC CX
-                        JMP LOOP1
-                        RETURN:
+        ;Set port configuration
+        mov dx,3fbh
+        mov al,00011011b  ;011=> even parity 0=> one stop bit 11=> 8bits
+        out dx,al    
 
-ENDM KnightMovements
+        ;Receiving a value
+
+        ;Check that Data Ready
+        mov dx , 3FDH ; Line Status Register
+        CHK:
+        in al , dx
+        AND al , 00000001b
+        JZ CHK ;jump untill it recive data
+
+        ;If Ready read the VALUE in Receive data register
+        mov dx , 03F8H
+        in al , dx
+        mov X , al
+
+ENDM recievechange
+
 .MODEL SMALL
 .286
 .STACK 64
 ;-----------
 .Data
-    nameq             db  'Please enter your name:','$'
-    erroname          db  'Please write a valid name :','$'
-    line              db  '---------------------------------------------------','$'
-    
-    brockdata         db  60D*60D dup(0)
-    bknightdata       db  60D*60D dup(0)
-    bbishopdata       db  60D*60D dup(0)
-    bqueendata        db  60D*60D dup(0)
-    bkingdata         db  60D*60D dup(0)
-    bpawndata         db  60D*60D dup(0)
-
-    wpawndata         db  60D*60D dup(0)
-    wrockdata         db  60D*60D dup(0)
-    wknightdata       db  60D*60D dup(0)
-    wbishopdata       db  60D*60D dup(0)
-    wqueendata        db  60D*60D dup(0)
-    wkingdata         db  60D*60D dup(0)
-
-
-    knightdx db 1,1,2,2,-2,-2, -1 , -1
-    knightdy db -2,2,1,-1,1,-1,2,-2
-    
-    ; king_dx           db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    ; king_dy           db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    ; soldier_dx        db  1 ,
-    ; soldier_dy        db  1 ,
-
-    thename           db  16,?,16 dup('$')                                             ; max size 15 char last digit for $
-    proceed           db  'Please Enter key to continue','$'
-    op1               db  'To start chatting press F1','$'
-    op2               db  'To start the game press F2','$'
-    op3               db  'To end the program press ESC','$'
-    ;------------black pieces---------------
-    bbishopwidth      equ 60D
-    bbishopheight     equ 60D
-    bbishopfilename   db  'bbishop.bin',0
-    bbishopfilehandle DW  ?
-
-    bkingwidth        equ 60D
-    bkingheight       equ 60D
-    bkingfilename     db  'bking.bin',0
-    bkingfilehandle   DW  ?
-
-    bknightwidth      equ 60D
-    bknightheight     equ 60D
-    bknightfilename   db  'bknight.bin',0
-    bknightfilehandle DW  ?
-
-    bpawnwidth        equ 60D
-    bpawnheight       equ 60D
-    bpawnfilename     db  'bpawn.bin',0
-    bpawnfilehandle   DW  ?
-
-    bqueenwidth       equ 60D
-    bqueenheight      equ 60D
-    bqueenfilename    db  'bqueen.bin',0
-    bqueenfilehandle  DW  ?
-
-    brockwidth        equ 60D
-    brockheight       equ 60D
-    brockfilename     db  'brock.bin',0
-    brockfilehandle   DW  ?
-
-    ;------------white pieces---------------
-    wbishopwidth      equ 60D
-    wbishopheight     equ 60D
-    wbishopfilename   db  'wbishop.bin',0
-    wbishopfilehandle DW  ?
-
-    wkingwidth        equ 60D
-    wkingheight       equ 60D
-    wkingfilename     db  'wking.bin',0
-    wkingfilehandle   DW  ?
-
-    wknightwidth      equ 60D
-    wknightheight     equ 60D
-    wknightfilename   db  'wknight.bin',0
-    wknightfilehandle DW  ?
-
-    wpawnwidth        equ 60D
-    wpawnheight       equ 60D
-    wpawnfilename     db  'wpawn.bin',0
-    wpawnfilehandle   DW  ?
-
-    wqueenwidth       equ 60D
-    wqueenheight      equ 60D
-    wqueenfilename    db  'wqueen.bin',0
-    wqueenfilehandle  DW  ?
-
-    wrockwidth        equ 60D
-    wrockheight       equ 60D
-    wrockfilename     db  'wrock.bin',0
-    wrockfilehandle   DW  ?
-    ;--------------
-    selectwidth       equ 60D
-    selectheight      equ 60D
-    selectfilename    db  'select.bin',0
-    selectfilehandle  DW  ?
-    selectdata        db  selectwidth*selectheight dup(0)
-    ;---------------
-
-    borderwidth       equ 60D
-    borderheight      equ 60D
-    borderfilename    db  'border.bin',0
-    borderfilehandle  DW  ?
-    borderdata        db  borderwidth*borderheight dup(0)
-
-    gridState         db  64  dup(0)
-    colorState        db  64  dup(0)
-    corsorState       db  64  dup(0)                                                   ; 0 for not cursor 1 for cursor
-
-    curRowCursor      dw  0
-    curColCursor      dw  0
-
-    startRowCursor    dw  0
-    startColCursor    dw  0
-
-    endRowCursor      dw  0
-    endColCursor      dw  0
-
-    cellColorState    db  0
-
-    stateOfQ          db  0
-    dummyData1    db 0
-    dummyData2    db 0
-
-    DUMMYX DB 5 
-    DUMMYY DB 5 
-    ;---------------------------------------------------------------------------------------------------
- 
-
-
+    nameq        db 'Please enter your name:','$'
+    curRowCursor dw -1
+    curColCursor dw -1
 .CODE
 MAIN PROC FAR
-    ;INITIALIZING
-                  call           GETDATA
-                  CALL           CLS
-    ;OPENING AND READING BIN FILES
-                  OpenFile       bbishopfilename, bbishopfilehandle
-                  ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile       bkingfilename, bkingfilehandle
-                  ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile       bknightfilename, bknightfilehandle
-                  ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile       bpawnfilename, bpawnfilehandle
-                  ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile       bqueenfilename, bqueenfilehandle
-                  ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile       brockfilename, brockfilehandle
-                  ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-    ;--white piecies----
-                  OpenFile       wbishopfilename, wbishopfilehandle
-                  ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile       wkingfilename, wkingfilehandle
-                  ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile       wknightfilename, wknightfilehandle
-                  ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile       wpawnfilename, wpawnfilehandle
-                  ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile       wqueenfilename, wqueenfilehandle
-                  ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile       wrockfilename, wrockfilehandle
-                  ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-    ;--border-----
-                  OpenFile       borderfilename, borderfilehandle
-                  ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-                  OpenFile       selectfilename, selectfilehandle
-                  ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
+    ;   sendchange 63D
 
-    ;START MENU
-                  validateName   nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
-                  movecursor     17H,0AH
-                  ShowMessage    proceed
-                  call           waitkey
-    ;CHOICE MENU
-    faraway:      
-
-                  call           CLS
-                  movecursor     17H,03H
-                  ShowMessage    op1
-                  movecursor     17H,08H
-                  ShowMessage    op2
-                  movecursor     17H,0DH
-                  ShowMessage    op3
-                  MAINMAIN       thename,thename
-    ;GAME SCREEN
-    play:         
-                  CALL           EnterGraphics
-                  mov            curColCursor,00h
-                  mov            curRowCursor,07h
-                  INITIALIZEGRID 0FH,08H
-                  DrawGrid       150D,0D,colorState[1],colorState[0]
-                  DrawPiecies    150D,0D
-
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  DRAWWITHSOURCE selectdata,selectwidth,selectheight,1D,1D,150D,0D
-                  CURSORMOV
-                ;   KnightMovements 5,5
-                
-
-
-
-    ;----------------------------closing files--------------------------------------------------
-                  CloseFile      bbishopfilehandle
-                  CloseFile      bkingfilehandle
-                  CloseFile      bknightfilehandle
-                  CloseFile      bpawnfilehandle
-                  CloseFile      bqueenfilehandle
-                  CloseFile      brockfilehandle
-
-                  CloseFile      wbishopfilehandle
-                  CloseFile      wkingfilehandle
-                  CloseFile      wknightfilehandle
-                  CloseFile      wpawnfilehandle
-                  CloseFile      wqueenfilehandle
-                  CloseFile      wrockfilehandle
-
-                  CloseFile      borderfilehandle
+    ;   recievechange BL
+                  MOV AH,0D
+                  MOV curRowCursor,BX
+    ;   TOSTRING      nameq
+    ;   ShowMessage   nameq
 
                   EXT
 MAIN ENDP
@@ -1765,34 +1437,34 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                              ;GET DATA
-                  MOV            AX,@DATA
-                  MOV            DS,AX
+GETDATA PROC                             ;GET DATA
+                  MOV AX,@DATA
+                  MOV DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                                  ;CLEAR SCREEN
-                  MOV            AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
-                  INT            10H
+CLS PROC                                 ;CLEAR SCREEN
+                  MOV AX,0003H           ;;ah == 0 set to graph mod the al = 3 return to text mode
+                  INT 10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                            ;ENTER TEXT MODE
-                  MOV            AX,3H
-                  INT            10H
+EnterText PROC                           ;ENTER TEXT MODE
+                  MOV AX,3H
+                  INT 10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                        ;ENTER GRAPHICS MODE
-                  MOV            AX,4F02H
-                  MOV            BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT            10H
+EnterGraphics PROC                       ;ENTER GRAPHICS MODE
+                  MOV AX,4F02H
+                  MOV BX,103H            ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT 10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                              ;wait for key
-                  MOV            AH , 0
-                  INT            16h
+waitkey PROC                             ;wait for key
+                  MOV AH , 0
+                  INT 16h
                   ret
 waitkey ENDP
 
