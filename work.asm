@@ -650,6 +650,38 @@ tmplabel10:
 
 ENDM CURSORMOV
 
+DRAW_AVAILABLE_PLACES MACRO
+LOCAL loop9
+LOCAL loop10
+LOCAL break6
+
+mov al,0
+mov ah,0
+loop9:
+mov al,0
+loop10:
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+ GETARINDEXBYBYTE dummyData1,dummyData2
+ cmp cursorState[bx],0
+ je break6
+ popa
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+DRAWWITHSOURCE       borderdata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D 
+break6:
+popa
+inc al
+cmp al,8
+jne loop10
+inc ah
+cmp ah,8
+jne loop9
+
+ENDM DRAW_AVAILABLE_PLACES
+
 DrawPiecies MACRO A,B
         ;white
                   DRAW        wrockwidth,wrockheight,0,0,A,B                       ; col,row
