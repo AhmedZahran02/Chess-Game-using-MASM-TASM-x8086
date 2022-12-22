@@ -895,7 +895,7 @@ MAINMAIN MACRO player1Name,player2Name
     check_for_anotherkey:
     mov ah,0
     int 16h 
-    cmp ah,3bh;f1 scane code
+    cmp ah,3bh;f1 scan code
     jz skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
     jmp check_for_f2
     skipf2chk:
@@ -925,10 +925,16 @@ OPENCHAT MACRO player1Name,player2Name
             LOCAL afterenter
             LOCAL deadmid
             local midh
-call CLS
+
                   mov  al, 01h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
+
+                  mov         ax,0620h ;clear page
+                  mov         bh,07
+                  mov         cx,0000H
+                  mov         dx,304FH
+                  int         10h
 
                   movecursorWithPageNumber  00,0AH,1D
                   ShowMessage line
@@ -970,7 +976,7 @@ call CLS
                   mov         dl,01H
                   push        dx
 
-                  movecursorWithPageNumber  00H,0bH,1D
+                  movecursorWithPageNumber  00H,01H,1D
                 
     ;program starts here
     mainloop:     
@@ -1113,7 +1119,7 @@ call CLS
 
                   jmp         mainloop
     dead:  
-                  mov  al, 00h   ; select display page 1
+                  mov  al, 00h   ; select display page 0
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
 
@@ -1460,15 +1466,12 @@ MAIN PROC FAR
                   OpenFile       borderfilename, borderfilehandle
                   ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
     ;------------------------------------------------------------------------------------------------
-    ;--------INITIAL GRID-----------------
-    start:        
-                  INITIALIZEGRID 0FH,08H
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------------------
 
     ;START MENU
-                  validateName   nameq,thename,erroname                                       ;Veryyyyyyyyyyyyyyyy STABLE
+                  validateName   nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
                   movecursor     17H,0AH
                   ShowMessage    proceed
                   call           waitkey
@@ -1486,10 +1489,13 @@ MAIN PROC FAR
     ;GAME SCREEN
     play:         
                   CALL           EnterGraphics
+                  mov            curColCursor,00h
+                  mov            curRowCursor,07h
+                  INITIALIZEGRID 0FH,08H
                   DrawGrid       150D,0D,colorState[1],colorState[0]
                   DrawPiecies    150D,0D
 
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,0D,0D,150D,0D            ; col,row
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
 
                   CURSORMOV
     ;----------------------------closing files--------------------------------------------------
@@ -1515,32 +1521,32 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                  ;GET DATA
+GETDATA PROC                                                                                              ;GET DATA
                   MOV            AX,@DATA
                   MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                      ;CLEAR SCREEN
-                  MOV            AX,0003H                                                     ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC                                                                                                  ;CLEAR SCREEN
+                  MOV            AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                ;ENTER TEXT MODE
+EnterText PROC                                                                                            ;ENTER TEXT MODE
                   MOV            AX,3H
                   INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                            ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                                        ;ENTER GRAPHICS MODE
                   MOV            AX,4F02H
-                  MOV            BX,103H                                                      ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV            BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
                   INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                  ;wait for key
+waitkey PROC                                                                                              ;wait for key
                   MOV            AH , 0
                   INT            16h
                   ret
