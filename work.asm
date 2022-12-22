@@ -2104,7 +2104,8 @@ ENDM KnightMovements
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    corsorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
+    corsorState       db  64  dup(0)  
+    cursorState       db  64  dup(0)                                                                                                        ; 0 for not cursor 1 for cursor
 
     curRowCursor      dw  0
     curColCursor      dw  0
