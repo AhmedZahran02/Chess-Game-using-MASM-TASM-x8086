@@ -433,12 +433,13 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
+                  ;if the cell is empty get out
                   isEmpty curRowCursor,curColCursor
                   cmp bl,0
                   jnz getoutt
                   jmp outterr
                   getoutt:
-
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor,curColCursor
                   MOV cl,BYTE PTR colorState[bx] 
                   mov BYTE PTR cellColorState,cl
@@ -455,7 +456,7 @@ FIRSTQHANDLE MACRO
 
                   inc bl
                   mov BYTE PTR stateOfQ,bl
-
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   outterr:
                   
 ENDM FIRSTQHANDLE
