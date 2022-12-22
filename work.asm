@@ -442,7 +442,8 @@ FIRSTQHANDLE MACRO
                 ;   getouttt: 
 
                   isEmpty curRowCursor,curColCursor
-                  KnightMovements curRowCursor,curColCursor
+                  PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                  ;KnightMovements curRowCursor,curColCursor
                   cmp bl,0FFH
                   jnz getoutt
                   jmp outterr
@@ -898,7 +899,7 @@ LEA SI,gridState
 GETARINDEX AX,CX 
 ADD SI,BX
 
-LEA DI,corsorState
+LEA DI,cursorState
 ADD DI,BX
 ADD DI,BX
 
@@ -907,8 +908,7 @@ MOV [DI],AX
 ADD DI,BX
 MOV [DI],AX
 
-
-;DRAW        bbishopwidth,bbishopheight,X,Y,150,0
+DRAW_AVAILABLE_PLACES
 
 ENDM PAWNAVALIABLEMOVES
 
@@ -2095,7 +2095,7 @@ ENDM KnightMovements
 
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
-    corsorState       db  64  dup(0)                                                                ; 0 for not cursor 1 for cursor
+    cursorState       db  64  dup(0)                                                                ; 0 for not cursor 1 for cursor
 
     curRowCursor      dw  0
     curColCursor      dw  0
