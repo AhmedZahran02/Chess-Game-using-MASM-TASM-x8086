@@ -982,6 +982,210 @@ HANDLEKNIGHT MACRO X,Y
                         RETURN:      
 ENDM HANDLEKNIGHT
 
+HANDLEPAWN MACRO X,Y
+; LOCAL CANMOVEFORWARD
+; LOCAL BREAKKK
+; LOCAL EAT
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+MOV AX,X
+MOV CX,Y
+DEC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID1
+MOV DL,0
+JMP CONTINUOUECHECK
+ITSVALID1:
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+MOV AX,X
+MOV CX,Y
+DEC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
+ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
+MOV DL,0
+CMP BX,0
+JNZ CONTINUOUECHECK
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+MOV AX,X
+MOV CX,Y
+DEC AX
+INC CX
+;;;;;;;;;;;;;;
+ISWHITE AX,CX
+CMP BX,1
+JZ CONTINUOUECHECK
+MOV DL,1 ; RIGHT HAS FOE
+CONTINUOUECHECK:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID2
+MOV DH,0
+JMP CONTINUOUECHECK2
+ITSVALID2:
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC CX
+;;;;;;;;;;;;;
+ISEMPTY AL,CL ;NOT EMPTY
+MOV DH,0
+CMP BX,0
+JNZ CONTINUOUECHECK2
+;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;
+ISWHITE AX,CX
+CMP BX,1
+JZ CONTINUOUECHECK2
+MOV DH,1 ;LEFT HAS FOE
+CONTINUOUECHECK2:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
+CMP DL,1
+JNZ RIGHTNOFOE
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+MOV AX,X
+MOV CX,Y
+DEC AX
+INC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState[BX],1
+RIGHTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
+CMP DH,1
+JNZ LEFTNOFOE
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState[BX],1
+LEFTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
+;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+;;;;;;;;;;;;;;;;;
+INSIDEGRID AX,CX
+CMP BX,1
+JZ ITSVALID3
+JMP CANTMOVE
+ITSVALID3:
+;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+;;;;;;;;;;;;;;;;;
+ISWHITE AX,CX
+CMP BX,1
+JNZ ITSVALID4
+JMP CANTMOVE
+ITSVALID4:
+;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+MOV AX,X
+MOV CX,Y
+DEC AX
+;;;;;;;;;;;;;;;;;
+ISEMPTY AL,CL
+CMP BX,1
+JZ CANMOVEFORWARD
+;;ELSE
+JMP CANTMOVE
+CANMOVEFORWARD:
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
+CMP BX,56
+JC SEEIFGREATERTAHN47OREQUAL
+JMP ONEMOVEONLY
+
+SEEIFGREATERTAHN47OREQUAL:
+CMP BX,47
+JNC TWOMOVES
+JMP ONEMOVEONLY
+
+TWOMOVES:
+;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC AX
+ISEMPTY AL,CL
+CMP BX,1
+JZ ITSVALID5
+JMP ONEMOVEONLY
+ITSVALID5:
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
+MOV AX,X
+MOV CX,Y
+DEC AX
+DEC AX
+GETARINDEX AX,CX 
+MOV cursorState[BX],1
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
+ONEMOVEONLY:
+MOV AX,X
+MOV CX,Y
+DEC AX
+GETARINDEX AX,CX
+MOV cursorState[BX],1
+CANTMOVE:
+
+
+ENDM PAWNAVALIABLEMOVES
+
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
     MOV BL , 8D
@@ -1867,58 +2071,20 @@ CMP BX,56
 JC SEEIFGREATERTAHN47OREQUAL
 JMP ONEMOVEONLY
 
-SEEIFGREATERTAHN47OREQUAL:
-CMP BX,47
-JNC TWOMOVES
-JMP ONEMOVEONLY
+; MOV AX,X
+; MOV CX,Y
 
-TWOMOVES:
-;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC AX
-ISEMPTY AL,CL
-CMP BX,1
-JZ ITSVALID5
-JMP ONEMOVEONLY
-ITSVALID5:
-;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC AX
-GETARINDEX AX,CX 
-MOV cursorState[BX],1
-;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
-ONEMOVEONLY:
-MOV AX,X
-MOV CX,Y
-DEC AX
-GETARINDEX AX,CX
-MOV cursorState[BX],1
-CANTMOVE:
+; LEA SI,gridState 
+; GETARINDEX AX,CX 
+; ADD SI,BX
+; MOV CH,BYTE PTR [SI]
+; CMP CH , 0 
+; jnz notEmpty 
 
+; MOV BX, 0ffh;;to get farway from the array index 0
+; notEmpty: 
 
-ENDM PAWNAVALIABLEMOVES
-
-isEmpty MACRO X,Y 
-LOCAL notEmpty 
-
-MOV AX,X
-MOV CX,Y
-
-LEA SI,gridState 
-GETARINDEX AX,CX 
-ADD SI,BX
-MOV CH,BYTE PTR [SI]
-CMP CH , 0 
-jnz notEmpty 
-
-MOV BX, 0ffh;;to get farway from the array index 0
-notEmpty: 
-
-ENDM isEmpty
+; ENDM isEmpty
 
 ISEMPTY MACRO x,y
 LOCAL break5
@@ -2676,228 +2842,32 @@ ENTERGAMECHAT MACRO player1Name,player2Name
 
 ENDM ENTERGAMECHAT
 
-ENTERGAMECHAT MACRO player1Name,player2Name
-                        LOCAL dead
-            LOCAL mainloop
-            LOCAL afterenter
-            local afterenter2
-            LOCAL deadmid
-            local midh
-            local CHK
-            local AGAIN
+GETTIME MACRO
 
-                  mov  al, 01h   ; select display page 1
-                  mov  ah, 05h   ; function 05h: select active display page
-                  int  10h
+    MOV TIME,0
+    MOV AH,2CH
+    INT 21H ; SEC -> DH ;MIN -> CL ;HRS ->CH
 
-                ;   mov         ax,0620h ;clear page
-                ;   mov         bh,07
-                ;   mov         cx,0000H
-                ;   mov         dx,304FH
-                ;   int         10h
+    MOV AX,0
+    MOV AL,CH
+    MOV BL,24
+    MUL BL
 
-                  movecursorWithPageNumber  00,21H,1D
-                  ShowMessage line
+    ADD TIME,AX
 
-                  movecursorWithPageNumber  00,1FH,1D
-                  ShowMessage player1Name
+    MOV AX,0
+    MOV AL,CL
+    MOV BL,60
+    MUL BL
 
-                  movecursorWithPageNumber  00,22H,1D
-                  ShowMessage player2Name
+    ADD TIME,AX
 
-                  mov         dx,3fbh           ; Line Control Register
-                  mov         al,10000000b      ;Set Divisor Latch Access Bit
-                  out         dx,al
+    MOV AX,0
+    MOV AL,dh
 
+    ADD TIME,AX
 
-    ;000c => 9600 baud rate
-    ;Set LSB byte of the Baud Rate Divisor Latch
-                  mov         dx,3f8h
-                  mov         al,0ch
-                  out         dx,al
-
-
-    ;Set MSB byte of the Baud Rate Divisor Latch register.
-                  mov         dx,3f9h
-                  mov         al,00h
-                  out         dx,al
-
-
-    ;Set port configuration
-                  mov         dx,3fbh
-                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
-                  out         dx,al
-
-
-                  mov         dh,00H
-                  mov         dl,23H
-                  push        dx
-                  mov         dh,00H
-                  mov         dl,20H
-                  push        dx
-
-                  movecursorWithPageNumber  00H,20H,1D
-                
-    ;program starts here
-    mainloop:     
-                  
-                
-                  mov         ah,01
-                  int         16h
-                  jz          AGAIN
-
-                  mov         ah,0
-                  int         16h
-                  
-
-                  pop         dx
-                  push        dx
-                  push        ax
-                  movecursorWithPageNumber  dh,dl,1
-                  pop         ax
-                  pop         dx
-                  inc         dh
-                  push        dx
-
-                  push        ax
-
-                  mov         ah,2
-                  mov         dl,al
-                  int         21h
-
-                  pop         ax
-
-                  mov         bl,ah
-                  cmp         bl,40H            ; F6 key
-                  je          deadmid
-
-                  mov         bl,al
-                  cmp         bl,13
-                  jne         afterenter
-
-                  pop         dx
-                  inc         dl
-                  mov         dh,0
-                  PUSH        dx
-
-                  cmp         dx,0021H          ;CURSOR CHECK
-                  jne         afterenter
-
-                  pop         dx                ;clear line
-                  push        dx
-                  push        ax
-                  MOV         DL,20H
-                  movecursorWithPageNumber  dh,dl,1
-                  ShowMessage clear
-                  pop         ax
-                  pop         dx
-                  inc         dh
-                  push        dx                  
-
-                  POP         DX
-                  MOV         DL,20H
-                  PUSH        DX
-
-    afterenter:   
-    ;Sending a value
-
-    ;Check that Transmitter Holding Register is Empty
-                  mov         dx , 3FDH         ; Line Status Register
-
-                  In          al , dx           ;Read Line Status
-                  AND         al , 00100000b
-                  JZ          AGAIN             ;jump untill it is empty
-
-    ;If empty put the VALUE in Transmit data register
-                  mov         dx , 3F8H         ; Transmit data register
-                  mov         al,bl
-                  out         dx , al
-                  jmp         AGAIN
-           
-    ;Receiving a value
-    deadmid:      
-                  jmp         dead
-                  
-    AGAIN:        
-    ;Check that Data Ready
-                  mov         dx , 3FDH         ; Line Status Register
-          
-                  in          al , dx
-                  AND         al , 00000001b
-                  JZ          CHK               ;jump untill it recive data
-
-    ;If Ready read the VALUE in Receive data register
-                  mov         dx , 03F8H
-                  in          al , dx
-                  
-                  pop         cx
-                  pop         dx
-                  push        dx
-                  push        cx
-                  movecursorWithPageNumber  dh,dl,1D
-                  pop         cx
-                  pop         dx
-                  inc         dh
-                  push        dx
-                  push        cx
-
-                  cmp         al,13
-                  jne         afterenter2
-
-                  pop         cx
-                  pop         dx
-                  push        dx
-                  push        cx
-                  MOV         DL,23H
-                  movecursorWithPageNumber  dh,dl,1D
-                  ShowMessage clear
-                  pop         cx
-                  pop         dx
-                  inc         dl
-                  mov         dh,0
-                  push        dx
-                  push        cx
-
-                  cmp         dx,0024H          ;CURSOR CHECK
-                  jne         afterenter2
-                
-
-                  PUSH        BX
-                  PUSH        AX
-
-                  MOV         DL,23H
-                  movecursorWithPageNumber  dh,dl,1
-                  ShowMessage clear
-
-                ;   mov         ax,0601h
-                ;   mov         bh,07
-                ;   mov         cx,0C00H ;write alot of spaces
-                ;   mov         dx,164FH
-                ;   int         10h
-
-                  POP         AX
-                  POP         BX
-                  pop         cx
-                  pop         dx
-                  MOV         DL,23H
-                  push        dx
-                  push        cx
-
-    afterenter2:  
-
-                  mov         dl,al
-                  mov         ah,2
-                  int         21h
-                  
-    CHK:          
-
-                  jmp         mainloop
-    dead:  
-                  mov  al, 00h   ; select display page 0
-                  mov  ah, 05h   ; function 05h: select active display page
-                  int  10h
-
-ENDM ENTERGAMECHAT
+ENDM GETTIME
 
 .MODEL SMALL
 .286
@@ -3040,6 +3010,7 @@ ENDM ENTERGAMECHAT
     DUMMYY            DB  5
 
     firstIndex        db  0
+    TIME              DW  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -3111,11 +3082,6 @@ MAIN PROC FAR
                   DrawPiecies    150D,0D
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-    ;   MOV                    cursorState[12],1D
-    ;   DRAW_AVAILABLE_PLACES
-
-    ;   CALL                   waitkey
-    ;   CLEAR_AVAILABLE_PLACES
 
     curs:         
                   CURSORMOV
