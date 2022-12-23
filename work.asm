@@ -511,6 +511,7 @@ FIRSTQHANDLE MACRO
                   JMP NOACTION
                 PAWN:
                   HANDLEPAWN curRowCursor,curColCursor
+                  HANDLEPAWN curRowCursor,curColCursor
                   JMP NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
@@ -1892,23 +1893,23 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-; isEmpty MACRO X,Y 
-; LOCAL notEmpty 
+isEmpty MACRO X,Y 
+LOCAL notEmpty 
 
-; MOV AX,X
-; MOV CX,Y
+MOV AX,X
+MOV CX,Y
 
-; LEA SI,gridState 
-; GETARINDEX AX,CX 
-; ADD SI,BX
-; MOV CH,BYTE PTR [SI]
-; CMP CH , 0 
-; jnz notEmpty 
+LEA SI,gridState 
+GETARINDEX AX,CX 
+ADD SI,BX
+MOV CH,BYTE PTR [SI]
+CMP CH , 0 
+jnz notEmpty 
 
-; MOV BX, 0ffh;;to get farway from the array index 0
-; notEmpty: 
+MOV BX, 0ffh;;to get farway from the array index 0
+notEmpty: 
 
-; ENDM isEmpty
+ENDM isEmpty
 
 ISEMPTY MACRO x,y
 LOCAL break5
