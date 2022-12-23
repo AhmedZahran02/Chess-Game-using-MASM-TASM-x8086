@@ -2653,6 +2653,7 @@ ENDM GETTIME
     firstIndex        db  0
     TIME              DW  0
     STARTTIME         DW  0
+    COLN              DB  ':','$'
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -2671,7 +2672,17 @@ MAIN PROC FAR
                   MOV         AX,BX
                   MOV         BX,STARTTIME
                   SUB         AX,BX
-                  CMP         AX,
+                  MOV         CX,60D
+                  DIV         CX
+                  PUSHA
+                  MOV         BX,AX
+                  MOV         AL,AH
+                  MOV         AH,0
+                  TOSTRING    nameq
+                  ShowMessage nameq
+                  ShowMessage COLN
+                  POPA
+                  MOV         AH,0
                   TOSTRING    nameq
                   ShowMessage nameq
                   JMP         LP
