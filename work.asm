@@ -450,7 +450,10 @@ FIRSTQHANDLE MACRO
                 ;   getoutt:
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor,curColCursor
-
+                  pusha
+                    KnightMovements curRowCursor,curColCursor
+                    DRAW_AVAILABLE_PLACES
+                  popa
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
@@ -1697,14 +1700,14 @@ mov gridState[45],0
 mov gridState[46],0
 mov gridState[47],0
 
-mov gridState[48],0 ;white pawn
-mov gridState[49],0 ;white pawn
-mov gridState[50],0 ;white pawn
-mov gridState[51],0 ;white pawn
-mov gridState[52],0 ;white pawn
-mov gridState[53],0 ;white pawn
-mov gridState[54],0 ;white pawn
-mov gridState[55],0 ;white pawn
+mov gridState[48],7 ;white pawn
+mov gridState[49],7 ;white pawn
+mov gridState[50],7 ;white pawn
+mov gridState[51],7 ;white pawn
+mov gridState[52],7 ;white pawn
+mov gridState[53],7 ;white pawn
+mov gridState[54],7 ;white pawn
+mov gridState[55],7 ;white pawn
 
 mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
