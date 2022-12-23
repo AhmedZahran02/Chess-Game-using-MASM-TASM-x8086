@@ -458,6 +458,7 @@ FIRSTQHANDLE MACRO
                     jmp break80
                     temp100:
                     popa
+
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
@@ -465,6 +466,25 @@ FIRSTQHANDLE MACRO
                   jmp break80
                   temp150:
                   popa
+
+                ;start handle count down
+                  pusha
+                  GETARINDEX curRowCursor,curColCursor
+                  mov SI,BX
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  dec BX
+                  dec BX
+                  dec BX
+                  CMP word ptr timeState[si],BX
+                  JL temp151
+                  jmp break80
+                  temp151:
+                  mov word ptr timeState[si],0D
+                  popa
+                ;end handle count down
 
                   MOV cl,BYTE PTR colorState[bx] 
                   mov BYTE PTR cellColorState,cl
@@ -525,7 +545,7 @@ FIRSTQHANDLE MACRO
                   HANDLEQUEEN curRowCursor,curColCursor
                   JMP NOACTION
                 KING:
-                  ;HANDLEKING curRowCursor,curColCursor
+                  HANDLEKING curRowCursor,curColCursor
                   JMP NOACTION
                 NOACTION:
                 PUSHA
@@ -996,9 +1016,7 @@ LOCAL ITSVALID5
 LOCAL ONEMOVEONLY
 LOCAL CANTMOVE
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1011,9 +1029,7 @@ MOV DL,0
 JMP CONTINUOUECHECK
 ITSVALID1:
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1024,9 +1040,7 @@ MOV DL,0
 CMP BX,0
 JNZ CONTINUOUECHECK
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1039,9 +1053,7 @@ MOV DL,1 ; RIGHT HAS FOE
 CONTINUOUECHECK:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1054,9 +1066,7 @@ MOV DH,0
 JMP CONTINUOUECHECK2
 ITSVALID2:
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1067,9 +1077,7 @@ MOV DH,0
 CMP BX,0
 JNZ CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1084,9 +1092,7 @@ CONTINUOUECHECK2:
 CMP DL,1
 JNZ RIGHTNOFOE
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1099,9 +1105,7 @@ RIGHTNOFOE:
 CMP DH,1
 JNZ LEFTNOFOE
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1112,9 +1116,7 @@ MOV cursorState[BX],1
 LEFTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
 ;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1126,9 +1128,7 @@ JMP CANTMOVE
 ITSVALID3:
 ;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1139,9 +1139,7 @@ JNZ ITSVALID4
 JMP CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
+
 MOV AX,X
 MOV CX,Y
 DEC AX
@@ -1161,7 +1159,7 @@ JC SEEIFGREATERTAHN47OREQUAL
 JMP ONEMOVEONLY
 
 SEEIFGREATERTAHN47OREQUAL:
-CMP BX,47
+CMP BX,48
 JNC TWOMOVES
 JMP ONEMOVEONLY
 
@@ -1195,6 +1193,10 @@ CANTMOVE:
 
 ENDM PAWNAVALIABLEMOVES
 
+HANDLEKING MACRO X,Y
+
+ENDM HANDLEKING
+
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
     MOV BL , 8D
@@ -1227,6 +1229,15 @@ SECONDQHANDLE MACRO
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
+                ;count down start
+                  PUSHA
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  mov word ptr timeState[si],BX
+                  POPA
+                ;count down end
                   POPA
                 SKIP:
                   pusha
@@ -2863,6 +2874,7 @@ ENDM PRINTCURRTIMER
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
     cursorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
+    timeState         dW  64  dup(0)
 
     curRowCursor      dw  0
     curColCursor      dw  0

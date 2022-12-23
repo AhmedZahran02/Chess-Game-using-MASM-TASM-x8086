@@ -458,6 +458,7 @@ FIRSTQHANDLE MACRO
                     jmp break80
                     temp100:
                     popa
+
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
@@ -465,6 +466,25 @@ FIRSTQHANDLE MACRO
                   jmp break80
                   temp150:
                   popa
+
+                ;start handle count down
+                  pusha
+                  GETARINDEX curRowCursor,curColCursor
+                  mov SI,BX
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  dec BX
+                  dec BX
+                  dec BX
+                  CMP word ptr timeState[si],BX
+                  JL temp151
+                  jmp break80
+                  temp151:
+                  mov word ptr timeState[si],0D
+                  popa
+                ;end handle count down
 
                   MOV cl,BYTE PTR colorState[bx] 
                   mov BYTE PTR cellColorState,cl
@@ -1209,6 +1229,15 @@ SECONDQHANDLE MACRO
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
+                ;count down start
+                  PUSHA
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  mov word ptr timeState[si],BX
+                  POPA
+                ;count down end
                   POPA
                 SKIP:
                   pusha
@@ -2845,6 +2874,7 @@ ENDM PRINTCURRTIMER
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
     cursorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
+    timeState         dW  64  dup(0)
 
     curRowCursor      dw  0
     curColCursor      dw  0
