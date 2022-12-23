@@ -2510,30 +2510,13 @@ GETTIME MACRO ;OUTPUT IN BX AND TIME DATA
 
 ENDM GETTIME
 
-.MODEL SMALL
-.286
-.STACK 64
-;-----------
-.Data
-    SEC       db 60 DUP('$')
-    MIN       db 60 DUP('$')
-    SPACE     DB ' ','$'
-    TIME      DW 0
-    STARTTIME DW 0
-    COLN      DB ':','$'
-    ;---------------------------------------------------------------------------------------------------
- 
-
-
-.CODE
-MAIN PROC FAR
-    ;INITIALIZING
-                  call        GETDATA
-                  CALL        CLS
-    ;OPENING AND READING BIN FILES
+INITIALIZETIME MACRO
                   GETTIME
-                  MOV         WORD PTR STARTTIME,BX
-    LP:           
+                  MOV     WORD PTR STARTTIME,BX
+ENDM INITIALIZETIME
+
+PRINTCURRTIMER MACRO 
+    LOCAL NSP 
                   movecursor  0,0
                   GETTIME
                   MOV         AX,BX
@@ -2560,41 +2543,67 @@ MAIN PROC FAR
                   MOV         SEC[1],'$'
                   MOV         MIN[1],'$'
 
-                  JMP         LP
+ENDM PRINTCURRTIMER
+
+.MODEL SMALL
+.286
+.STACK 64
+;-----------
+.Data
+    SEC       db 60 DUP('$')
+    MIN       db 60 DUP('$')
+    SPACE     DB ' ','$'
+    TIME      DW 0
+    STARTTIME DW 0
+    COLN      DB ':','$'
+    ;---------------------------------------------------------------------------------------------------
+ 
+
+
+.CODE
+MAIN PROC FAR
+    ;INITIALIZING
+                  call           GETDATA
+                  CALL           CLS
+    ;OPENING AND READING BIN FILES
+                  INITIALIZETIME
+    LP:           
+                  PRINTCURRTIMER
+                  JMP            LP
                   EXT
 MAIN ENDP
     ;----------------------------------------------------------------------------------------------------------------
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                           ;GET DATA
-                  MOV         AX,@DATA
-                  MOV         DS,AX
+GETDATA PROC                                 ;GET DATA
+                  MOV            AX,@DATA
+                  MOV            DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                               ;CLEAR SCREEN
-                  MOV         AX,0003H                 ;;ah == 0 set to graph mod the al = 3 return to text mode
-                  INT         10H
+CLS PROC                                     ;CLEAR SCREEN
+                  MOV            AX,0003H    ;;ah == 0 set to graph mod the al = 3 return to text mode
+                  INT            10H
                   ret
 CLS ENDP
 
-EnterText PROC                                         ;ENTER TEXT MODE
-                  MOV         AX,3H
-                  INT         10H
+EnterText PROC                               ;ENTER TEXT MODE
+                  MOV            AX,3H
+                  INT            10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                     ;ENTER GRAPHICS MODE
-                  MOV         AX,4F02H
-                  MOV         BX,103H                  ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT         10H
+EnterGraphics PROC                           ;ENTER GRAPHICS MODE
+                  MOV            AX,4F02H
+                  MOV            BX,103H     ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT            10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                           ;wait for key
-                  MOV         AH , 0
-                  INT         16h
+waitkey PROC                                 ;wait for key
+                  MOV            AH , 0
+                  INT            16h
                   ret
 waitkey ENDP
 

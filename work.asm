@@ -1471,12 +1471,18 @@ CURSORMOV MACRO
   LOCAL tmplabel20
   LOCAL firsrQ
   LOCAL temp23
-
+  LOCAL temp24
+                  
 cursorLoop:
+                  PRINTCURRTIMER
 
-
-                  mov             ah,0
-                  int             16h
+                  mov         ah,01
+                  int         16h
+                  JNZ temp24
+                  jmp          curs
+                temp24:
+                  mov         ah,0
+                  int         16h
 
                   ;if f4 is pressed return to main screen  
                   cmp ah,3Eh
@@ -2666,32 +2672,69 @@ ENTERGAMECHAT MACRO player1Name,player2Name
 
 ENDM ENTERGAMECHAT
 
-GETTIME MACRO
+GETTIME MACRO ;OUTPUT IN BX AND TIME DATA
 
     MOV TIME,0
     MOV AH,2CH
     INT 21H ; SEC -> DH ;MIN -> CL ;HRS ->CH
 
-    MOV AX,0
-    MOV AL,CH
-    MOV BL,24
-    MUL BL
+    ; MOV AX,0
+    ; MOV AL,CH ;HOURS
+    ; MOV BL,3600D
+    ; MUL BL
 
-    ADD TIME,AX
+    ; ADD TIME,AX
 
     MOV AX,0
-    MOV AL,CL
+    MOV AL,CL ;MINUTES
     MOV BL,60
     MUL BL
 
     ADD TIME,AX
 
-    MOV AX,0
-    MOV AL,dh
+    MOV AX,0 
+    MOV AL,dh ;SECONDS
 
     ADD TIME,AX
 
+    MOV BX,WORD PTR TIME
+
 ENDM GETTIME
+
+INITIALIZETIME MACRO
+                  GETTIME
+                  MOV     WORD PTR STARTTIME,BX
+ENDM INITIALIZETIME
+
+PRINTCURRTIMER MACRO 
+    LOCAL NSP 
+                  movecursor  0,0
+                  GETTIME
+                  MOV         AX,BX
+                  MOV         BX,WORD PTR STARTTIME
+                  SUB         AX,BX
+                  MOV         CL,60D
+                  DIV         CL
+                  PUSHA
+                  MOV         AH,0
+                  TOSTRING    MIN
+                  ShowMessage MIN
+                  ShowMessage COLN
+                  POPA
+                  MOV         AL,AH
+                  MOV         AH,0
+                  TOSTRING    SEC
+                  ShowMessage SEC
+
+                  CMP         SEC[1],'$'
+                  JNE         NSP
+                  
+                  ShowMessage SPACE
+    NSP:          
+                  MOV         SEC[1],'$'
+                  MOV         MIN[1],'$'
+
+ENDM PRINTCURRTIMER
 
 .MODEL SMALL
 .286
@@ -2834,7 +2877,13 @@ ENDM GETTIME
     DUMMYY            DB  5
 
     firstIndex        db  0
+    
+    SEC               db  60 DUP('$')
+    MIN               db  60 DUP('$')
+    SPACE             DB  ' ','$'
     TIME              DW  0
+    STARTTIME         DW  0
+    COLN              DB  ':','$'
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -2907,6 +2956,7 @@ MAIN PROC FAR
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
 
+                  INITIALIZETIME
     curs:         
                   CURSORMOV
                   ENTERGAMECHAT  thename+2,thename+2
