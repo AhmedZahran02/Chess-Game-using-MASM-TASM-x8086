@@ -458,6 +458,7 @@ FIRSTQHANDLE MACRO
                     jmp break80
                     temp100:
                     popa
+
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
@@ -465,6 +466,25 @@ FIRSTQHANDLE MACRO
                   jmp break80
                   temp150:
                   popa
+
+                ;start handle count down
+                  pusha
+                  GETARINDEX curRowCursor,curColCursor
+                  mov SI,BX
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  dec BX
+                  dec BX
+                  dec BX
+                  CMP word ptr timeState[si],BX
+                  JL temp151
+                  jmp break80
+                  temp151:
+                  mov word ptr timeState[si],0D
+                  popa
+                ;end handle count down
 
                   MOV cl,BYTE PTR colorState[bx] 
                   mov BYTE PTR cellColorState,cl
@@ -1491,6 +1511,15 @@ SECONDQHANDLE MACRO
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
+                ;count down start
+                  PUSHA
+                  GETTIME
+                  mov ax,si
+                  mul ax,2D
+                  mov si,ax
+                  mov word ptr timeState[si],BX
+                  POPA
+                ;count down end
                   POPA
                 SKIP:
                   pusha
@@ -1744,12 +1773,18 @@ CURSORMOV MACRO
   LOCAL tmplabel20
   LOCAL firsrQ
   LOCAL temp23
-
+  LOCAL temp24
+                  
 cursorLoop:
+                  PRINTCURRTIMER
 
-
-                  mov             ah,0
-                  int             16h
+                  mov         ah,01
+                  int         16h
+                  JNZ temp24
+                  jmp          curs
+                temp24:
+                  mov         ah,0
+                  int         16h
 
                   ;if f4 is pressed return to main screen  
                   cmp ah,3Eh
@@ -2939,32 +2974,69 @@ ENTERGAMECHAT MACRO player1Name,player2Name
 
 ENDM ENTERGAMECHAT
 
-GETTIME MACRO
+GETTIME MACRO ;OUTPUT IN BX AND TIME DATA
 
     MOV TIME,0
     MOV AH,2CH
     INT 21H ; SEC -> DH ;MIN -> CL ;HRS ->CH
 
-    MOV AX,0
-    MOV AL,CH
-    MOV BL,24
-    MUL BL
+    ; MOV AX,0
+    ; MOV AL,CH ;HOURS
+    ; MOV BL,3600D
+    ; MUL BL
 
-    ADD TIME,AX
+    ; ADD TIME,AX
 
     MOV AX,0
-    MOV AL,CL
+    MOV AL,CL ;MINUTES
     MOV BL,60
     MUL BL
 
     ADD TIME,AX
 
-    MOV AX,0
-    MOV AL,dh
+    MOV AX,0 
+    MOV AL,dh ;SECONDS
 
     ADD TIME,AX
 
+    MOV BX,WORD PTR TIME
+
 ENDM GETTIME
+
+INITIALIZETIME MACRO
+                  GETTIME
+                  MOV     WORD PTR STARTTIME,BX
+ENDM INITIALIZETIME
+
+PRINTCURRTIMER MACRO 
+    LOCAL NSP 
+                  movecursor  0,0
+                  GETTIME
+                  MOV         AX,BX
+                  MOV         BX,WORD PTR STARTTIME
+                  SUB         AX,BX
+                  MOV         CL,60D
+                  DIV         CL
+                  PUSHA
+                  MOV         AH,0
+                  TOSTRING    MIN
+                  ShowMessage MIN
+                  ShowMessage COLN
+                  POPA
+                  MOV         AL,AH
+                  MOV         AH,0
+                  TOSTRING    SEC
+                  ShowMessage SEC
+
+                  CMP         SEC[1],'$'
+                  JNE         NSP
+                  
+                  ShowMessage SPACE
+    NSP:          
+                  MOV         SEC[1],'$'
+                  MOV         MIN[1],'$'
+
+ENDM PRINTCURRTIMER
 
 .MODEL SMALL
 .286
@@ -3084,6 +3156,7 @@ ENDM GETTIME
     gridState         db  64  dup(0)
     colorState        db  64  dup(0)
     cursorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
+    timeState         dW  64  dup(0)
 
     curRowCursor      dw  0
     curColCursor      dw  0
@@ -3107,7 +3180,13 @@ ENDM GETTIME
     DUMMYY            DB  5
 
     firstIndex        db  0
+    
+    SEC               db  60 DUP('$')
+    MIN               db  60 DUP('$')
+    SPACE             DB  ' ','$'
     TIME              DW  0
+    STARTTIME         DW  0
+    COLN              DB  ':','$'
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -3180,6 +3259,7 @@ MAIN PROC FAR
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
 
+                  INITIALIZETIME
     curs:         
                   CURSORMOV
                   ENTERGAMECHAT  thename+2,thename+2
