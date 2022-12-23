@@ -441,15 +441,31 @@ FIRSTQHANDLE MACRO
                 ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
                 ;   getouttt: 
 
-                  isEmpty curRowCursor,curColCursor
-                  PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                  ;KnightMovements curRowCursor,curColCursor
-                  cmp bl,0FFH
-                  jnz getoutt
-                  jmp outterr
-                  getoutt:
+                ;   isEmpty curRowCursor,curColCursor
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   ;KnightMovements curRowCursor,curColCursor
+                ;   cmp bl,0FFH
+                ;   jnz getoutt
+                ;   jmp outterr
+                ;   getoutt:
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor,curColCursor
+
+                  pusha
+                  ISEMPTY curRowCursor,curColCursor
+                    cmp bx,1
+                    jne temp100
+                    jmp break80
+                    temp100:
+                    popa
+                  pusha
+                  ISWHITE curRowCursor,curColCursor
+                  cmp bx,0
+                  jne temp150
+                  jmp break80
+                  temp150:
+                  popa
+
                   MOV cl,BYTE PTR colorState[bx] 
                   mov BYTE PTR cellColorState,cl
                   mov cl,BYTE PTR curRowCursor
@@ -465,10 +481,443 @@ FIRSTQHANDLE MACRO
 
                   inc bl
                   mov BYTE PTR stateOfQ,bl
+
+                ;------------------------
+                  GETARINDEX curRowCursor,curColCursor
+                  CMP BYTE PTR gridState[BX],7d
+                  JNE PAWNTEMP
+                  JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],8d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],9d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],10d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],11d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],12d
+                  JNE KINGTEMP
+                  JMP KING
+                  KINGTEMP:
+                  JMP NOACTION
+                PAWN:
+                  ;HANDLEPAWN curRowCursor,curColCursor
+                  JMP NOACTION
+                ROOK:
+                  HANDLEROOK curRowCursor,curColCursor
+                  JMP NOACTION
+                KNIGHT:
+                  ;HANDLEKNIGHT curRowCursor,curColCursor
+                  JMP NOACTION
+                BISHOP:
+                  HANDLEBISHOP curRowCursor,curColCursor
+                  JMP NOACTION
+                QUEEN:
+                  HANDLEQUEEN curRowCursor,curColCursor
+                  JMP NOACTION
+                KING:
+                  ;HANDLEKING curRowCursor,curColCursor
+                  JMP NOACTION
+                NOACTION:
+                PUSHA
+                DRAW_AVAILABLE_PLACES
+                POPA
+                ;------------------------------
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   outterr:
+                  break80:
                   
 ENDM FIRSTQHANDLE
+
+HANDLEROOK MACRO x,y
+LOCAL break1
+LOCAL break2
+LOCAL break3
+LOCAL break4
+LOCAL break12
+LOCAL break22
+LOCAL break32
+LOCAL break42
+LOCAL First_Loop
+LOCAL Second_Loop
+LOCAL Third_Loop
+LOCAL Fourth_Loop
+LOCAL temp29
+LOCAL temp36
+LOCAL temp35
+LOCAL temp28
+LOCAL temp34
+LOCAL temp33
+LOCAL temp27
+LOCAL temp32
+LOCAL temp31
+LOCAL temp26
+LOCAL temp40
+LOCAL temp30
+
+
+mov dh,x
+mov dl,y
+mov ah,dh
+mov al,dl
+First_Loop:
+inc ah
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp30
+jmp break12
+temp30:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp40
+jmp break1
+temp40:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp First_Loop
+break1:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp26
+jmp break12
+temp26:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break12:
+
+
+mov ah,dh
+mov al,dl
+Second_Loop:
+inc al
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp31
+jmp break22
+temp31:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp32
+jmp break2
+temp32:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Second_Loop
+break2:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp27
+jmp break22
+temp27:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break22:
+
+
+mov ah,dh
+mov al,dl
+Third_Loop:
+dec ah
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp33
+jmp break32
+temp33:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp34
+jmp break3
+temp34:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Third_Loop
+break3:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp28
+jmp break32
+temp28:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break32:
+
+
+mov ah,dh
+mov al,dl
+Fourth_Loop:
+dec al
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp35
+jmp break42
+temp35:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp36
+jmp break4
+temp36:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Fourth_Loop
+break4:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp29
+jmp break42
+temp29:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break42:
+
+ENDM HANDLEROOK
+
+HANDLEBISHOP MACRO x,y
+LOCAL break1
+LOCAL break2
+LOCAL break3
+LOCAL break4
+LOCAL break12
+LOCAL break22
+LOCAL break32
+LOCAL break42
+LOCAL First_Loop
+LOCAL Second_Loop
+LOCAL Third_Loop
+LOCAL Fourth_Loop
+LOCAL temp29
+LOCAL temp36
+LOCAL temp35
+LOCAL temp28
+LOCAL temp34
+LOCAL temp33
+LOCAL temp27
+LOCAL temp32
+LOCAL temp31
+LOCAL temp26
+LOCAL temp40
+LOCAL temp30
+
+
+mov dh,x
+mov dl,y
+mov ah,dh
+mov al,dl
+First_Loop:
+inc ah
+inc al
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp30
+jmp break12
+temp30:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp40
+jmp break1
+temp40:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp First_Loop
+break1:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp26
+jmp break12
+temp26:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break12:
+
+
+mov ah,dh
+mov al,dl
+Second_Loop:
+dec al
+dec ah
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp31
+jmp break22
+temp31:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp32
+jmp break2
+temp32:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Second_Loop
+break2:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp27
+jmp break22
+temp27:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break22:
+
+
+mov ah,dh
+mov al,dl
+Third_Loop:
+dec ah
+inc al
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp33
+jmp break32
+temp33:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp34
+jmp break3
+temp34:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Third_Loop
+break3:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp28
+jmp break32
+temp28:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break32:
+
+
+mov ah,dh
+mov al,dl
+Fourth_Loop:
+dec al
+inc ah
+mov dummyData1,ah
+mov dummyData2,al
+push ax
+INSIDEGRID dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp35
+jmp break42
+temp35:
+push ax
+ISEMPTY dummyData1,dummyData2
+pop ax 
+cmp bx,0
+jne temp36
+jmp break4
+temp36:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+jmp Fourth_Loop
+break4:
+ISWHITE dummyData1,dummyData2
+cmp bx,1
+jne temp29
+jmp break42
+temp29:
+push ax
+GETARINDEXBYBYTE  dummyData1,dummyData2
+pop ax
+mov cursorState[bx],1
+break42:
+
+ENDM HANDLEBISHOP
+
+HANDLEQUEEN MACRO x,y
+mov dh,x
+mov dl,y
+pusha
+HANDLEROOK x,y
+popa
+mov x,dh
+mov y,dl
+pusha
+HANDLEBISHOP x,y
+popa
+ENDM HANDLEQUEEN
 
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
@@ -480,6 +929,7 @@ GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
 ENDM GETARINDEXBYBYTE
 
 SECONDQHANDLE MACRO
+            LOCAL SKIP
 
                   GETARINDEX startRowCursor,startColCursor
 
@@ -489,13 +939,20 @@ SECONDQHANDLE MACRO
                   mov ch,BYTE PTR curColCursor
                   mov BYTE PTR endRowCursor,cl
                   mov BYTE PTR endColCursor,ch
-                  mov cx,bx
+                  mov cx,bx ;START INDEX
+
                   GETARINDEX endRowCursor,endColCursor
-                  mov si,cx
-                  mov dh,BYTE PTR gridState[si]
-                  mov gridState[si],0
-                  mov si,bx
-                  mov gridState[si],dh
+
+                  CMP cursorState[BX],0
+                  JE SKIP
+                  PUSHA
+                  mov si,cx ;START INDEX
+                  mov dh,BYTE PTR gridState[si] ;DATA OF FIRST INDEX
+                  mov gridState[si],0 ;CLEAR START
+                  mov si,bx ;END INDEX
+                  mov gridState[si],dh ; MOVE START TO END
+                  POPA
+                SKIP:
                   pusha
                   UPDATECELL     startRowCursor,startColCursor,150D,0D
                   popa
@@ -503,13 +960,18 @@ SECONDQHANDLE MACRO
                   pusha
                   UPDATECELL     endRowCursor,endColCursor,150D,0D
                   popa
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
 
+                  PUSHA
+                  CLEAR_AVAILABLE_PLACES
+                  POPA
+
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,endRowCursor,endColCursor,150D,0D    ; col,row
 
                   mov bl,BYTE PTR stateOfQ
                   dec bl
                   mov BYTE PTR stateOfQ,bl
-
+                  
+                  
 ENDM SECONDQHANDLE
 
 CLEAR_AVAILABLE_PLACES MACRO
@@ -533,14 +995,15 @@ CLEAR_AVAILABLE_PLACES MACRO
                   JNE                   TMP
                   JMP                   Nbreak6
     TMP:          
+                  MOV                   cursorState[bx],0
                   popa
                   MOV                   dummyData3,0D
                   MOV                   dummyData4,0D
                   ADD                   dummyData3,al
                   ADD                   dummyData4,ah
                   pusha
-                  
                   UPDATECELL            dummyData3,dummyData4,150D,0D
+                  
     Nbreak6:      
                   popa
                   inc                   al
@@ -555,6 +1018,169 @@ CLEAR_AVAILABLE_PLACES MACRO
     TMP3:
 
     ENDM CLEAR_AVAILABLE_PLACES
+
+; CURSORMOV MACRO 
+;   LOCAL tmplabel10
+;   LOCAL label6
+;   LOCAL label7
+;   LOCAL label8
+;   LOCAL label9
+;   LOCAL left
+;   LOCAL temp20
+;   LOCAL label5
+;   LOCAL right
+;   LOCAL temp22
+;   LOCAL label4
+;   LOCAL up
+;   LOCAL label10
+;   LOCAL label2
+;   LOCAL down
+;   LOCAL label11
+;   LOCAL label1
+;   LOCAL qpressed
+;   LOCAL tmplabel20
+;   LOCAL firsrQ
+;   LOCAL temp23
+
+
+; cursorLoop:
+
+
+;                   mov             ah,0
+;                   int             16h
+
+;                   ;if f4 is pressed return to main screen  
+;                   cmp ah,3Eh
+;                   jnz dontexit
+;                   jmp faraway  
+;                   dontexit: 
+
+;                   cmp ah,10h
+;                   jnz             tmplabel10
+;                   jmp qpressed
+; tmplabel10:
+
+;                   cmp             ah,40h
+;                   jnz             temp23
+;                   jmp             gameChat
+;     temp23: 
+;                   cmp             ah,11h
+;                   jnz             label6
+;                   jmp             up
+;     label6:
+
+;                   cmp             ah,1eh
+;                   jnz             label7
+;                   jmp             left
+;     label7:
+
+;                   cmp             ah,20h
+;                   jnz             label8
+;                   jmp             right
+;     label8:
+
+;                   cmp             ah,1fh
+;                   jnz             label9
+;                   jmp             down
+;     label9:
+
+;                   jmp             cursorLoop                  
+
+;     left:
+;                   mov             dx,curColCursor
+;                   cmp             dx,0D
+;                   jnz             temp20
+
+;                   jmp             cursorLoop
+;     temp20:
+;  pusha
+;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
+;                   popa
+;                   sub             dx,1D
+
+;                   mov             curColCursor,dx
+;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+;                   cmp             ah,11h
+;                   jz              label5
+
+;                   jmp             cursorLoop
+;     label5:
+
+
+;     right:
+;                   mov             dx,curColCursor
+;                   cmp             dx,7d
+;                   jnz             temp22
+;                   jmp             cursorLoop
+;     temp22:
+;  pusha
+;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
+;                   popa
+;                   add             dx,1
+;                   mov             curColCursor,dx
+;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+;                   cmp             ah,20h
+;                   jz              label4
+;                   jmp             cursorLoop
+;     label4:
+
+;     up:
+;                   mov             dx,curRowCursor
+;                   cmp             dx,0D
+;                   jnz             label10
+;                   jmp             cursorLoop
+;     label10:
+
+;  pusha
+;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
+;                   popa
+;                   sub             dx,1D
+
+;                   mov             curRowCursor,dx
+;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+;                   cmp             ah,11h
+;                   jz              label2
+
+;                   jmp             cursorLoop
+;     label2:
+
+
+;     down:
+;                   mov             dx,curRowCursor
+;                   cmp             dx,7D
+;                   jnz             label11
+;                   jmp             cursorLoop
+;     label11:
+;                   pusha
+;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
+;                   popa
+
+;                   add             dx,1
+;                   mov             curRowCursor,dx
+;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+;                   cmp             ah,1fh
+;                   jz              label1
+;                   jmp             cursorLoop
+;     label1:
+
+;     qpressed:
+;     mov bl,stateOfQ
+;     cmp bl,0
+;     jnz tmplabel20
+;     jmp firsrQ
+;     tmplabel20:
+
+
+;    SECONDQHANDLE
+;     jmp   cursorLoop   
+
+;     firsrQ:
+;     FIRSTQHANDLE
+;                  jmp             cursorLoop   
+;                                   gameChat:
+
+
+; ENDM CURSORMOV
 
 CURSORMOV MACRO 
   LOCAL tmplabel10
@@ -579,7 +1205,6 @@ CURSORMOV MACRO
   LOCAL firsrQ
   LOCAL temp23
 
-
 cursorLoop:
 
 
@@ -600,7 +1225,13 @@ tmplabel10:
                   cmp             ah,40h
                   jnz             temp23
                   jmp             gameChat
-    temp23: 
+    temp23:
+
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,startColCursor
+                  popa
+                 ; mov firstIndex,bx
+
                   cmp             ah,11h
                   jnz             label6
                   jmp             up
@@ -633,6 +1264,19 @@ tmplabel10:
  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
+
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip1
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip1:
+                  
                   sub             dx,1D
 
                   mov             curColCursor,dx
@@ -650,9 +1294,21 @@ tmplabel10:
                   jnz             temp22
                   jmp             cursorLoop
     temp22:
- pusha
+  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
+
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip2
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip2:
                   add             dx,1
                   mov             curColCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
@@ -668,9 +1324,21 @@ tmplabel10:
                   jmp             cursorLoop
     label10:
 
- pusha
+  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
+
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip3
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip3:
                   sub             dx,1D
 
                   mov             curRowCursor,dx
@@ -691,6 +1359,18 @@ tmplabel10:
                   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
+
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip4
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip4:
 
                   add             dx,1
                   mov             curRowCursor,dx
@@ -714,8 +1394,8 @@ tmplabel10:
     firsrQ:
     FIRSTQHANDLE
                  jmp             cursorLoop   
-                                  gameChat:
 
+                 gameChat:
 
 ENDM CURSORMOV
 
@@ -794,6 +1474,7 @@ ENDM DrawPiecies
 ;(1,0)......
 ;      (7,7)
 ;
+
 getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx to the required values to draw
  MOV         AL,BYTE PTR ROW
  MOV         CL,60D
@@ -882,8 +1563,8 @@ mov gridState[5],3 ;black bishop
 mov gridState[6],2 ;black knight
 mov gridState[7],1 ;black rook
 
-mov gridState[8],6 ;black pawn
-mov gridState[9],6 ;black pawn
+mov gridState[8], 6 ;black pawn
+mov gridState[9], 6 ;black pawn
 mov gridState[10],6 ;black pawn
 mov gridState[11],6 ;black pawn
 mov gridState[12],6 ;black pawn
@@ -924,14 +1605,14 @@ mov gridState[45],0
 mov gridState[46],0
 mov gridState[47],0
 
-mov gridState[48],7 ;white pawn
-mov gridState[49],7 ;white pawn
-mov gridState[50],7 ;white pawn
-mov gridState[51],7 ;white pawn
-mov gridState[52],7 ;white pawn
-mov gridState[53],7 ;white pawn
-mov gridState[54],7 ;white pawn
-mov gridState[55],7 ;white pawn
+mov gridState[48],0 ;white pawn
+mov gridState[49],0 ;white pawn
+mov gridState[50],0 ;white pawn
+mov gridState[51],0 ;white pawn
+mov gridState[52],0 ;white pawn
+mov gridState[53],0 ;white pawn
+mov gridState[54],0 ;white pawn
+mov gridState[55],0 ;white pawn
 
 mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
@@ -945,9 +1626,6 @@ mov gridState[63],8  ;white rook
 ENDM INITIALIZEGRID
 
 PAWNAVALIABLEMOVES MACRO X,Y
-LOCAL SEEIFLESSTHAN55
-LOCAL ONEMOVEONLY
-
 MOV AX,X
 MOV CX,Y
 
@@ -957,47 +1635,50 @@ ADD SI,BX
 
 LEA DI,cursorState
 ADD DI,BX
-SUB BX,8
-SUB DI,8
-MOV AX,1
-MOV [DI],AX;ONE MOVE FORWARD
-
-CMP BX,39;47
-JNC SEEIFLESSTHAN55
-JMP ONEMOVEONLY
-
-SEEIFLESSTHAN55:
-
-CMP BX,47;56
-JNC ONEMOVEONLY
+ADD DI,BX
 
 MOV AX,1
-SUB DI,8
 MOV [DI],AX
-ONEMOVEONLY:
+ADD DI,BX
+MOV [DI],AX
+
 DRAW_AVAILABLE_PLACES
 
 ENDM PAWNAVALIABLEMOVES
 
+; isEmpty MACRO X,Y 
+; LOCAL notEmpty 
 
+; MOV AX,X
+; MOV CX,Y
 
-isEmpty MACRO X,Y 
-LOCAL notEmpty 
+; LEA SI,gridState 
+; GETARINDEX AX,CX 
+; ADD SI,BX
+; MOV CH,BYTE PTR [SI]
+; CMP CH , 0 
+; jnz notEmpty 
 
-MOV AX,X
-MOV CX,Y
+; MOV BX, 0ffh;;to get farway from the array index 0
+; notEmpty: 
 
-LEA SI,gridState 
-GETARINDEX AX,CX 
-ADD SI,BX
-MOV CH,BYTE PTR [SI]
-CMP CH , 0 
-jnz notEmpty 
+; ENDM isEmpty
 
-MOV BX, 0ffh;;to get farway from the array index 0
-notEmpty: 
-
-ENDM isEmpty
+ISEMPTY MACRO x,y
+LOCAL break5
+LOCAL empty
+pusha
+GETARINDEXBYBYTE x,y
+cmp  gridState[bx],0
+je empty
+popa
+mov bx,0
+jmp break5
+empty:
+popa
+mov bx,1
+break5:
+ENDM ISEMPTY
 
 validateName MACRO entermsg,name,strFailed
     LOCAL repeatt
@@ -1459,6 +2140,7 @@ RETURN:
 
 
 ENDM ISWHITE
+
 ISWHITEBYTE MACRO X,Y 
 LOCAL WHITE 
 LOCAL BLACK 
@@ -1487,6 +2169,7 @@ RETURN:
 
 
 ENDM ISWHITE
+
 INSIDEGRID MACRO X , Y 
 LOCAL NOTVALID 
 LOCAL VALID 
@@ -2047,6 +2730,7 @@ LOCAL BLACK
                         RETURN:
 
 ENDM KnightMovements
+
 .MODEL SMALL
 .286
 .STACK 64
@@ -2186,6 +2870,8 @@ ENDM KnightMovements
 
     DUMMYX            DB  5
     DUMMYY            DB  5
+
+    firstIndex        db  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -2257,7 +2943,11 @@ MAIN PROC FAR
                   DrawPiecies    150D,0D
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  
+    ;   MOV                    cursorState[12],1D
+    ;   DRAW_AVAILABLE_PLACES
+
+    ;   CALL                   waitkey
+    ;   CLEAR_AVAILABLE_PLACES
 
     curs:         
                   CURSORMOV
