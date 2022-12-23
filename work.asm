@@ -1800,11 +1800,17 @@ cursorLoop:
                   jnz             tmplabel10
                   jmp qpressed
 tmplabel10:
-
+                ; handle chat f6 click
                   cmp             ah,40h
                   jnz             temp23
-                  jmp             gameChat
-    temp23:
+                  cmp f6,0
+                  je set
+                  mov f6,0
+                  jmp temp23
+                  set:
+                  mov f6,1
+                temp23:
+                ;end handle chat f6 click
 
                   pusha
                   GETARINDEXBYBYTE curRowCursor,startColCursor
@@ -1966,15 +1972,12 @@ tmplabel10:
     jmp firsrQ
     tmplabel20:
 
-
-   SECONDQHANDLE
+    SECONDQHANDLE
     jmp   cursorLoop   
 
     firsrQ:
     FIRSTQHANDLE
                  jmp             cursorLoop   
-
-                 gameChat:
 
 ENDM CURSORMOV
 
@@ -2764,6 +2767,10 @@ ENTERGAMECHAT MACRO player1Name,player2Name
             local midh
             local CHK
             local AGAIN
+            local enter
+            local temp88
+            local set2
+            local bla
 
                   mov  al, 01h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
@@ -2820,14 +2827,28 @@ ENTERGAMECHAT MACRO player1Name,player2Name
     ;program starts here
     mainloop:     
                   
-                
+                cmp f6,1
+                je enter
+                jmp AGAIN
+                enter:
                   mov         ah,01
                   int         16h
-                  jz          AGAIN
+                  jnz bla
+                  jmp          AGAIN
+                bla:
 
                   mov         ah,0
                   int         16h
                   
+                  cmp             ah,40h
+                  jnz             temp88
+                  cmp f6,0
+                  je set2
+                  mov f6,0
+                  jmp temp88
+                  set2:
+                  mov f6,1
+                  temp88:
 
                   pop         dx
                   push        dx
@@ -2903,7 +2924,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name
           
                   in          al , dx
                   AND         al , 00000001b
-                  JZ          CHK               ;jump untill it recive data
+                  JZ          CHK               ;jump if no recive data
 
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
@@ -2969,8 +2990,8 @@ ENTERGAMECHAT MACRO player1Name,player2Name
                   int         21h
                   
     CHK:          
-
-                  jmp         mainloop
+                
+                ;   jmp         mainloop
     dead:  
                   mov  al, 00h   ; select display page 0
                   mov  ah, 05h   ; function 05h: select active display page
@@ -3191,6 +3212,8 @@ ENDM PRINTCURRTIMER
     TIME              DW  0
     STARTTIME         DW  0
     COLN              DB  ':','$'
+
+    f6                db  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -3266,7 +3289,6 @@ MAIN PROC FAR
                   INITIALIZETIME
     curs:         
                   CURSORMOV
-                  ENTERGAMECHAT  thename+2,thename+2
                   JMP            curs
     ;----------------------------closing files--------------------------------------------------
                   CloseFile      bbishopfilehandle
