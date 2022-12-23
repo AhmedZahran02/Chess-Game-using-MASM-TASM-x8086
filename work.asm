@@ -516,7 +516,7 @@ FIRSTQHANDLE MACRO
                   HANDLEROOK curRowCursor,curColCursor
                   JMP NOACTION
                 KNIGHT:
-                  ;HANDLEKNIGHT curRowCursor,curColCursor
+                  HANDLEKNIGHT curRowCursor,curColCursor
                   JMP NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
@@ -918,6 +918,98 @@ pusha
 HANDLEBISHOP x,y
 popa
 ENDM HANDLEQUEEN
+
+HANDLEKNIGHT MACRO X,Y
+            LOCAL VALID
+            LOCAL NOTVALID
+            LOCAL LOOP1 
+            LOCAL CHECK2
+            LOCAL WHITE 
+            LOCAL BLACK
+            LOCAL RETURN
+                    MOV AX,  3 ; ROW 
+                    MOV DX , 3 ; COL
+                    MOV CX,8 
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    PUSH AX
+                    PUSH DX
+                    LOOP1:
+                    LEA SI , knightdx
+                    LEA DI , knightdy
+                    MOV AX,  X ; ROW 
+                    MOV DX , Y ; COL
+                    ADD SI ,CX
+                    ADD DI, CX
+                        ADD AX , [SI]
+                        ADD DX , [DI]
+                        PUSH AX
+                        INSIDEGRID AL,DL
+                        POP AX
+                        CMP BX,0 
+                        JE NOTVALID 
+
+                        CHECK2:
+                        ; PUSH AX
+                        ; PUSH CX
+                        ; MOV DUMMYX, AL 
+                        ; MOV DUMMYY , DL
+                        ; ISWHITEBYTE DUMMYX,DUMMYY
+                        ; POP CX
+                        ; POP AX 
+                        ; CMP BX,0
+                        ; JE NOTVALID
+
+
+
+                    ; PUSHA
+                    ; ;  CODE FOR CHECKING IF WHITE   ---------------------------------------------------;                 
+                    ; LEA SI,gridState 
+                    ; ; GETARINDEX AX,DX 
+                    ;     ; MOV AX,X 
+                    ;     MOV BL , 8D
+                    ;     MUL BL 
+                    ;     ADD AX , DX
+        
+                    ; ADD SI,AX
+                    ; MOV CH,BYTE PTR [SI]
+                    ; CMP CH , 6 
+                    ; JG WHITE 
+                    ; JMP BLACK
+                    ; WHITE:
+                    ; POPA
+
+                    ; JMP NOTVALID
+                    ; BLACK: 
+
+                    ; ;-----------------------------------------------------------------------------;
+                    ; POPA
+
+
+
+
+
+
+
+
+                        VALID: 
+                        MOV dummyData1 , AL
+                        ; LEA SI , DUMMYY
+                        MOV dummyData2 ,  DL
+                        push ax
+                        GETARINDEXBYBYTE  dummyData1,dummyData2
+                        pop ax
+                        mov cursorState[bx],1
+                        ; PUSHA
+                        ; DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
+                        ; POPA
+                        NOTVALID:
+                         CMP CX,0
+                        JE RETURN
+                        DEC CX
+                        JMP LOOP1
+                        RETURN:      
+ENDM HANDLEKNIGHT
 
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
@@ -2642,94 +2734,6 @@ ENTERGAMECHAT MACRO player1Name,player2Name
                   int  10h
 
 ENDM ENTERGAMECHAT
-
-KnightMovements MACRO X, Y
-LOCAL VALID
-LOCAL NOTVALID
-LOCAL LOOP1 
-LOCAL CHECK2
-LOCAL WHITE 
-LOCAL BLACK
-                    MOV AX,  3 ; ROW 
-                    MOV DX , 3 ; COL
-                    MOV CX,8 
-                    LEA SI , knightdx
-                    LEA DI , knightdy
-                    PUSH AX
-                    PUSH DX
-                    LOOP1:
-                    LEA SI , knightdx
-                    LEA DI , knightdy
-                    MOV AX,  X ; ROW 
-                    MOV DX , Y ; COL
-                    ADD SI ,CX
-                    ADD DI, CX
-                        ADD AX , [SI]
-                        ADD DX , [DI]
-                        PUSH AX
-                        INSIDEGRID AL,DL
-                        POP AX
-                        CMP BX,0 
-                        JE NOTVALID 
-
-                        CHECK2:
-                        ; PUSH AX
-                        ; PUSH CX
-                        ; MOV DUMMYX, AL 
-                        ; MOV DUMMYY , DL
-                        ; ISWHITEBYTE DUMMYX,DUMMYY
-                        ; POP CX
-                        ; POP AX 
-                        ; CMP BX,0
-                        ; JE NOTVALID
-
-
-
-                    ; PUSHA
-                    ; ;  CODE FOR CHECKING IF WHITE   ---------------------------------------------------;                 
-                    ; LEA SI,gridState 
-                    ; ; GETARINDEX AX,DX 
-                    ;     ; MOV AX,X 
-                    ;     MOV BL , 8D
-                    ;     MUL BL 
-                    ;     ADD AX , DX
-        
-                    ; ADD SI,AX
-                    ; MOV CH,BYTE PTR [SI]
-                    ; CMP CH , 6 
-                    ; JG WHITE 
-                    ; JMP BLACK
-                    ; WHITE:
-                    ; POPA
-
-                    ; JMP NOTVALID
-                    ; BLACK: 
-
-                    ; ;-----------------------------------------------------------------------------;
-                    ; POPA
-
-
-
-
-
-
-
-
-                        VALID: 
-                        MOV DUMMYX , AL
-                        ; LEA SI , DUMMYY
-                        MOV DUMMYY ,  DL
-                        PUSHA
-                        DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
-                        POPA
-                        NOTVALID:
-                         CMP CX,0
-                        JE RETURN
-                        DEC CX
-                        JMP LOOP1
-                        RETURN:
-
-ENDM KnightMovements
 
 .MODEL SMALL
 .286
