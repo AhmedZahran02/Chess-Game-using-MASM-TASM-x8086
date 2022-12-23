@@ -2515,145 +2515,12 @@ ENDM GETTIME
 .STACK 64
 ;-----------
 .Data
-    nameq             db  'Please enter your name:','$'
-    erroname          db  'Please write a valid name :','$'
-    clear             db  '                                                                                                    ','$'
-    line              db  '---------------------------------------------------','$'
-    
-    brockdata         db  60D*60D dup(0)
-    bknightdata       db  60D*60D dup(0)
-    bbishopdata       db  60D*60D dup(0)
-    bqueendata        db  60D*60D dup(0)
-    bkingdata         db  60D*60D dup(0)
-    bpawndata         db  60D*60D dup(0)
-
-    wpawndata         db  60D*60D dup(0)
-    wrockdata         db  60D*60D dup(0)
-    wknightdata       db  60D*60D dup(0)
-    wbishopdata       db  60D*60D dup(0)
-    wqueendata        db  60D*60D dup(0)
-    wkingdata         db  60D*60D dup(0)
-
-
-    knightdx          db  1,1,2,2,-2,-2, -1 , -1
-    knightdy          db  -2,2,1,-1,1,-1,2,-2
-    
-    ; king_dx           db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    ; king_dy           db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    ; soldier_dx        db  1 ,
-    ; soldier_dy        db  1 ,
-
-    thename           db  16,?,16 dup('$')                                                                                              ; max size 15 char last digit for $
-    proceed           db  'Please Enter key to continue','$'
-    op1               db  'To start chatting press F1','$'
-    op2               db  'To start the game press F2','$'
-    op3               db  'To end the program press ESC','$'
-    ;------------black pieces---------------
-    bbishopwidth      equ 60D
-    bbishopheight     equ 60D
-    bbishopfilename   db  'bbishop.bin',0
-    bbishopfilehandle DW  ?
-
-    bkingwidth        equ 60D
-    bkingheight       equ 60D
-    bkingfilename     db  'bking.bin',0
-    bkingfilehandle   DW  ?
-
-    bknightwidth      equ 60D
-    bknightheight     equ 60D
-    bknightfilename   db  'bknight.bin',0
-    bknightfilehandle DW  ?
-
-    bpawnwidth        equ 60D
-    bpawnheight       equ 60D
-    bpawnfilename     db  'bpawn.bin',0
-    bpawnfilehandle   DW  ?
-
-    bqueenwidth       equ 60D
-    bqueenheight      equ 60D
-    bqueenfilename    db  'bqueen.bin',0
-    bqueenfilehandle  DW  ?
-
-    brockwidth        equ 60D
-    brockheight       equ 60D
-    brockfilename     db  'brock.bin',0
-    brockfilehandle   DW  ?
-
-    ;------------white pieces---------------
-    wbishopwidth      equ 60D
-    wbishopheight     equ 60D
-    wbishopfilename   db  'wbishop.bin',0
-    wbishopfilehandle DW  ?
-
-    wkingwidth        equ 60D
-    wkingheight       equ 60D
-    wkingfilename     db  'wking.bin',0
-    wkingfilehandle   DW  ?
-
-    wknightwidth      equ 60D
-    wknightheight     equ 60D
-    wknightfilename   db  'wknight.bin',0
-    wknightfilehandle DW  ?
-
-    wpawnwidth        equ 60D
-    wpawnheight       equ 60D
-    wpawnfilename     db  'wpawn.bin',0
-    wpawnfilehandle   DW  ?
-
-    wqueenwidth       equ 60D
-    wqueenheight      equ 60D
-    wqueenfilename    db  'wqueen.bin',0
-    wqueenfilehandle  DW  ?
-
-    wrockwidth        equ 60D
-    wrockheight       equ 60D
-    wrockfilename     db  'wrock.bin',0
-    wrockfilehandle   DW  ?
-    ;--------------
-    selectwidth       equ 60D
-    selectheight      equ 60D
-    selectfilename    db  'select.bin',0
-    selectfilehandle  DW  ?
-    selectdata        db  selectwidth*selectheight dup(0)
-    ;---------------
-
-    borderwidth       equ 60D
-    borderheight      equ 60D
-    borderfilename    db  'border.bin',0
-    borderfilehandle  DW  ?
-    borderdata        db  borderwidth*borderheight dup(0)
-
-    gridState         db  64  dup(0)
-    colorState        db  64  dup(0)
-    cursorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
-
-    curRowCursor      dw  0
-    curColCursor      dw  0
-
-    startRowCursor    dw  0
-    startColCursor    dw  0
-
-    endRowCursor      dw  0
-    endColCursor      dw  0
-
-    cellColorState    db  0
-
-    stateOfQ          db  0
-    dummyData1        db  0
-    dummyData2        db  0
-
-    dummyData3        DW  0
-    dummyData4        dW  0
-
-    DUMMYX            DB  5
-    DUMMYY            DB  5
-
-    firstIndex        db  0
-    TIME              DW  0
-    STARTTIME         DW  0
-    COLN              DB  ':','$'
+    SEC       db 60 DUP('$')
+    MIN       db 60 DUP('$')
+    SPACE     DB ' ','$'
+    TIME      DW 0
+    STARTTIME DW 0
+    COLN      DB ':','$'
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -2665,26 +2532,34 @@ MAIN PROC FAR
                   CALL        CLS
     ;OPENING AND READING BIN FILES
                   GETTIME
-                  MOV         STARTTIME,BX
+                  MOV         WORD PTR STARTTIME,BX
     LP:           
                   movecursor  0,0
                   GETTIME
                   MOV         AX,BX
-                  MOV         BX,STARTTIME
+                  MOV         BX,WORD PTR STARTTIME
                   SUB         AX,BX
-                  MOV         CX,60D
-                  DIV         CX
+                  MOV         CL,60D
+                  DIV         CL
                   PUSHA
-                  MOV         BX,AX
-                  MOV         AL,AH
                   MOV         AH,0
-                  TOSTRING    nameq
-                  ShowMessage nameq
+                  TOSTRING    MIN
+                  ShowMessage MIN
                   ShowMessage COLN
                   POPA
+                  MOV         AL,AH
                   MOV         AH,0
-                  TOSTRING    nameq
-                  ShowMessage nameq
+                  TOSTRING    SEC
+                  ShowMessage SEC
+
+                  CMP         SEC[1],'$'
+                  JNE         NSP
+                  
+                  ShowMessage SPACE
+    NSP:          
+                  MOV         SEC[1],'$'
+                  MOV         MIN[1],'$'
+
                   JMP         LP
                   EXT
 MAIN ENDP
@@ -2692,32 +2567,32 @@ MAIN ENDP
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                  ;GET DATA
+GETDATA PROC                                           ;GET DATA
                   MOV         AX,@DATA
                   MOV         DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                      ;CLEAR SCREEN
-                  MOV         AX,0003H        ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC                                               ;CLEAR SCREEN
+                  MOV         AX,0003H                 ;;ah == 0 set to graph mod the al = 3 return to text mode
                   INT         10H
                   ret
 CLS ENDP
 
-EnterText PROC                                ;ENTER TEXT MODE
+EnterText PROC                                         ;ENTER TEXT MODE
                   MOV         AX,3H
                   INT         10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                            ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                     ;ENTER GRAPHICS MODE
                   MOV         AX,4F02H
-                  MOV         BX,103H         ;(800x600) pixel ;grid =480*480; char=60*60
+                  MOV         BX,103H                  ;(800x600) pixel ;grid =480*480; char=60*60
                   INT         10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                  ;wait for key
+waitkey PROC                                           ;wait for key
                   MOV         AH , 0
                   INT         16h
                   ret
