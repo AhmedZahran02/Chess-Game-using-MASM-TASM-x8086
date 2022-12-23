@@ -473,13 +473,14 @@ FIRSTQHANDLE MACRO
                   mov SI,BX
                   GETTIME
                   mov ax,si
-                  mul ax,2D
+                  mov cl,2D
+                  mul cl
                   mov si,ax
                   dec BX
                   dec BX
                   dec BX
                   CMP word ptr timeState[si],BX
-                  JL temp151
+                  JLE temp151
                   jmp break80
                   temp151:
                   mov word ptr timeState[si],0D
@@ -1229,15 +1230,18 @@ SECONDQHANDLE MACRO
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
+
                 ;count down start
                   PUSHA
                   GETTIME
                   mov ax,si
-                  mul ax,2D
+                  mov cl,2D
+                  mul cl
                   mov si,ax
                   mov word ptr timeState[si],BX
                   POPA
                 ;count down end
+
                   POPA
                 SKIP:
                   pusha
