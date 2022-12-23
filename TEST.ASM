@@ -983,206 +983,21 @@ HANDLEKNIGHT MACRO X,Y
 ENDM HANDLEKNIGHT
 
 HANDLEPAWN MACRO X,Y
-; LOCAL CANMOVEFORWARD
-; LOCAL BREAKKK
-; LOCAL EAT
-;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
-MOV AX,X
-MOV CX,Y
-DEC AX
-INC CX
-;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
-INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
-CMP BX,1
-JZ ITSVALID1
-MOV DL,0
-JMP CONTINUOUECHECK
-ITSVALID1:
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
-MOV AX,X
-MOV CX,Y
-DEC AX
-INC CX
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
-ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
-MOV DL,0
-CMP BX,0
-JNZ CONTINUOUECHECK
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
-MOV AX,X
-MOV CX,Y
-DEC AX
-INC CX
-;;;;;;;;;;;;;;
-ISWHITE AX,CX
-CMP BX,1
-JZ CONTINUOUECHECK
-MOV DL,1 ; RIGHT HAS FOE
-CONTINUOUECHECK:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC CX
-;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
-INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
-CMP BX,1
-JZ ITSVALID2
-MOV DH,0
-JMP CONTINUOUECHECK2
-ITSVALID2:
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC CX
-;;;;;;;;;;;;;
-ISEMPTY AL,CL ;NOT EMPTY
-MOV DH,0
-CMP BX,0
-JNZ CONTINUOUECHECK2
-;;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC CX
-;;;;;;;;;;;;;;;;;;
-ISWHITE AX,CX
-CMP BX,1
-JZ CONTINUOUECHECK2
-MOV DH,1 ;LEFT HAS FOE
-CONTINUOUECHECK2:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
-CMP DL,1
-JNZ RIGHTNOFOE
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX  ;RIGHT TO THE PAWN
-MOV AX,X
-MOV CX,Y
-DEC AX
-INC CX
-GETARINDEX AX,CX  ;GET NEW INDEX
-;;;;;;;;;;;;;
-MOV cursorState[BX],1
-RIGHTNOFOE:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
-CMP DH,1
-JNZ LEFTNOFOE
-;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;LEFT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC CX
-GETARINDEX AX,CX  ;GET NEW INDEX
-;;;;;;;;;;;;;
-MOV cursorState[BX],1
-LEFTNOFOE:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
-;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-;;;;;;;;;;;;;;;;;
-INSIDEGRID AX,CX
-CMP BX,1
-JZ ITSVALID3
-JMP CANTMOVE
-ITSVALID3:
-;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-;;;;;;;;;;;;;;;;;
-ISWHITE AX,CX
-CMP BX,1
-JNZ ITSVALID4
-JMP CANTMOVE
-ITSVALID4:
-;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
-GETARINDEX AX,CX ;;;;;FRONT TO THE PAW
-MOV AX,X
-MOV CX,Y
-DEC AX
-;;;;;;;;;;;;;;;;;
-ISEMPTY AL,CL
-CMP BX,1
-JZ CANMOVEFORWARD
-;;ELSE
-JMP CANTMOVE
-CANMOVEFORWARD:
-MOV AX,X
-MOV CX,Y
+
+LEA SI,gridState 
 GETARINDEX AX,CX 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
-CMP BX,56
-JC SEEIFGREATERTAHN47OREQUAL
-JMP ONEMOVEONLY
+ADD SI,BX
 
-SEEIFGREATERTAHN47OREQUAL:
-CMP BX,47
-JNC TWOMOVES
-JMP ONEMOVEONLY
+LEA DI,cursorState
+ADD DI,BX
+ADD DI,BX
 
-TWOMOVES:
-;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC AX
-ISEMPTY AL,CL
-CMP BX,1
-JZ ITSVALID5
-JMP ONEMOVEONLY
-ITSVALID5:
-;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
-MOV AX,X
-MOV CX,Y
-DEC AX
-DEC AX
-GETARINDEX AX,CX 
-MOV cursorState[BX],1
-;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
-ONEMOVEONLY:
-MOV AX,X
-MOV CX,Y
-DEC AX
-GETARINDEX AX,CX
-MOV cursorState[BX],1
-CANTMOVE:
-
+MOV AX,1
+MOV [DI],AX
+ADD DI,BX
+MOV [DI],AX
 
 ENDM HANDLEPAWN
 
@@ -2666,30 +2481,32 @@ ENTERGAMECHAT MACRO player1Name,player2Name
 
 ENDM ENTERGAMECHAT
 
-GETTIME MACRO
+GETTIME MACRO ;OUTPUT IN BX AND TIME DATA
 
     MOV TIME,0
     MOV AH,2CH
     INT 21H ; SEC -> DH ;MIN -> CL ;HRS ->CH
 
-    MOV AX,0
-    MOV AL,CH
-    MOV BL,24
-    MUL BL
+    ; MOV AX,0
+    ; MOV AL,CH ;HOURS
+    ; MOV BL,3600D
+    ; MUL BL
 
-    ADD TIME,AX
+    ; ADD TIME,AX
 
     MOV AX,0
-    MOV AL,CL
+    MOV AL,CL ;MINUTES
     MOV BL,60
     MUL BL
 
     ADD TIME,AX
 
-    MOV AX,0
-    MOV AL,dh
+    MOV AX,0 
+    MOV AL,dh ;SECONDS
 
     ADD TIME,AX
+
+    MOV BX,WORD PTR TIME
 
 ENDM GETTIME
 
@@ -2835,6 +2652,7 @@ ENDM GETTIME
 
     firstIndex        db  0
     TIME              DW  0
+    STARTTIME         DW  0
     ;---------------------------------------------------------------------------------------------------
  
 
@@ -2842,126 +2660,55 @@ ENDM GETTIME
 .CODE
 MAIN PROC FAR
     ;INITIALIZING
-                  call           GETDATA
-                  CALL           CLS
+                  call        GETDATA
+                  CALL        CLS
     ;OPENING AND READING BIN FILES
-                  OpenFile       bbishopfilename, bbishopfilehandle
-                  ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile       bkingfilename, bkingfilehandle
-                  ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile       bknightfilename, bknightfilehandle
-                  ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile       bpawnfilename, bpawnfilehandle
-                  ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile       bqueenfilename, bqueenfilehandle
-                  ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile       brockfilename, brockfilehandle
-                  ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-    ;--white piecies----
-                  OpenFile       wbishopfilename, wbishopfilehandle
-                  ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile       wkingfilename, wkingfilehandle
-                  ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile       wknightfilename, wknightfilehandle
-                  ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile       wpawnfilename, wpawnfilehandle
-                  ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile       wqueenfilename, wqueenfilehandle
-                  ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile       wrockfilename, wrockfilehandle
-                  ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-    ;--border-----
-                  OpenFile       borderfilename, borderfilehandle
-                  ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-                  OpenFile       selectfilename, selectfilehandle
-                  ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-
-    ;START MENU
-                  validateName   nameq,thename,erroname                                                   ;Veryyyyyyyyyyyyyyyy STABLE
-                  movecursor     17H,0AH
-                  ShowMessage    proceed
-                  call           waitkey
-    ;CHOICE MENU
-    faraway:      
-
-                  call           CLS
-                  movecursor     17H,03H
-                  ShowMessage    op1
-                  movecursor     17H,08H
-                  ShowMessage    op2
-                  movecursor     17H,0DH
-                  ShowMessage    op3
-                  MAINMAIN       thename,thename
-    ;GAME SCREEN
-    play:         
-                  CALL           EnterGraphics
-                  mov            curColCursor,00h
-                  mov            curRowCursor,07h
-                  INITIALIZEGRID 0FH,08H
-                  DrawGrid       150D,0D,colorState[1],colorState[0]
-                  DrawPiecies    150D,0D
-
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-
-    curs:         
-                  CURSORMOV
-                  ENTERGAMECHAT  thename+2,thename+2
-                  JMP            curs
-    ;----------------------------closing files--------------------------------------------------
-                  CloseFile      bbishopfilehandle
-                  CloseFile      bkingfilehandle
-                  CloseFile      bknightfilehandle
-                  CloseFile      bpawnfilehandle
-                  CloseFile      bqueenfilehandle
-                  CloseFile      brockfilehandle
-
-                  CloseFile      wbishopfilehandle
-                  CloseFile      wkingfilehandle
-                  CloseFile      wknightfilehandle
-                  CloseFile      wpawnfilehandle
-                  CloseFile      wqueenfilehandle
-                  CloseFile      wrockfilehandle
-
-                  CloseFile      borderfilehandle
-
+                  GETTIME
+                  MOV         STARTTIME,BX
+    LP:           
+                  movecursor  0,0
+                  GETTIME
+                  MOV         AX,BX
+                  MOV         BX,STARTTIME
+                  SUB         AX,BX
+                  CMP         AX,
+                  TOSTRING    nameq
+                  ShowMessage nameq
+                  JMP         LP
                   EXT
 MAIN ENDP
     ;----------------------------------------------------------------------------------------------------------------
 
 
     ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                              ;GET DATA
-                  MOV            AX,@DATA
-                  MOV            DS,AX
+GETDATA PROC                                  ;GET DATA
+                  MOV         AX,@DATA
+                  MOV         DS,AX
                   ret
 GETDATA ENDP
 
-CLS PROC                                                                                                  ;CLEAR SCREEN
-                  MOV            AX,0003H                                                                 ;;ah == 0 set to graph mod the al = 3 return to text mode
-                  INT            10H
+CLS PROC                                      ;CLEAR SCREEN
+                  MOV         AX,0003H        ;;ah == 0 set to graph mod the al = 3 return to text mode
+                  INT         10H
                   ret
 CLS ENDP
 
-EnterText PROC                                                                                            ;ENTER TEXT MODE
-                  MOV            AX,3H
-                  INT            10H
+EnterText PROC                                ;ENTER TEXT MODE
+                  MOV         AX,3H
+                  INT         10H
                   ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                        ;ENTER GRAPHICS MODE
-                  MOV            AX,4F02H
-                  MOV            BX,103H                                                                  ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT            10H
+EnterGraphics PROC                            ;ENTER GRAPHICS MODE
+                  MOV         AX,4F02H
+                  MOV         BX,103H         ;(800x600) pixel ;grid =480*480; char=60*60
+                  INT         10H
                   ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                              ;wait for key
-                  MOV            AH , 0
-                  INT            16h
+waitkey PROC                                  ;wait for key
+                  MOV         AH , 0
+                  INT         16h
                   ret
 waitkey ENDP
 
