@@ -450,7 +450,10 @@ FIRSTQHANDLE MACRO
                 ;   getoutt:
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor,curColCursor
-
+                  pusha
+                    KnightMovements curRowCursor,curColCursor
+                    DRAW_AVAILABLE_PLACES
+                  popa
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
@@ -516,7 +519,7 @@ FIRSTQHANDLE MACRO
                   HANDLEROOK curRowCursor,curColCursor
                   JMP NOACTION
                 KNIGHT:
-                  ;HANDLEKNIGHT curRowCursor,curColCursor
+                  KnightMovements  curRowCursor,curColCursor
                   JMP NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
@@ -2650,6 +2653,7 @@ LOCAL LOOP1
 LOCAL CHECK2
 LOCAL WHITE 
 LOCAL BLACK
+LOCAL RETURN
                     MOV AX,  3 ; ROW 
                     MOV DX , 3 ; COL
                     MOV CX,8 
@@ -2716,12 +2720,16 @@ LOCAL BLACK
 
 
                         VALID: 
-                        MOV DUMMYX , AL
+                        MOV dummyData1 , AL
                         ; LEA SI , DUMMYY
-                        MOV DUMMYY ,  DL
-                        PUSHA
-                        DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
-                        POPA
+                        MOV dummyData2 ,  DL
+                        push ax
+                        GETARINDEXBYBYTE  dummyData1,dummyData2
+                        pop ax
+                        mov cursorState[bx],1
+                        ; PUSHA
+                        ; DRAWWITHSOURCE       selectdata,borderwidth,borderheight,DUMMYX,DUMMYY,150D,0D
+                        ; POPA
                         NOTVALID:
                          CMP CX,0
                         JE RETURN
