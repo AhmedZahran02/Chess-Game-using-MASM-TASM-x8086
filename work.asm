@@ -459,7 +459,7 @@ FIRSTQHANDLE MACRO
                     temp100:
                     popa
                   pusha
-                  ISWHITE curRowCursor,curColCursor
+                  ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
                   jne temp150
                   jmp break80
@@ -593,7 +593,7 @@ pop ax
 mov cursorState[bx],1
 jmp First_Loop
 break1:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp26
 jmp break12
@@ -631,7 +631,7 @@ pop ax
 mov cursorState[bx],1
 jmp Second_Loop
 break2:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp27
 jmp break22
@@ -669,7 +669,7 @@ pop ax
 mov cursorState[bx],1
 jmp Third_Loop
 break3:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp28
 jmp break32
@@ -707,7 +707,7 @@ pop ax
 mov cursorState[bx],1
 jmp Fourth_Loop
 break4:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp29
 jmp break42
@@ -776,7 +776,7 @@ pop ax
 mov cursorState[bx],1
 jmp First_Loop
 break1:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp26
 jmp break12
@@ -815,7 +815,7 @@ pop ax
 mov cursorState[bx],1
 jmp Second_Loop
 break2:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp27
 jmp break22
@@ -854,7 +854,7 @@ pop ax
 mov cursorState[bx],1
 jmp Third_Loop
 break3:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp28
 jmp break32
@@ -893,7 +893,7 @@ pop ax
 mov cursorState[bx],1
 jmp Fourth_Loop
 break4:
-ISWHITE dummyData1,dummyData2
+ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp29
 jmp break42
