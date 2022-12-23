@@ -510,7 +510,7 @@ FIRSTQHANDLE MACRO
                   KINGTEMP:
                   JMP NOACTION
                 PAWN:
-                  HANDLEPAWN curRowCursor,curColCursor
+                  ;HANDLEPAWN curRowCursor,curColCursor
                   JMP NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
@@ -1688,19 +1688,24 @@ mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
 
-HANDLEPAWN MACRO X,Y
+PAWNAVALIABLEMOVES MACRO X,Y
 MOV AX,X
 MOV CX,Y
 
-; LEA SI,gridState 
+LEA SI,gridState 
 GETARINDEX AX,CX 
-; ADD SI,BX
-SUB BX,8
-MOV cursorState[BX],1
-SUB BX,8
-MOV cursorState[BX],1
-MOV AX,1
+ADD SI,BX
 
+LEA DI,cursorState
+ADD DI,BX
+ADD DI,BX
+
+MOV AX,1
+MOV [DI],AX
+ADD DI,BX
+MOV [DI],AX
+
+DRAW_AVAILABLE_PLACES
 
 ENDM PAWNAVALIABLEMOVES
 
