@@ -709,7 +709,7 @@ FIRSTQHANDLE2 MACRO
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 KING:
-                  ;HANDLEKING2 curRowCursor2,curColCursor2
+                  HANDLEKING2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 NOACTION:
                 PUSHA
@@ -2107,6 +2107,316 @@ MOV CX,Y
 DEC CX
 GETARINDEX AX,CX
 MOV cursorState[BX],1
+CANTMOVE8:
+
+ENDM HANDLEKING
+
+HANDLEKING2 MACRO X,Y
+LOCAL CANMOVE1
+LOCAL CHKIFWHITE1
+LOCAL CANTMOVE1
+LOCAL CANMOVE2
+LOCAL CHKIFWHITE2
+LOCAL CANTMOVE2
+LOCAL CANMOVE3
+LOCAL CHKIFWHITE3
+LOCAL CANTMOVE3
+LOCAL CANMOVE4
+LOCAL CHKIFWHITE4
+LOCAL CANTMOVE4
+LOCAL CANMOVE5
+LOCAL CHKIFWHITE5
+LOCAL CANTMOVE5
+LOCAL CANMOVE6
+LOCAL CHKIFWHITE6
+LOCAL CANTMOVE6
+LOCAL CANMOVE7
+LOCAL CHKIFWHITE7
+LOCAL CANTMOVE7
+LOCAL CANMOVE8
+LOCAL CHKIFWHITE8
+LOCAL CANTMOVE8
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE1
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE1
+JMP CANMOVE1
+;;;;;;;;;;;;;;;;
+CHKIFWHITE1:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE1
+;;;;;;;;;;;;;;;
+CANMOVE1:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE1:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE2
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE2
+JMP CANMOVE2
+;;;;;;;;;;;;;;;;
+CHKIFWHITE2:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE2
+;;;;;;;;;;;;;;;
+CANMOVE2:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE2:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE3
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE3
+JMP CANMOVE3
+;;;;;;;;;;;;;;;;
+CHKIFWHITE3:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE3
+;;;;;;;;;;;;;;;
+CANMOVE3:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE3:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE4
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE4
+JMP CANMOVE4
+;;;;;;;;;;;;;;;;
+CHKIFWHITE4:
+MOV AX,X
+MOV CX,Y
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE4
+;;;;;;;;;;;;;;;
+CANMOVE4:
+MOV AX,X
+MOV CX,Y
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE4:
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE5
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE5
+JMP CANMOVE5
+;;;;;;;;;;;;;;;;
+CHKIFWHITE5:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE5
+;;;;;;;;;;;;;;;
+CANMOVE5:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE5:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE6
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE6
+JMP CANMOVE6
+;;;;;;;;;;;;;;;;
+CHKIFWHITE6:
+MOV AX,X
+MOV CX,Y
+INC AX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE6
+;;;;;;;;;;;;;;;
+CANMOVE6:
+MOV AX,X
+MOV CX,Y
+INC AX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE6:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE7
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE7
+JMP CANMOVE7
+;;;;;;;;;;;;;;;;
+CHKIFWHITE7:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE7
+;;;;;;;;;;;;;;;
+CANMOVE7:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE7:
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE8
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE8
+JMP CANMOVE8
+;;;;;;;;;;;;;;;;
+CHKIFWHITE8:
+MOV AX,X
+MOV CX,Y
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE8
+;;;;;;;;;;;;;;;
+CANMOVE8:
+MOV AX,X
+MOV CX,Y
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
 CANTMOVE8:
 
 ENDM HANDLEKING
