@@ -994,7 +994,7 @@ temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov cursorState2[bx],1
 jmp Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
@@ -1005,7 +1005,7 @@ temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov cursorState2[bx],1
 break22:
 
 
