@@ -1832,7 +1832,7 @@ MOV AX,X
 MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE1:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1869,7 +1869,7 @@ MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE2:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1906,7 +1906,7 @@ MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE3:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1939,7 +1939,7 @@ MOV AX,X
 MOV CX,Y
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE4:
 
 
@@ -1978,7 +1978,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE5:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2011,7 +2011,7 @@ MOV AX,X
 MOV CX,Y
 INC AX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE6:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2048,7 +2048,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE7:
 
 
@@ -2082,7 +2082,7 @@ MOV AX,X
 MOV CX,Y
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE8:
 
 ENDM HANDLEKING
