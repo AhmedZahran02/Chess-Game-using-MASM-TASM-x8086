@@ -694,7 +694,7 @@ FIRSTQHANDLE2 MACRO
                   KINGTEMP:
                   JMP NOACTION
                 PAWN:
-                  ;HANDLEPAWN2 curRowCursor2,curColCursor2
+                  HANDLEPAWN2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
@@ -1623,6 +1623,8 @@ LOCAL CANMOVEFORWARD
 LOCAL ITSVALID5
 LOCAL ONEMOVEONLY
 LOCAL CANTMOVE
+LOCAL TWOMOVES
+LOCAL SEEIFGREATERTAHN47OREQUAL
 ;;;;;;;;;;;;;
 
 MOV AX,X
@@ -1799,7 +1801,201 @@ MOV cursorState[BX],1
 CANTMOVE:
 
 
-ENDM PAWNAVALIABLEMOVES
+ENDM HANDLEPAWN
+
+HANDLEPAWN2 MACRO X,Y
+LOCAL ITSVALID1
+LOCAL CONTINUOUECHECK
+LOCAL ITSVALID2
+LOCAL CONTINUOUECHECK2
+LOCAL RIGHTNOFOE
+LOCAL LEFTNOFOE
+LOCAL ITSVALID3
+LOCAL ITSVALID4
+LOCAL CANMOVEFORWARD
+LOCAL ITSVALID5
+LOCAL ONEMOVEONLY
+LOCAL CANTMOVE
+LOCAL TWOMOVES
+LOCAL SEEIFGREATERTAHN47OREQUAL
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID1
+MOV DL,0
+JMP CONTINUOUECHECK
+ITSVALID1:
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
+ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
+MOV DL,0
+CMP BX,0
+JNZ CONTINUOUECHECK
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JZ CONTINUOUECHECK
+MOV DL,1 ; RIGHT HAS FOE
+CONTINUOUECHECK:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID2
+MOV DH,0
+JMP CONTINUOUECHECK2
+ITSVALID2:
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;
+ISEMPTY AL,CL ;NOT EMPTY
+MOV DH,0
+CMP BX,0
+JNZ CONTINUOUECHECK2
+;;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JZ CONTINUOUECHECK2
+MOV DH,1 ;LEFT HAS FOE
+CONTINUOUECHECK2:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
+CMP DL,1
+JNZ RIGHTNOFOE
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState2[BX],1
+RIGHTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
+CMP DH,1
+JNZ LEFTNOFOE
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState2[BX],1
+LEFTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+INSIDEGRID AX,CX
+CMP BX,1
+JZ ITSVALID3
+JMP CANTMOVE
+ITSVALID3:
+;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JNZ ITSVALID4
+JMP CANTMOVE
+ITSVALID4:
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+ISEMPTY AL,CL
+CMP BX,1
+JZ CANMOVEFORWARD
+;;ELSE
+JMP CANTMOVE
+CANMOVEFORWARD:
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
+CMP BX,16
+JC SEEIFGREATERTAHN47OREQUAL
+JMP ONEMOVEONLY
+
+SEEIFGREATERTAHN47OREQUAL:
+CMP BX,8
+JNC TWOMOVES
+JMP ONEMOVEONLY
+
+TWOMOVES:
+;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
+MOV AX,X
+MOV CX,Y
+INC AX
+INC AX
+ISEMPTY AL,CL
+CMP BX,1
+JZ ITSVALID5
+JMP ONEMOVEONLY
+ITSVALID5:
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
+MOV AX,X
+MOV CX,Y
+INC AX
+INC AX
+GETARINDEX AX,CX 
+MOV cursorState2[BX],1
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
+ONEMOVEONLY:
+MOV AX,X
+MOV CX,Y
+INC AX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE:
+
+
+ENDM HANDLEPAWN2
+
 
 HANDLEKING MACRO X,Y
 LOCAL CANMOVE1
@@ -2419,7 +2615,7 @@ GETARINDEX AX,CX
 MOV cursorState2[BX],1
 CANTMOVE8:
 
-ENDM HANDLEKING
+ENDM HANDLEKING2
 
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
@@ -3711,14 +3907,14 @@ mov gridState[5],3 ;black bishop
 mov gridState[6],2 ;black knight
 mov gridState[7],1 ;black rook
 
-mov gridState[8], 0;6 ;black pawn
-mov gridState[9], 0;6 ;black pawn
-mov gridState[10],0;6 ;black pawn
-mov gridState[11],0;6 ;black pawn
-mov gridState[12],0;6 ;black pawn
-mov gridState[13],0;6 ;black pawn
-mov gridState[14],0;6 ;black pawn
-mov gridState[15],0;6 ;black pawn
+mov gridState[8], 6 ;black pawn
+mov gridState[9], 6 ;black pawn
+mov gridState[10],6 ;black pawn
+mov gridState[11],6 ;black pawn
+mov gridState[12],6 ;black pawn
+mov gridState[13],6 ;black pawn
+mov gridState[14],6 ;black pawn
+mov gridState[15],6 ;black pawn
 
 mov gridState[16],0
 mov gridState[17],0
