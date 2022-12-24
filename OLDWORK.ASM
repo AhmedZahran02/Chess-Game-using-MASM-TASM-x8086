@@ -694,7 +694,7 @@ FIRSTQHANDLE2 MACRO
                   KINGTEMP:
                   JMP NOACTION
                 PAWN:
-                  ;HANDLEPAWN2 curRowCursor2,curColCursor2
+                  HANDLEPAWN2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
@@ -709,7 +709,7 @@ FIRSTQHANDLE2 MACRO
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 KING:
-                  ;HANDLEKING2 curRowCursor2,curColCursor2
+                  HANDLEKING2 curRowCursor2,curColCursor2
                   JMP NOACTION
                 NOACTION:
                 PUSHA
@@ -994,7 +994,7 @@ temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov cursorState2[bx],1
 jmp Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
@@ -1005,7 +1005,7 @@ temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov cursorState2[bx],1
 break22:
 
 
@@ -1623,6 +1623,8 @@ LOCAL CANMOVEFORWARD
 LOCAL ITSVALID5
 LOCAL ONEMOVEONLY
 LOCAL CANTMOVE
+LOCAL TWOMOVES
+LOCAL SEEIFGREATERTAHN47OREQUAL
 ;;;;;;;;;;;;;
 
 MOV AX,X
@@ -1799,9 +1801,227 @@ MOV cursorState[BX],1
 CANTMOVE:
 
 
-ENDM PAWNAVALIABLEMOVES
+ENDM HANDLEPAWN
+
+HANDLEPAWN2 MACRO X,Y
+LOCAL ITSVALID1
+LOCAL CONTINUOUECHECK
+LOCAL ITSVALID2
+LOCAL CONTINUOUECHECK2
+LOCAL RIGHTNOFOE
+LOCAL LEFTNOFOE
+LOCAL ITSVALID3
+LOCAL ITSVALID4
+LOCAL CANMOVEFORWARD
+LOCAL ITSVALID5
+LOCAL ONEMOVEONLY
+LOCAL CANTMOVE
+LOCAL TWOMOVES
+LOCAL SEEIFGREATERTAHN47OREQUAL
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID1
+MOV DL,0
+JMP CONTINUOUECHECK
+ITSVALID1:
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
+ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
+MOV DL,0
+CMP BX,0
+JNZ CONTINUOUECHECK
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JZ CONTINUOUECHECK
+MOV DL,1 ; RIGHT HAS FOE
+CONTINUOUECHECK:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
+INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
+CMP BX,1
+JZ ITSVALID2
+MOV DH,0
+JMP CONTINUOUECHECK2
+ITSVALID2:
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;
+ISEMPTY AL,CL ;NOT EMPTY
+MOV DH,0
+CMP BX,0
+JNZ CONTINUOUECHECK2
+;;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+;;;;;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JZ CONTINUOUECHECK2
+MOV DH,1 ;LEFT HAS FOE
+CONTINUOUECHECK2:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
+CMP DL,1
+JNZ RIGHTNOFOE
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+INC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState2[BX],1
+RIGHTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
+CMP DH,1
+JNZ LEFTNOFOE
+;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+DEC CX
+GETARINDEX AX,CX  ;GET NEW INDEX
+;;;;;;;;;;;;;
+MOV cursorState2[BX],1
+LEFTNOFOE:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+INSIDEGRID AX,CX
+CMP BX,1
+JZ ITSVALID3
+JMP CANTMOVE
+ITSVALID3:
+;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+ISWHITE2 AX,CX
+CMP BX,0
+JNZ ITSVALID4
+JMP CANTMOVE
+ITSVALID4:
+;;;;;;;;;;;;;;;;;
+
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;
+ISEMPTY AL,CL
+CMP BX,1
+JZ CANMOVEFORWARD
+;;ELSE
+JMP CANTMOVE
+CANMOVEFORWARD:
+MOV AX,X
+MOV CX,Y
+GETARINDEX AX,CX 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
+CMP BX,16
+JC SEEIFGREATERTAHN47OREQUAL
+JMP ONEMOVEONLY
+
+SEEIFGREATERTAHN47OREQUAL:
+CMP BX,8
+JNC TWOMOVES
+JMP ONEMOVEONLY
+
+TWOMOVES:
+;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
+MOV AX,X
+MOV CX,Y
+INC AX
+INC AX
+ISEMPTY AL,CL
+CMP BX,1
+JZ ITSVALID5
+JMP ONEMOVEONLY
+ITSVALID5:
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
+MOV AX,X
+MOV CX,Y
+INC AX
+INC AX
+GETARINDEX AX,CX 
+MOV cursorState2[BX],1
+;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
+ONEMOVEONLY:
+MOV AX,X
+MOV CX,Y
+INC AX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE:
+
+
+ENDM HANDLEPAWN2
+
 
 HANDLEKING MACRO X,Y
+LOCAL CANMOVE1
+LOCAL CHKIFWHITE1
+LOCAL CANTMOVE1
+LOCAL CANMOVE2
+LOCAL CHKIFWHITE2
+LOCAL CANTMOVE2
+LOCAL CANMOVE3
+LOCAL CHKIFWHITE3
+LOCAL CANTMOVE3
+LOCAL CANMOVE4
+LOCAL CHKIFWHITE4
+LOCAL CANTMOVE4
+LOCAL CANMOVE5
+LOCAL CHKIFWHITE5
+LOCAL CANTMOVE5
+LOCAL CANMOVE6
+LOCAL CHKIFWHITE6
+LOCAL CANTMOVE6
+LOCAL CANMOVE7
+LOCAL CHKIFWHITE7
+LOCAL CANTMOVE7
+LOCAL CANMOVE8
+LOCAL CHKIFWHITE8
+LOCAL CANTMOVE8
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -1832,7 +2052,7 @@ MOV AX,X
 MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE1:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1869,7 +2089,7 @@ MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE2:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1906,7 +2126,7 @@ MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE3:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1939,7 +2159,7 @@ MOV AX,X
 MOV CX,Y
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE4:
 
 
@@ -1978,7 +2198,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE5:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2011,7 +2231,7 @@ MOV AX,X
 MOV CX,Y
 INC AX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE6:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2048,7 +2268,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE7:
 
 
@@ -2082,10 +2302,320 @@ MOV AX,X
 MOV CX,Y
 DEC CX
 GETARINDEX AX,CX
-MOV cursorState[BX],2
+MOV cursorState[BX],1
 CANTMOVE8:
 
 ENDM HANDLEKING
+
+HANDLEKING2 MACRO X,Y
+LOCAL CANMOVE1
+LOCAL CHKIFWHITE1
+LOCAL CANTMOVE1
+LOCAL CANMOVE2
+LOCAL CHKIFWHITE2
+LOCAL CANTMOVE2
+LOCAL CANMOVE3
+LOCAL CHKIFWHITE3
+LOCAL CANTMOVE3
+LOCAL CANMOVE4
+LOCAL CHKIFWHITE4
+LOCAL CANTMOVE4
+LOCAL CANMOVE5
+LOCAL CHKIFWHITE5
+LOCAL CANTMOVE5
+LOCAL CANMOVE6
+LOCAL CHKIFWHITE6
+LOCAL CANTMOVE6
+LOCAL CANMOVE7
+LOCAL CHKIFWHITE7
+LOCAL CANTMOVE7
+LOCAL CANMOVE8
+LOCAL CHKIFWHITE8
+LOCAL CANTMOVE8
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE1
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE1
+JMP CANMOVE1
+;;;;;;;;;;;;;;;;
+CHKIFWHITE1:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE1
+;;;;;;;;;;;;;;;
+CANMOVE1:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE1:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE2
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE2
+JMP CANMOVE2
+;;;;;;;;;;;;;;;;
+CHKIFWHITE2:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE2
+;;;;;;;;;;;;;;;
+CANMOVE2:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE2:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE3
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE3
+JMP CANMOVE3
+;;;;;;;;;;;;;;;;
+CHKIFWHITE3:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE3
+;;;;;;;;;;;;;;;
+CANMOVE3:
+MOV AX,X
+MOV CX,Y
+DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE3:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE4
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE4
+JMP CANMOVE4
+;;;;;;;;;;;;;;;;
+CHKIFWHITE4:
+MOV AX,X
+MOV CX,Y
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE4
+;;;;;;;;;;;;;;;
+CANMOVE4:
+MOV AX,X
+MOV CX,Y
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE4:
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE5
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE5
+JMP CANMOVE5
+;;;;;;;;;;;;;;;;
+CHKIFWHITE5:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE5
+;;;;;;;;;;;;;;;
+CANMOVE5:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE5:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE6
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE6
+JMP CANMOVE6
+;;;;;;;;;;;;;;;;
+CHKIFWHITE6:
+MOV AX,X
+MOV CX,Y
+INC AX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE6
+;;;;;;;;;;;;;;;
+CANMOVE6:
+MOV AX,X
+MOV CX,Y
+INC AX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE6:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE7
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE7
+JMP CANMOVE7
+;;;;;;;;;;;;;;;;
+CHKIFWHITE7:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE7
+;;;;;;;;;;;;;;;
+CANMOVE7:
+MOV AX,X
+MOV CX,Y
+INC AX;;;;;;;;;;;;;;;FRONT STEP
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE7:
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC CX
+INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE8
+;;;;;;;;;;;;;
+MOV AX,X
+MOV CX,Y
+DEC CX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
+ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
+CMP BX,1
+JNZ CHKIFWHITE8
+JMP CANMOVE8
+;;;;;;;;;;;;;;;;
+CHKIFWHITE8:
+MOV AX,X
+MOV CX,Y
+DEC CX
+ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
+CMP BX,0
+JZ CANTMOVE8
+;;;;;;;;;;;;;;;
+CANMOVE8:
+MOV AX,X
+MOV CX,Y
+DEC CX
+GETARINDEX AX,CX
+MOV cursorState2[BX],1
+CANTMOVE8:
+
+ENDM HANDLEKING2
 
 GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
@@ -2110,16 +2640,18 @@ SECONDQHANDLE MACRO
                   mov cx,bx ;START INDEX
 
                   GETARINDEX endRowCursor,endColCursor
-
+                  
                   CMP cursorState[BX],0
                   JE SKIP
                   PUSHA
                   mov si,cx ;START INDEX
                   mov dh,BYTE PTR gridState[si] ;DATA OF FIRST INDEX
+
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -2178,6 +2710,7 @@ SECONDQHANDLE2 MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -2690,6 +3223,40 @@ CLEAR_AVAILABLE_PLACES2 MACRO
 ;                  jmp             cursorLoop   
 
 ; ENDM CURSORMOV
+
+CHECKMATE MACRO 
+LOCAL LOOPAGAIN1
+LOCAL CONTINUOUEGAME1
+LOCAL LOOPAGAIN2
+LOCAL CONTINUOUEGAME2
+
+MOV BX, 64
+LOOPAGAIN1:
+DEC BX
+CMP gridState[BX],5 ; BLACK KING
+JZ CONTINUOUEGAME1
+CMP BX,0
+JNZ LOOPAGAIN1
+
+MOV AL,1
+MOV WINNER,AL
+
+JMP faraway
+CONTINUOUEGAME1:
+
+MOV BX, 64
+LOOPAGAIN2:
+DEC BX
+CMP gridState[BX],12 ; WHITE KING
+JZ CONTINUOUEGAME2
+CMP BX,0
+JNZ LOOPAGAIN2
+MOV AL,2
+MOV WINNER,AL
+JMP faraway
+CONTINUOUEGAME2:
+
+ENDM CHECKMATE
 
 CURSORMOV MACRO 
   LOCAL tmplabel10
@@ -3377,14 +3944,14 @@ mov gridState[5],3 ;black bishop
 mov gridState[6],2 ;black knight
 mov gridState[7],1 ;black rook
 
-mov gridState[8], 0;6 ;black pawn
-mov gridState[9], 0;6 ;black pawn
-mov gridState[10],0;6 ;black pawn
-mov gridState[11],0;6 ;black pawn
-mov gridState[12],0;6 ;black pawn
-mov gridState[13],0;6 ;black pawn
-mov gridState[14],0;6 ;black pawn
-mov gridState[15],0;6 ;black pawn
+mov gridState[8], 6 ;black pawn
+mov gridState[9], 6 ;black pawn
+mov gridState[10],6 ;black pawn
+mov gridState[11],6 ;black pawn
+mov gridState[12],6 ;black pawn
+mov gridState[13],6 ;black pawn
+mov gridState[14],6 ;black pawn
+mov gridState[15],6 ;black pawn
 
 mov gridState[16],0
 mov gridState[17],0
@@ -3556,6 +4123,38 @@ MAINMAIN MACRO player1Name,player2Name
     INT 21H
 
 ENDM MAINMAIN
+
+STATUSLINE MACRO
+  LOCAL LOOPXXXX
+  MOV BL,10
+  LOOPXXXX:
+  movecursorWithPageNumber BL,18,0
+  mov ah,2
+  MOV DL,'-' 
+  int 21h
+  INC BL
+  CMP BL,70
+  JNZ LOOPXXXX
+
+  movecursorWithPageNumber 30,20,0
+
+  CMP WINNER,1
+  JNZ WHITEDIDNTWIN
+  MOV AL,0
+  MOV WINNER,AL
+  ShowMessage WINNERISWHITE
+
+  JMP BLACKIDNTWIN
+  WHITEDIDNTWIN:
+
+  CMP WINNER,2
+  JNZ BLACKIDNTWIN
+  MOV AL,0
+  MOV WINNER,AL
+  ShowMessage WINNERISBLACK
+  
+  BLACKIDNTWIN:
+ENDM STATUSLINE
 
 OPENCHAT MACRO player1Name,player2Name
             LOCAL dead
@@ -4361,7 +4960,9 @@ ENDM PRINTCURRTIMER
   erroname          db  'Please write a valid name :','$'
   clear             db  '                                                                                                    ','$'
   line              db  '---------------------------------------------------','$'
-    
+  WINNERISBLACK     db  'winner is black','$'
+  WINNERISWHITE     db  'winner is white','$'
+
   brockdata         db  60D*60D dup(0)
   bknightdata       db  60D*60D dup(0)
   bbishopdata       db  60D*60D dup(0)
@@ -4386,7 +4987,7 @@ ENDM PRINTCURRTIMER
   ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
   ; soldier_dx        db  1 ,
   ; soldier_dy        db  1 ,
-
+  WINNER            db  0
   thename           db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
   proceed           db  'Please Enter key to continue','$'
   op1               db  'To start chatting press F1','$'
@@ -4589,6 +5190,7 @@ MAIN PROC FAR
                 ShowMessage    op2
                 movecursor     17H,0DH
                 ShowMessage    op3
+                STATUSLINE
                 MAINMAIN       thename,thename
   ;GAME SCREEN
   play:         
