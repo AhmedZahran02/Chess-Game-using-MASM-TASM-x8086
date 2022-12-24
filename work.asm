@@ -2651,6 +2651,7 @@ SECONDQHANDLE MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -2709,6 +2710,7 @@ SECONDQHANDLE2 MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -3223,6 +3225,10 @@ CLEAR_AVAILABLE_PLACES2 MACRO
 ; ENDM CURSORMOV
 
 CHECKMATE MACRO 
+LOCAL LOOPAGAIN1
+LOCAL CONTINUOUEGAME1
+LOCAL LOOPAGAIN2
+LOCAL CONTINUOUEGAME2
 
 MOV BX, 64
 LOOPAGAIN1:
@@ -3231,6 +3237,10 @@ CMP gridState[BX],5 ; BLACK KING
 JZ CONTINUOUEGAME1
 CMP BX,0
 JNZ LOOPAGAIN1
+
+MOV AL,1
+MOV WINNER,AL
+
 JMP faraway
 CONTINUOUEGAME1:
 
@@ -3241,6 +3251,8 @@ CMP gridState[BX],12 ; WHITE KING
 JZ CONTINUOUEGAME2
 CMP BX,0
 JNZ LOOPAGAIN2
+MOV AL,2
+MOV WINNER,AL
 JMP faraway
 CONTINUOUEGAME2:
 
@@ -4112,6 +4124,38 @@ MAINMAIN MACRO player1Name,player2Name
 
 ENDM MAINMAIN
 
+STATUSLINE MACRO
+  LOCAL LOOPXXXX
+  MOV BL,10
+  LOOPXXXX:
+  movecursorWithPageNumber BL,18,0
+  mov ah,2
+  MOV DL,'-' 
+  int 21h
+  INC BL
+  CMP BL,70
+  JNZ LOOPXXXX
+
+  movecursorWithPageNumber 30,20,0
+
+  CMP WINNER,1
+  JNZ WHITEDIDNTWIN
+  MOV AL,0
+  MOV WINNER,AL
+  ShowMessage WINNERISWHITE
+
+  JMP BLACKIDNTWIN
+  WHITEDIDNTWIN:
+
+  CMP WINNER,2
+  JNZ BLACKIDNTWIN
+  MOV AL,0
+  MOV WINNER,AL
+  ShowMessage WINNERISBLACK
+  
+  BLACKIDNTWIN:
+ENDM STATUSLINE
+
 OPENCHAT MACRO player1Name,player2Name
             LOCAL dead
             LOCAL mainloop
@@ -4916,7 +4960,9 @@ ENDM PRINTCURRTIMER
     erroname          db  'Please write a valid name :','$'
     clear             db  '                                                                                                    ','$'
     line              db  '---------------------------------------------------','$'
-    
+    WINNERISBLACK     db  'winner is black','$'
+    WINNERISWHITE     db  'winner is white','$'
+
     brockdata         db  60D*60D dup(0)
     bknightdata       db  60D*60D dup(0)
     bbishopdata       db  60D*60D dup(0)
@@ -4941,7 +4987,7 @@ ENDM PRINTCURRTIMER
     ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
     ; soldier_dx        db  1 ,
     ; soldier_dy        db  1 ,
-
+    WINNER            db  0
     thename           db  16,?,16 dup('$')                                                                                              ; max size 15 char last digit for $
     proceed           db  'Please Enter key to continue','$'
     op1               db  'To start chatting press F1','$'
@@ -5144,6 +5190,7 @@ MAIN PROC FAR
                   ShowMessage    op2
                   movecursor     17H,0DH
                   ShowMessage    op3
+                  STATUSLINE
                   MAINMAIN       thename,thename
     ;GAME SCREEN
     play:         
