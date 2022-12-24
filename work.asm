@@ -2640,12 +2640,13 @@ SECONDQHANDLE MACRO
                   mov cx,bx ;START INDEX
 
                   GETARINDEX endRowCursor,endColCursor
-
+                  
                   CMP cursorState[BX],0
                   JE SKIP
                   PUSHA
                   mov si,cx ;START INDEX
                   mov dh,BYTE PTR gridState[si] ;DATA OF FIRST INDEX
+
                   mov gridState[si],0 ;CLEAR START
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
@@ -3220,6 +3221,30 @@ CLEAR_AVAILABLE_PLACES2 MACRO
 ;                  jmp             cursorLoop   
 
 ; ENDM CURSORMOV
+
+CHECKMATE MACRO 
+
+MOV BX, 64
+LOOPAGAIN1:
+DEC BX
+CMP gridState[BX],5 ; BLACK KING
+JZ CONTINUOUEGAME1
+CMP BX,0
+JNZ LOOPAGAIN1
+JMP faraway
+CONTINUOUEGAME1:
+
+MOV BX, 64
+LOOPAGAIN2:
+DEC BX
+CMP gridState[BX],12 ; WHITE KING
+JZ CONTINUOUEGAME2
+CMP BX,0
+JNZ LOOPAGAIN2
+JMP faraway
+CONTINUOUEGAME2:
+
+ENDM CHECKMATE
 
 CURSORMOV MACRO 
   LOCAL tmplabel10
