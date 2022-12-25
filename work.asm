@@ -429,7 +429,6 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             INC CX
             CMP CX,4D
         JNE  BIGGERLOOP8 
-
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
@@ -2868,7 +2867,10 @@ SECONDQHANDLE MACRO
             local blabla2
             local blabla3
             local er
-            
+            pusha
+        movecursor 2d,31d
+        ShowMessage clear
+        popa
             CLEAR_AVAILABLE_PLACES
             CLEAR_AVAILABLE_PLACES2
             FIRSTQHANDLEM
@@ -3716,12 +3718,16 @@ loop10:
 DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
 popa
 PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
 CMP gridState[BX],5D
 JE BREAK8
 BREAK7:
 JMP BREAK6
 BREAK8:
-; code to be executed if the selected is king
+         pusha
+        movecursor 2d,31d
+        ShowMessage CHECKSTRING
+        popa
 break6:
 popa
 inc al
