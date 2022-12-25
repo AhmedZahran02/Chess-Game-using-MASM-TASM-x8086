@@ -3169,7 +3169,7 @@ CMP BX,0
 JNZ LOOPAGAIN1
 
 MOV AL,1
-MOV WINNER,AL
+MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
   movecursor 37,30
   ShowMessage WINNERISWHITE
   not4f:
@@ -4162,6 +4162,7 @@ STATUSLINE MACRO
   LOCAL LOOPXXXX
   LOCAL WHITEDIDNTWIN
   MOV BL,10
+  ;;;;;;;;;;;;;;;;; --------- lined
   LOOPXXXX:
   movecursorWithPageNumber BL,18,0
   mov ah,2
@@ -4170,7 +4171,7 @@ STATUSLINE MACRO
   INC BL
   CMP BL,70
   JNZ LOOPXXXX
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   movecursorWithPageNumber 30,20,0
 
   CMP WINNER,1
