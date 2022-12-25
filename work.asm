@@ -2927,7 +2927,7 @@ SECONDQHANDLE MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
-                  
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -2959,7 +2959,6 @@ SECONDQHANDLE MACRO
                   dec bl
                   mov BYTE PTR stateOfQ,bl
                   
-                  CHECKMATE
                   
 ENDM SECONDQHANDLE
 
@@ -3025,7 +3024,7 @@ SECONDQHANDLE2 MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
-                  
+                  CHECKMATE
                 ;count down start
                   PUSHA
                   GETTIME
@@ -3056,7 +3055,7 @@ SECONDQHANDLE2 MACRO
                   mov bl,BYTE PTR stateOfQ2
                   dec bl
                   mov BYTE PTR stateOfQ2,bl
-                  CHECKMATE
+                  
                   
 ENDM SECONDQHANDLE2
 
@@ -3155,8 +3154,7 @@ LOCAL LOOPAGAIN1
 LOCAL CONTINUOUEGAME1
 LOCAL LOOPAGAIN2
 LOCAL CONTINUOUEGAME2
-LOCAL not4f
-LOCAL not4f2
+
 MOV BX, 64
 LOOPAGAIN1:
 DEC BX
@@ -3167,13 +3165,7 @@ JNZ LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL
-  movecursor 37,30
-  ShowMessage WINNERISWHITE
-  not4f:
-  mov ah,0
-  int 16h
-  cmp ah,3Eh;f4
-  jnz not4f
+
 JMP faraway
 CONTINUOUEGAME1:
 
@@ -3186,13 +3178,6 @@ CMP BX,0
 JNZ LOOPAGAIN2
 MOV AL,2
 MOV WINNER,AL
-  movecursor 37,30
-  ShowMessage WINNERISBLACK
-  not4f2:
-  mov ah,0
-  int 16h
-  cmp ah,3Eh;f4
-  jnz not4f2
 JMP faraway
 CONTINUOUEGAME2:
 
@@ -4105,7 +4090,6 @@ ENDM MAINMAIN
 
 STATUSLINE MACRO
   LOCAL LOOPXXXX
-  LOCAL WHITEDIDNTWIN
   MOV BL,10
   LOOPXXXX:
   movecursorWithPageNumber BL,18,0
@@ -5258,7 +5242,6 @@ MAIN PROC FAR
                 INITIALIZETIME
   curs:         
                 CURSORMOV
-
                 JMP            curs
 
                 EXT
