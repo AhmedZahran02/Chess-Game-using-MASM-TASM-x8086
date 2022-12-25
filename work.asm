@@ -3759,7 +3759,64 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES
 
+
+
+
 DRAW_AVAILABLE_PLACES2 MACRO
+LOCAL loop9
+LOCAL loop10
+LOCAL break6
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
+mov al,0
+mov ah,0
+loop9:
+mov al,0
+loop10:
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+ GETARINDEXBYBYTE dummyData1,dummyData2
+ cmp cursorState2[bx],0
+ je BREAK7
+ popa
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+DRAWWITHSOURCE       select2data,select2width,select2height,dummyData1,dummyData2,150D,0D 
+popa
+PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
+CMP gridState[BX],12D
+JE BREAK8
+BREAK7:
+JMP BREAK6
+BREAK8:
+         pusha
+        movecursor 80d,31d
+        ShowMessage CHECKSTRING
+        popa
+break6:
+popa
+inc al
+cmp al,8
+je beforeloop10
+jmp loop10
+beforeloop10:
+inc ah
+cmp ah,8
+je beforeloop9
+jmp loop9
+beforeloop9:
+
+
+ENDM DRAW_AVAILABLE_PLACES2
+
+
+
+DRAW_AVAILABLE_PLACES3 MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
@@ -3789,7 +3846,7 @@ inc ah
 cmp ah,8
 jne loop9
 
-ENDM DRAW_AVAILABLE_PLACES2
+ENDM DRAW_AVAILABLE_PLACES3
 
 DrawPiecies MACRO A,B
         ;white
