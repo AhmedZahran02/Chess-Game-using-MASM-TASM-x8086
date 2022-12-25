@@ -659,7 +659,7 @@ FIRSTQHANDLE2 MACRO
                   MOV BYTE PTR colorState[bx],0CH 
                   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D 
                   popa
                   mov bl,BYTE PTR stateOfQ2
 
@@ -1996,7 +1996,6 @@ CANTMOVE:
 
 ENDM HANDLEPAWN2
 
-
 HANDLEKING MACRO X,Y
 LOCAL CANMOVE1
 LOCAL CHKIFWHITE1
@@ -2736,7 +2735,7 @@ SECONDQHANDLE2 MACRO
                   CLEAR_AVAILABLE_PLACES2
                   POPA
 
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,endRowCursor,endColCursor,150D,0D    ; col,row
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,endRowCursor2,endColCursor2,150D,0D    ; col,row
 
                   mov bl,BYTE PTR stateOfQ2
                   dec bl
@@ -2834,395 +2833,6 @@ CLEAR_AVAILABLE_PLACES2 MACRO
     TMP3:
 
     ENDM CLEAR_AVAILABLE_PLACES2
-
-; CURSORMOV MACRO 
-;   LOCAL tmplabel10
-;   LOCAL label6
-;   LOCAL label7
-;   LOCAL label8
-;   LOCAL label9
-;   LOCAL left
-;   LOCAL temp20
-;   LOCAL label5
-;   LOCAL right
-;   LOCAL temp22
-;   LOCAL label4
-;   LOCAL up
-;   LOCAL label10
-;   LOCAL label2
-;   LOCAL down
-;   LOCAL label11
-;   LOCAL label1
-;   LOCAL qpressed
-;   LOCAL tmplabel20
-;   LOCAL firsrQ
-;   LOCAL temp23
-
-
-; cursorLoop:
-
-
-;                   mov             ah,0
-;                   int             16h
-
-;                   ;if f4 is pressed return to main screen  
-;                   cmp ah,3Eh
-;                   jnz dontexit
-;                   jmp faraway  
-;                   dontexit: 
-
-;                   cmp ah,10h
-;                   jnz             tmplabel10
-;                   jmp qpressed
-; tmplabel10:
-
-;                   cmp             ah,40h
-;                   jnz             temp23
-;                   jmp             gameChat
-;     temp23: 
-;                   cmp             ah,11h
-;                   jnz             label6
-;                   jmp             up
-;     label6:
-
-;                   cmp             ah,1eh
-;                   jnz             label7
-;                   jmp             left
-;     label7:
-
-;                   cmp             ah,20h
-;                   jnz             label8
-;                   jmp             right
-;     label8:
-
-;                   cmp             ah,1fh
-;                   jnz             label9
-;                   jmp             down
-;     label9:
-
-;                   jmp             cursorLoop                  
-
-;     left:
-;                   mov             dx,curColCursor
-;                   cmp             dx,0D
-;                   jnz             temp20
-
-;                   jmp             cursorLoop
-;     temp20:
-;  pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-;                   sub             dx,1D
-
-;                   mov             curColCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,11h
-;                   jz              label5
-
-;                   jmp             cursorLoop
-;     label5:
-
-
-;     right:
-;                   mov             dx,curColCursor
-;                   cmp             dx,7d
-;                   jnz             temp22
-;                   jmp             cursorLoop
-;     temp22:
-;  pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-;                   add             dx,1
-;                   mov             curColCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,20h
-;                   jz              label4
-;                   jmp             cursorLoop
-;     label4:
-
-;     up:
-;                   mov             dx,curRowCursor
-;                   cmp             dx,0D
-;                   jnz             label10
-;                   jmp             cursorLoop
-;     label10:
-
-;  pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-;                   sub             dx,1D
-
-;                   mov             curRowCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,11h
-;                   jz              label2
-
-;                   jmp             cursorLoop
-;     label2:
-
-
-;     down:
-;                   mov             dx,curRowCursor
-;                   cmp             dx,7D
-;                   jnz             label11
-;                   jmp             cursorLoop
-;     label11:
-;                   pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-
-;                   add             dx,1
-;                   mov             curRowCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,1fh
-;                   jz              label1
-;                   jmp             cursorLoop
-;     label1:
-
-;     qpressed:
-;     mov bl,stateOfQ
-;     cmp bl,0
-;     jnz tmplabel20
-;     jmp firsrQ
-;     tmplabel20:
-
-
-;    SECONDQHANDLE
-;     jmp   cursorLoop   
-
-;     firsrQ:
-;     FIRSTQHANDLE
-;                  jmp             cursorLoop   
-;                                   gameChat:
-
-
-; ENDM CURSORMOV
-
-; CURSORMOV MACRO 
-;   LOCAL tmplabel10
-;   LOCAL label6
-;   LOCAL label7
-;   LOCAL label8
-;   LOCAL label9
-;   LOCAL left
-;   LOCAL temp20
-;   LOCAL label5
-;   LOCAL right
-;   LOCAL temp22
-;   LOCAL label4
-;   LOCAL up
-;   LOCAL label10
-;   LOCAL label2
-;   LOCAL down
-;   LOCAL label11
-;   LOCAL label1
-;   LOCAL qpressed
-;   LOCAL tmplabel20
-;   LOCAL firsrQ
-;   LOCAL temp23
-;   LOCAL temp24
-                  
-; cursorLoop:
-;                   PRINTCURRTIMER
-
-;                   mov         ah,01
-;                   int         16h
-;                   JNZ temp24
-;                   jmp          curs
-;                 temp24:
-;                   mov         ah,0
-;                   int         16h
-
-;                   ;if f4 is pressed return to main screen  
-;                   cmp ah,3Eh
-;                   jnz dontexit
-;                   jmp faraway  
-;                   dontexit: 
-
-;                   cmp ah,10h
-;                   jnz             tmplabel10
-;                   jmp qpressed
-; tmplabel10:
-;                 ; handle chat f6 click
-;                   cmp             ah,40h
-;                   jnz             temp23
-;                   cmp f6,0
-;                   je set
-;                   mov f6,0
-;                   jmp temp23
-;                   set:
-;                   mov f6,1
-;                 temp23:
-;                 ;end handle chat f6 click
-
-;                 ;   pusha
-;                 ;   GETARINDEXBYBYTE curRowCursor,startColCursor
-;                 ;   popa
-;                  ; mov firstIndex,bx
-
-;                   cmp             ah,11h
-;                   jnz             label6
-;                   jmp             up
-;     label6:
-
-;                   cmp             ah,1eh
-;                   jnz             label7
-;                   jmp             left
-;     label7:
-
-;                   cmp             ah,20h
-;                   jnz             label8
-;                   jmp             right
-;     label8:
-
-;                   cmp             ah,1fh
-;                   jnz             label9
-;                   jmp             down
-;     label9:
-
-;                   jmp             cursorLoop                  
-
-;     left:
-;                   mov             dx,curColCursor
-;                   cmp             dx,0D
-;                   jnz             temp20
-
-;                   jmp             cursorLoop
-;     temp20:
-;  pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-
-;                   pusha
-;                   GETARINDEXBYBYTE curRowCursor,curColCursor
-;                   mov firstIndex,bx
-;                   popa
-;                   mov bx,firstIndex
-;                   cmp cursorState[bx],0
-;                   je skip1
-;                   pusha
-;                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   popa
-;                   skip1:
-                  
-;                   sub             dx,1D
-
-;                   mov             curColCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,11h
-;                   jz              label5
-
-;                   jmp             cursorLoop
-;     label5:
-
-
-;     right:
-;                   mov             dx,curColCursor
-;                   cmp             dx,7d
-;                   jnz             temp22
-;                   jmp             cursorLoop
-;     temp22:
-;   pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-
-;                   pusha
-;                   GETARINDEXBYBYTE curRowCursor,curColCursor
-;                   mov firstIndex,bx
-;                   popa
-;                   mov bx,firstIndex
-;                   cmp cursorState[bx],0
-;                   je skip2
-;                   pusha
-;                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   popa
-;                   skip2:
-;                   add             dx,1
-;                   mov             curColCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,20h
-;                   jz              label4
-;                   jmp             cursorLoop
-;     label4:
-
-;     up:
-;                   mov             dx,curRowCursor
-;                   cmp             dx,0D
-;                   jnz             label10
-;                   jmp             cursorLoop
-;     label10:
-
-;   pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-
-;                   pusha
-;                   GETARINDEXBYBYTE curRowCursor,curColCursor
-;                   mov firstIndex,bx
-;                   popa
-;                   mov bx,firstIndex
-;                   cmp cursorState[bx],0
-;                   je skip3
-;                   pusha
-;                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   popa
-;                   skip3:
-;                   sub             dx,1D
-
-;                   mov             curRowCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,11h
-;                   jz              label2
-
-;                   jmp             cursorLoop
-;     label2:
-
-
-;     down:
-;                   mov             dx,curRowCursor
-;                   cmp             dx,7D
-;                   jnz             label11
-;                   jmp             cursorLoop
-;     label11:
-;                   pusha
-;                   UPDATECELL     curRowCursor,curColCursor,150D,0D
-;                   popa
-
-;                   pusha
-;                   GETARINDEXBYBYTE curRowCursor,curColCursor
-;                   mov firstIndex,bx
-;                   popa
-;                   mov bx,firstIndex
-;                   cmp cursorState[bx],0
-;                   je skip4
-;                   pusha
-;                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   popa
-;                   skip4:
-
-;                   add             dx,1
-;                   mov             curRowCursor,dx
-;                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-;                   cmp             ah,1fh
-;                   jz              label1
-;                   jmp             cursorLoop
-;     label1:
-
-;     qpressed:
-;     mov bl,stateOfQ
-;     cmp bl,0
-;     jnz tmplabel20
-;     jmp firsrQ
-;     tmplabel20:
-
-;     SECONDQHANDLE
-;     jmp   cursorLoop   
-
-;     firsrQ:
-;     FIRSTQHANDLE
-;                  jmp             cursorLoop   
-
-; ENDM CURSORMOV
 
 CHECKMATE MACRO 
 LOCAL LOOPAGAIN1
@@ -3413,11 +3023,16 @@ tmplabel102:
  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
-
+  pusha
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
                   mov firstIndex,bx
                   popa
+
+                
+
                   mov bx,firstIndex
                   cmp cursorState[bx],0
                   je skip1
@@ -3453,7 +3068,9 @@ tmplabel102:
  pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor2,curColCursor2
                   mov firstIndex2,bx
@@ -3476,7 +3093,7 @@ tmplabel102:
                   sub             dx,1D
 
                   mov             curColCursor2,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4bh
                   jz              label52
 
@@ -3492,7 +3109,9 @@ tmplabel102:
   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
                   mov firstIndex,bx
@@ -3530,7 +3149,9 @@ tmplabel102:
   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor2,curColCursor2
                   mov firstIndex2,bx
@@ -3552,7 +3173,7 @@ tmplabel102:
 
                   add             dx,1
                   mov             curColCursor2,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4dh
                   jz              label42
                   jmp             cursorLoop
@@ -3568,7 +3189,9 @@ tmplabel102:
   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
                   mov firstIndex,bx
@@ -3608,7 +3231,9 @@ tmplabel102:
   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor2,curColCursor2
                   mov firstIndex2,bx
@@ -3631,7 +3256,7 @@ tmplabel102:
                   sub             dx,1D
 
                   mov             curRowCursor2,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,48h
                   jz              label22
 
@@ -3650,7 +3275,9 @@ tmplabel102:
                   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
                   mov firstIndex,bx
@@ -3687,7 +3314,9 @@ tmplabel102:
                   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
                   popa
-
+ pusha
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor2,curColCursor2
                   mov firstIndex2,bx
@@ -3709,7 +3338,7 @@ tmplabel102:
 
                   add             dx,1
                   mov             curRowCursor2,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,50h
                   jz              label12
                   jmp             cursorLoop
@@ -4956,312 +4585,350 @@ ENDM PRINTCURRTIMER
 .STACK 64
 ;-----------
 .Data
-    nameq             db  'Please enter your name:','$'
-    erroname          db  'Please write a valid name :','$'
-    clear             db  '                                                                                                    ','$'
-    line              db  '---------------------------------------------------','$'
-    WINNERISBLACK     db  'winner is black','$'
-    WINNERISWHITE     db  'winner is white','$'
+  nameq             db  'Please enter your name:','$'
+  erroname          db  'Please write a valid name :','$'
+  clear             db  '                                                                                                    ','$'
+  line              db  '---------------------------------------------------','$'
+  WINNERISBLACK     db  'winner is black','$'
+  WINNERISWHITE     db  'winner is white','$'
 
-    brockdata         db  60D*60D dup(0)
-    bknightdata       db  60D*60D dup(0)
-    bbishopdata       db  60D*60D dup(0)
-    bqueendata        db  60D*60D dup(0)
-    bkingdata         db  60D*60D dup(0)
-    bpawndata         db  60D*60D dup(0)
+  brockdata         db  60D*60D dup(0)
+  bknightdata       db  60D*60D dup(0)
+  bbishopdata       db  60D*60D dup(0)
+  bqueendata        db  60D*60D dup(0)
+  bkingdata         db  60D*60D dup(0)
+  bpawndata         db  60D*60D dup(0)
 
-    wpawndata         db  60D*60D dup(0)
-    wrockdata         db  60D*60D dup(0)
-    wknightdata       db  60D*60D dup(0)
-    wbishopdata       db  60D*60D dup(0)
-    wqueendata        db  60D*60D dup(0)
-    wkingdata         db  60D*60D dup(0)
+  wpawndata         db  60D*60D dup(0)
+  wrockdata         db  60D*60D dup(0)
+  wknightdata       db  60D*60D dup(0)
+  wbishopdata       db  60D*60D dup(0)
+  wqueendata        db  60D*60D dup(0)
+  wkingdata         db  60D*60D dup(0)
 
 
-    knightdx          db  1,1,2,2,-2,-2, -1 , -1
-    knightdy          db  -2,2,1,-1,1,-1,2,-2
+  knightdx          db  1,1,2,2,-2,-2, -1 , -1
+  knightdy          db  -2,2,1,-1,1,-1,2,-2
     
-    king_dx           db  -1,-1,0,1,1,1,0,-1
-    king_dy           db  0,1,1,1,0,-1,-1,-1
-    ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-    ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-    ; soldier_dx        db  1 ,
-    ; soldier_dy        db  1 ,
-    WINNER            db  0
-    thename           db  16,?,16 dup('$')                                                                                              ; max size 15 char last digit for $
-    proceed           db  'Please Enter key to continue','$'
-    op1               db  'To start chatting press F1','$'
-    op2               db  'To start the game press F2','$'
-    op3               db  'To end the program press ESC','$'
-    ;------------black pieces---------------
-    bbishopwidth      equ 60D
-    bbishopheight     equ 60D
-    bbishopfilename   db  'bbishop.bin',0
-    bbishopfilehandle DW  ?
+  king_dx           db  -1,-1,0,1,1,1,0,-1
+  king_dy           db  0,1,1,1,0,-1,-1,-1
+  ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
+  ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
+  ; soldier_dx        db  1 ,
+  ; soldier_dy        db  1 ,
+  WINNER            db  0
+  thename           db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
+  proceed           db  'Please Enter key to continue','$'
+  op1               db  'To start chatting press F1','$'
+  op2               db  'To start the game press F2','$'
+  op3               db  'To end the program press ESC','$'
+  ;------------black pieces---------------
+  bbishopwidth      equ 60D
+  bbishopheight     equ 60D
+  bbishopfilename   db  'bbishop.bin',0
+  bbishopfilehandle DW  ?
 
-    bkingwidth        equ 60D
-    bkingheight       equ 60D
-    bkingfilename     db  'bking.bin',0
-    bkingfilehandle   DW  ?
+  bkingwidth        equ 60D
+  bkingheight       equ 60D
+  bkingfilename     db  'bking.bin',0
+  bkingfilehandle   DW  ?
 
-    bknightwidth      equ 60D
-    bknightheight     equ 60D
-    bknightfilename   db  'bknight.bin',0
-    bknightfilehandle DW  ?
+  bknightwidth      equ 60D
+  bknightheight     equ 60D
+  bknightfilename   db  'bknight.bin',0
+  bknightfilehandle DW  ?
 
-    bpawnwidth        equ 60D
-    bpawnheight       equ 60D
-    bpawnfilename     db  'bpawn.bin',0
-    bpawnfilehandle   DW  ?
+  bpawnwidth        equ 60D
+  bpawnheight       equ 60D
+  bpawnfilename     db  'bpawn.bin',0
+  bpawnfilehandle   DW  ?
 
-    bqueenwidth       equ 60D
-    bqueenheight      equ 60D
-    bqueenfilename    db  'bqueen.bin',0
-    bqueenfilehandle  DW  ?
+  bqueenwidth       equ 60D
+  bqueenheight      equ 60D
+  bqueenfilename    db  'bqueen.bin',0
+  bqueenfilehandle  DW  ?
 
-    brockwidth        equ 60D
-    brockheight       equ 60D
-    brockfilename     db  'brock.bin',0
-    brockfilehandle   DW  ?
+  brockwidth        equ 60D
+  brockheight       equ 60D
+  brockfilename     db  'brock.bin',0
+  brockfilehandle   DW  ?
 
-    ;------------white pieces---------------
-    wbishopwidth      equ 60D
-    wbishopheight     equ 60D
-    wbishopfilename   db  'wbishop.bin',0
-    wbishopfilehandle DW  ?
+  ;------------white pieces---------------
+  wbishopwidth      equ 60D
+  wbishopheight     equ 60D
+  wbishopfilename   db  'wbishop.bin',0
+  wbishopfilehandle DW  ?
 
-    wkingwidth        equ 60D
-    wkingheight       equ 60D
-    wkingfilename     db  'wking.bin',0
-    wkingfilehandle   DW  ?
+  wkingwidth        equ 60D
+  wkingheight       equ 60D
+  wkingfilename     db  'wking.bin',0
+  wkingfilehandle   DW  ?
 
-    wknightwidth      equ 60D
-    wknightheight     equ 60D
-    wknightfilename   db  'wknight.bin',0
-    wknightfilehandle DW  ?
+  wknightwidth      equ 60D
+  wknightheight     equ 60D
+  wknightfilename   db  'wknight.bin',0
+  wknightfilehandle DW  ?
 
-    wpawnwidth        equ 60D
-    wpawnheight       equ 60D
-    wpawnfilename     db  'wpawn.bin',0
-    wpawnfilehandle   DW  ?
+  wpawnwidth        equ 60D
+  wpawnheight       equ 60D
+  wpawnfilename     db  'wpawn.bin',0
+  wpawnfilehandle   DW  ?
 
-    wqueenwidth       equ 60D
-    wqueenheight      equ 60D
-    wqueenfilename    db  'wqueen.bin',0
-    wqueenfilehandle  DW  ?
+  wqueenwidth       equ 60D
+  wqueenheight      equ 60D
+  wqueenfilename    db  'wqueen.bin',0
+  wqueenfilehandle  DW  ?
 
-    wrockwidth        equ 60D
-    wrockheight       equ 60D
-    wrockfilename     db  'wrock.bin',0
-    wrockfilehandle   DW  ?
-    ;--------------
-    selectwidth       equ 60D
-    selectheight      equ 60D
-    selectfilename    db  'select.bin',0
-    selectfilehandle  DW  ?
-    selectdata        db  selectwidth*selectheight dup(0)
-    ;---------------
-    ;--------------
-    select2width      equ 60D
-    select2height     equ 60D
-    select2filename   db  'select2.bin',0
-    select2filehandle DW  ?
-    select2data       db  select2width*select2height dup(0)
-    ;---------------
+  wrockwidth        equ 60D
+  wrockheight       equ 60D
+  wrockfilename     db  'wrock.bin',0
+  wrockfilehandle   DW  ?
+  ;--------------
+  selectwidth       equ 60D
+  selectheight      equ 60D
+  selectfilename    db  'select.bin',0
+  selectfilehandle  DW  ?
+  selectdata        db  selectwidth*selectheight dup(0)
+  ;---------------
+  ;--------------
+  select2width      equ 60D
+  select2height     equ 60D
+  select2filename   db  'select2.bin',0
+  select2filehandle DW  ?
+  select2data       db  select2width*select2height dup(0)
+  ;---------------
 
-    borderwidth       equ 60D
-    borderheight      equ 60D
-    borderfilename    db  'border.bin',0
-    borderfilehandle  DW  ?
-    borderdata        db  borderwidth*borderheight dup(0)
+  borderwidth       equ 60D
+  borderheight      equ 60D
+  borderfilename    db  'border.bin',0
+  borderfilehandle  DW  ?
+  borderdata        db  borderwidth*borderheight dup(0)
+  ;---------------
 
-    gridState         db  64  dup(0)
-    colorState        db  64  dup(0)
-    cursorState       db  64  dup(0)                                                                                                    ; 0 for not cursor 1 for cursor
-    cursorState2      db  64  dup(0)
-    timeState         dW  64  dup(0)
+  border2width      equ 60D
+  border2height     equ 60D
+  border2filename   db  'border2.bin',0
+  border2filehandle DW  ?
+  border2data       db  border2width*border2height dup(0)
 
-    curRowCursor      dw  0
-    curColCursor      dw  0
+  gridState         db  64  dup(0)
+  colorState        db  64  dup(0)
+  cursorState       db  64  dup(0)                                                                                                  ; 0 for not cursor 1 for cursor
+  cursorState2      db  64  dup(0)
+  timeState         dW  64  dup(0)
 
-    startRowCursor    dw  0
-    startColCursor    dw  0
+  curRowCursor      dw  0
+  curColCursor      dw  0
 
-    endRowCursor      dw  0
-    endColCursor      dw  0
+  startRowCursor    dw  0
+  startColCursor    dw  0
 
-    cellColorState    db  0
+  endRowCursor      dw  0
+  endColCursor      dw  0
 
-    stateOfQ          db  0
+  cellColorState    db  0
 
-    curRowCursor2     dw  0
-    curColCursor2     dw  0
+  stateOfQ          db  0
 
-    startRowCursor2   dw  0
-    startColCursor2   dw  0
+  curRowCursor2     dw  0
+  curColCursor2     dw  0
 
-    endRowCursor2     dw  0
-    endColCursor2     dw  0
+  startRowCursor2   dw  0
+  startColCursor2   dw  0
 
-    cellColorState2   db  0
+  endRowCursor2     dw  0
+  endColCursor2     dw  0
 
-    stateOfQ2         db  0
+  cellColorState2   db  0
 
-    dummyData1        db  0
-    dummyData2        db  0
+  stateOfQ2         db  0
 
-    dummyData3        DW  0
-    dummyData4        dW  0
+  dummyData1        db  0
+  dummyData2        db  0
 
-    DUMMYX            DB  5
-    DUMMYY            DB  5
+  dummyData3        DW  0
+  dummyData4        dW  0
 
-    firstIndex        db  0
+  DUMMYX            DB  5
+  DUMMYY            DB  5
 
-    firstIndex2       db  0
+  firstIndex        db  0
+
+  firstIndex2       db  0
     
-    SEC               db  60 DUP('$')
-    MIN               db  60 DUP('$')
-    SPACE             DB  ' ','$'
-    TIME              DW  0
-    STARTTIME         DW  0
-    COLN              DB  ':','$'
+  SEC               db  60 DUP('$')
+  MIN               db  60 DUP('$')
+  SPACE             DB  ' ','$'
+  TIME              DW  0
+  STARTTIME         DW  0
+  COLN              DB  ':','$'
 
-    f6                db  0
-    ;---------------------------------------------------------------------------------------------------
+  f6                db  0
+  ;---------------------------------------------------------------------------------------------------
  
 
 
 .CODE
 MAIN PROC FAR
-    ;INITIALIZING
-                  call           GETDATA
-                  CALL           CLS
-    ;OPENING AND READING BIN FILES
-                  OpenFile       bbishopfilename, bbishopfilehandle
-                  ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                  OpenFile       bkingfilename, bkingfilehandle
-                  ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                  OpenFile       bknightfilename, bknightfilehandle
-                  ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                  OpenFile       bpawnfilename, bpawnfilehandle
-                  ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                  OpenFile       bqueenfilename, bqueenfilehandle
-                  ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                  OpenFile       brockfilename, brockfilehandle
-                  ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-    ;--white piecies----
-                  OpenFile       wbishopfilename, wbishopfilehandle
-                  ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                  OpenFile       wkingfilename, wkingfilehandle
-                  ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                  OpenFile       wknightfilename, wknightfilehandle
-                  ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                  OpenFile       wpawnfilename, wpawnfilehandle
-                  ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                  OpenFile       wqueenfilename, wqueenfilehandle
-                  ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                  OpenFile       wrockfilename, wrockfilehandle
-                  ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-    ;--border-----
-                  OpenFile       borderfilename, borderfilehandle
-                  ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-                  OpenFile       selectfilename, selectfilehandle
-                  ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-                  OpenFile       select2filename, select2filehandle
-                  ReadData       select2filehandle ,select2width,select2height,select2data
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
-    ;------------------------------------------------------------------------------------------------
+  ;INITIALIZING
+                call           GETDATA
+                CALL           CLS
+  ;OPENING AND READING BIN FILES
+                OpenFile       bbishopfilename, bbishopfilehandle
+                ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
 
-    ;START MENU
-                  validateName   nameq,thename,erroname                                                     ;Veryyyyyyyyyyyyyyyy STABLE
-                  movecursor     17H,0AH
-                  ShowMessage    proceed
-                  call           waitkey
-    ;CHOICE MENU
-    faraway:      
+                CloseFile      bbishopfilehandle
 
-                  call           CLS
-                  movecursor     17H,03H
-                  ShowMessage    op1
-                  movecursor     17H,08H
-                  ShowMessage    op2
-                  movecursor     17H,0DH
-                  ShowMessage    op3
-                  STATUSLINE
-                  MAINMAIN       thename,thename
-    ;GAME SCREEN
-    play:         
-                  CALL           EnterGraphics
-                  mov            curColCursor,00h
-                  mov            curRowCursor,07h
-                  INITIALIZEGRID 0FH,08H
-                  DrawGrid       150D,0D,colorState[1],colorState[0]
-                  DrawPiecies    150D,0D
+                OpenFile       bkingfilename, bkingfilehandle
+                ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
 
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+                CloseFile      bkingfilehandle
 
-                  INITIALIZETIME
-    curs:         
-                  CURSORMOV
-                  JMP            curs
-    ;----------------------------closing files--------------------------------------------------
-                  CloseFile      bbishopfilehandle
-                  CloseFile      bkingfilehandle
-                  CloseFile      bknightfilehandle
-                  CloseFile      bpawnfilehandle
-                  CloseFile      bqueenfilehandle
-                  CloseFile      brockfilehandle
+                OpenFile       bknightfilename, bknightfilehandle
+                ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
 
-                  CloseFile      wbishopfilehandle
-                  CloseFile      wkingfilehandle
-                  CloseFile      wknightfilehandle
-                  CloseFile      wpawnfilehandle
-                  CloseFile      wqueenfilehandle
-                  CloseFile      wrockfilehandle
+                CloseFile      bknightfilehandle
 
-                  CloseFile      borderfilehandle
-                  CloseFile      selectfilehandle
-                  CloseFile      select2filehandle
+                OpenFile       bpawnfilename, bpawnfilehandle
+                ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
 
-                  EXT
+                CloseFile      bpawnfilehandle
+
+                OpenFile       bqueenfilename, bqueenfilehandle
+                ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+
+                CloseFile      bqueenfilehandle
+
+                OpenFile       brockfilename, brockfilehandle
+                ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
+
+                CloseFile      brockfilehandle
+
+  ;--white piecies----
+                OpenFile       wbishopfilename, wbishopfilehandle
+                ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+
+                CloseFile      wbishopfilehandle
+
+                OpenFile       wkingfilename, wkingfilehandle
+                ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+
+                CloseFile      wkingfilehandle
+
+                OpenFile       wknightfilename, wknightfilehandle
+                ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+
+                CloseFile      wknightfilehandle
+
+                OpenFile       wpawnfilename, wpawnfilehandle
+                ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+
+                CloseFile      wpawnfilehandle
+
+                OpenFile       wqueenfilename, wqueenfilehandle
+                ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+
+                CloseFile      wqueenfilehandle
+
+                OpenFile       wrockfilename, wrockfilehandle
+                ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+
+                CloseFile      wrockfilehandle
+
+  ;--border-----
+                OpenFile       borderfilename, borderfilehandle
+                ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
+
+                CloseFile      borderfilehandle
+
+                OpenFile       border2filename, border2filehandle
+                ReadData       border2filehandle ,border2width,border2height,border2data
+
+                CloseFile      border2filehandle
+
+                OpenFile       selectfilename, selectfilehandle
+                ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
+
+                CloseFile      selectfilehandle
+
+                OpenFile       select2filename, select2filehandle
+                ReadData       select2filehandle ,select2width,select2height,select2data
+
+                CloseFile      select2filehandle
+  ;------------------------------------------------------------------------------------------------
+  ;------------------------------------------------------------------------------------------------
+  ;------------------------------------------------------------------------------------------------
+  ;------------------------------------------------------------------------------------------------
+
+  ;START MENU
+                validateName   nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+                movecursor     17H,0AH
+                ShowMessage    proceed
+                call           waitkey
+  ;CHOICE MENU
+  faraway:      
+
+                call           CLS
+                movecursor     17H,03H
+                ShowMessage    op1
+                movecursor     17H,08H
+                ShowMessage    op2
+                movecursor     17H,0DH
+                ShowMessage    op3
+                STATUSLINE
+                MAINMAIN       thename,thename
+  ;GAME SCREEN
+  play:         
+                CALL           EnterGraphics
+                mov            curColCursor,00h
+                mov            curRowCursor,07h
+                INITIALIZEGRID 0FH,08H
+                DrawGrid       150D,0D,colorState[1],colorState[0]
+                DrawPiecies    150D,0D
+
+                DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+
+                INITIALIZETIME
+  curs:         
+                CURSORMOV
+                JMP            curs
+
+                EXT
 MAIN ENDP
-    ;----------------------------------------------------------------------------------------------------------------
+  ;----------------------------------------------------------------------------------------------------------------
 
 
-    ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                                ;GET DATA
-                  MOV            AX,@DATA
-                  MOV            DS,AX
-                  ret
+  ;--------------------------------------------------Functions---------------------------------------------------------
+GETDATA PROC                                                                                             ;GET DATA
+                MOV            AX,@DATA
+                MOV            DS,AX
+                ret
 GETDATA ENDP
 
-CLS PROC                                                                                                    ;CLEAR SCREEN
-                  MOV            AX,0003H                                                                   ;;ah == 0 set to graph mod the al = 3 return to text mode
-                  INT            10H
-                  ret
+CLS PROC                                                                                                 ;CLEAR SCREEN
+                MOV            AX,0003H                                                                  ;;ah == 0 set to graph mod the al = 3 return to text mode
+                INT            10H
+                ret
 CLS ENDP
 
-EnterText PROC                                                                                              ;ENTER TEXT MODE
-                  MOV            AX,3H
-                  INT            10H
-                  ret
+EnterText PROC                                                                                           ;ENTER TEXT MODE
+                MOV            AX,3H
+                INT            10H
+                ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                          ;ENTER GRAPHICS MODE
-                  MOV            AX,4F02H
-                  MOV            BX,103H                                                                    ;(800x600) pixel ;grid =480*480; char=60*60
-                  INT            10H
-                  ret
+EnterGraphics PROC                                                                                       ;ENTER GRAPHICS MODE
+                MOV            AX,4F02H
+                MOV            BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
+                INT            10H
+                ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                                ;wait for key
-                  MOV            AH , 0
-                  INT            16h
-                  ret
+waitkey PROC                                                                                             ;wait for key
+                MOV            AH , 0
+                INT            16h
+                ret
 waitkey ENDP
 
 END MAIN
