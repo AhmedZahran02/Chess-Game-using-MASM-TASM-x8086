@@ -2867,6 +2867,7 @@ SECONDQHANDLE MACRO
             local blabla
             local blabla2
             local blabla3
+            local er
             
             CLEAR_AVAILABLE_PLACES
             CLEAR_AVAILABLE_PLACES2
@@ -2961,13 +2962,17 @@ ENDM SECONDQHANDLE
 
 SECONDQHANDLE2 MACRO
             LOCAL SKIP
+            local blabla
+            local blabla2
+            local blabla3
+            local er
 
-CLEAR_AVAILABLE_PLACES
-CLEAR_AVAILABLE_PLACES2
-FIRSTQHANDLEM
-FIRSTQHANDLE2M
-DRAW_AVAILABLE_PLACES
-DRAW_AVAILABLE_PLACES2
+            CLEAR_AVAILABLE_PLACES
+            CLEAR_AVAILABLE_PLACES2
+            FIRSTQHANDLEM
+            FIRSTQHANDLE2M
+            DRAW_AVAILABLE_PLACES
+            DRAW_AVAILABLE_PLACES2
 
                   GETARINDEX startRowCursor2,startColCursor2
 
@@ -2982,7 +2987,34 @@ DRAW_AVAILABLE_PLACES2
                   GETARINDEX endRowCursor2,endColCursor2
 
                   CMP cursorState2[BX],0
-                  JE SKIP
+                  jne blabla
+                  jmp SKIP
+                blabla:
+
+                cmp gridState[bx],0
+                jne blabla2
+                  jmp blabla3
+                blabla2:
+              ;---------------------------
+              Pusha
+                getDrawPosition 30d,0d,blackrow,blackcol
+                DRAWCELL        cx,dx,0fh
+                GETIMGDATA      endRowCursor2,endColCursor2
+                DRAWWITHSOURCE  [bx],60D,60D,blackrow,blackcol,30D,0D
+                mov             al,blackrow
+                inc             al
+                mov             blackrow,al
+                cmp al,8d
+                JNE er
+                mov al,0d
+                mov ah,11D
+                mov             blackrow,al
+                mov             blackcol,ah
+                er:
+              popa
+              ;-----------------------------
+            blabla3:
+
                   PUSHA
                   mov si,cx ;START INDEX
                   mov dh,BYTE PTR gridState[si] ;DATA OF FIRST INDEX
