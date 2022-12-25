@@ -577,6 +577,128 @@ FIRSTQHANDLE MACRO
                   
 ENDM FIRSTQHANDLE
 
+FIRSTQHANDLEM MACRO
+    LOCAL PAWNTEMP
+    local ROOKTEMP
+    local KNIGHTTEMP
+    local BISHOPTEMP
+    local QUEENTEMP
+    local KINGTEMP
+    local PAWN
+    local ROOK
+    local KNIGHT
+    local BISHOP
+    local QUEEN
+    local KING
+    local NOACTION
+    local outterr
+    local break80
+    local temp151
+    local temp150
+    local temp100
+                  ;if the cell is empty get out
+                ;   cmp bl,6
+                ;   jz isapawn
+                ;   jmp getouttt
+                ;   isapawn:  
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   getouttt: 
+
+                ;   isEmpty curRowCursor,curColCursor
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   ;KnightMovements curRowCursor,curColCursor
+                ;   cmp bl,0FFH
+                ;   jnz getoutt
+                ;   jmp outterr
+                ;   getoutt:
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  GETARINDEX curRowCursor,curColCursor
+
+                  pusha
+                  ISEMPTY startRowCursor,startColCursor
+                    cmp bx,1
+                    jne temp100
+                    jmp break80
+                    temp100:
+                    popa
+
+                  pusha
+                  ISWHITEBYTE startRowCursor,startColCursor
+                  cmp bx,0
+                  jne temp150
+                  jmp break80
+                  temp150:
+                  popa
+
+              
+
+                 
+                  mov cl,BYTE PTR startRowCursor
+                  mov ch,BYTE PTR startColCursor
+                  mov BYTE PTR startRowCursor,cl
+                  mov BYTE PTR startColCursor,ch
+                  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D 
+                  popa
+              
+
+                ;------------------------
+                  GETARINDEX startRowCursor,startColCursor
+                  CMP BYTE PTR gridState[BX],7d
+                  JNE PAWNTEMP
+                  JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],8d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],9d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],10d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],11d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],12d
+                  JNE KINGTEMP
+                  JMP KING
+                  KINGTEMP:
+                  JMP NOACTION
+                PAWN:
+                  HANDLEPAWN startRowCursor,startColCursor
+                  JMP NOACTION
+                ROOK:
+                  HANDLEROOK startRowCursor,startColCursor
+                  JMP NOACTION
+                KNIGHT:
+                  HANDLEKNIGHT startRowCursor,startColCursor
+                  JMP NOACTION
+                BISHOP:
+                  HANDLEBISHOP startRowCursor,startColCursor
+                  JMP NOACTION
+                QUEEN:
+                  HANDLEQUEEN startRowCursor,startColCursor
+                  JMP NOACTION
+                KING:
+                  HANDLEKING startRowCursor,startColCursor
+                  JMP NOACTION
+                NOACTION:
+                PUSHA
+                DRAW_AVAILABLE_PLACES
+                POPA
+                ;------------------------------
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  outterr:
+                  break80:
+                  
+ENDM FIRSTQHANDLEM
+
 FIRSTQHANDLE2 MACRO
     LOCAL PAWNTEMP
     local ROOKTEMP
@@ -721,6 +843,121 @@ FIRSTQHANDLE2 MACRO
                   break80:
                   
 ENDM FIRSTQHANDLE2
+
+FIRSTQHANDLE2M MACRO
+    LOCAL PAWNTEMP
+    local ROOKTEMP
+    local KNIGHTTEMP
+    local BISHOPTEMP
+    local QUEENTEMP
+    local KINGTEMP
+    local PAWN
+    local ROOK
+    local KNIGHT
+    local BISHOP
+    local QUEEN
+    local KING
+    local NOACTION
+    local outterr
+    local break80
+    local temp151
+    local temp150
+    local temp100
+                  ;if the cell is empty get out
+                ;   cmp bl,6
+                ;   jz isapawn
+                ;   jmp getouttt
+                ;   isapawn:  
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   getouttt: 
+
+                ;   isEmpty curRowCursor,curColCursor
+                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
+                ;   ;KnightMovements curRowCursor,curColCursor
+                ;   cmp bl,0FFH
+                ;   jnz getoutt
+                ;   jmp outterr
+                ;   getoutt:
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  GETARINDEX startRowCursor2,startColCursor2
+
+                  pusha
+                  ISEMPTY startRowCursor2,startColCursor2
+                    cmp bx,1
+                    jne temp100
+                    jmp break80
+                    temp100:
+                    popa
+
+                  pusha
+                  ISWHITEBYTE startRowCursor2,startColCursor2
+                  cmp bx,1
+                  jne temp150
+                  jmp break80
+                  temp150:
+                  popa
+
+              
+
+                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
+                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D 
+                  popa
+             
+                ;------------------------
+                  GETARINDEX startRowCursor2,startColCursor2
+                  CMP BYTE PTR gridState[BX],6d
+                  JNE PAWNTEMP
+                  JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],1d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],2d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],3d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],4d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],5d
+                  JNE KINGTEMP
+                  JMP KING
+                  KINGTEMP:
+                  JMP NOACTION
+                PAWN:
+                  HANDLEPAWN2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                ROOK:
+                  HANDLEROOK2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                KNIGHT:
+                  HANDLEKNIGHT2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                BISHOP:
+                  HANDLEBISHOP2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                QUEEN:
+                  HANDLEQUEEN2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                KING:
+                  HANDLEKING2 startRowCursor2,startColCursor2
+                  JMP NOACTION
+                NOACTION:
+                PUSHA
+                DRAW_AVAILABLE_PLACES2
+                POPA
+                ;------------------------------
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  outterr:
+                  break80:
+                  
+ENDM FIRSTQHANDLE2M
 
 HANDLEROOK MACRO x,y
 LOCAL break1
@@ -2627,7 +2864,8 @@ ENDM GETARINDEXBYBYTE
 
 SECONDQHANDLE MACRO
             LOCAL SKIP
-
+CLEAR_AVAILABLE_PLACES
+FIRSTQHANDLEM
                   GETARINDEX startRowCursor,startColCursor
 
                   MOV cl,BYTE PTR cellColorState
@@ -2687,7 +2925,8 @@ ENDM SECONDQHANDLE
 
 SECONDQHANDLE2 MACRO
             LOCAL SKIP
-
+CLEAR_AVAILABLE_PLACES2
+FIRSTQHANDLE2M
                   GETARINDEX startRowCursor2,startColCursor2
 
                   MOV cl,BYTE PTR cellColorState2
