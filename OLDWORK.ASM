@@ -2864,8 +2864,14 @@ ENDM GETARINDEXBYBYTE
 
 SECONDQHANDLE MACRO
             LOCAL SKIP
+
 CLEAR_AVAILABLE_PLACES
+CLEAR_AVAILABLE_PLACES2
 FIRSTQHANDLEM
+FIRSTQHANDLE2M
+DRAW_AVAILABLE_PLACES
+DRAW_AVAILABLE_PLACES2
+
                   GETARINDEX startRowCursor,startColCursor
 
                   MOV cl,BYTE PTR cellColorState
@@ -2925,8 +2931,14 @@ ENDM SECONDQHANDLE
 
 SECONDQHANDLE2 MACRO
             LOCAL SKIP
+
+CLEAR_AVAILABLE_PLACES
 CLEAR_AVAILABLE_PLACES2
+FIRSTQHANDLEM
 FIRSTQHANDLE2M
+DRAW_AVAILABLE_PLACES
+DRAW_AVAILABLE_PLACES2
+
                   GETARINDEX startRowCursor2,startColCursor2
 
                   MOV cl,BYTE PTR cellColorState2
@@ -5012,87 +5024,71 @@ MAIN PROC FAR
   ;INITIALIZING
                 call           GETDATA
                 CALL           CLS
-  ;OPENING AND READING BIN FILES
+  ;OPENING AND READING AND CLOSING BIN FILES
                 OpenFile       bbishopfilename, bbishopfilehandle
                 ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-
                 CloseFile      bbishopfilehandle
 
                 OpenFile       bkingfilename, bkingfilehandle
                 ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-
                 CloseFile      bkingfilehandle
 
                 OpenFile       bknightfilename, bknightfilehandle
                 ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-
                 CloseFile      bknightfilehandle
 
                 OpenFile       bpawnfilename, bpawnfilehandle
                 ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-
                 CloseFile      bpawnfilehandle
 
                 OpenFile       bqueenfilename, bqueenfilehandle
                 ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-
                 CloseFile      bqueenfilehandle
 
                 OpenFile       brockfilename, brockfilehandle
                 ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-
                 CloseFile      brockfilehandle
 
   ;--white piecies----
                 OpenFile       wbishopfilename, wbishopfilehandle
                 ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-
                 CloseFile      wbishopfilehandle
 
                 OpenFile       wkingfilename, wkingfilehandle
                 ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-
                 CloseFile      wkingfilehandle
 
                 OpenFile       wknightfilename, wknightfilehandle
                 ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-
                 CloseFile      wknightfilehandle
 
                 OpenFile       wpawnfilename, wpawnfilehandle
                 ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-
                 CloseFile      wpawnfilehandle
 
                 OpenFile       wqueenfilename, wqueenfilehandle
                 ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-
                 CloseFile      wqueenfilehandle
 
                 OpenFile       wrockfilename, wrockfilehandle
                 ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-
                 CloseFile      wrockfilehandle
 
   ;--border-----
                 OpenFile       borderfilename, borderfilehandle
                 ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-
                 CloseFile      borderfilehandle
 
                 OpenFile       border2filename, border2filehandle
                 ReadData       border2filehandle ,border2width,border2height,border2data
-
                 CloseFile      border2filehandle
 
                 OpenFile       selectfilename, selectfilehandle
                 ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-
                 CloseFile      selectfilehandle
 
                 OpenFile       select2filename, select2filehandle
                 ReadData       select2filehandle ,select2width,select2height,select2data
-
                 CloseFile      select2filehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
@@ -5121,7 +5117,7 @@ MAIN PROC FAR
                 CALL           EnterGraphics
                 mov            curColCursor,00h
                 mov            curRowCursor,07h
-                INITIALIZEGRID 0FH,08H
+                INITIALIZEGRID 42H,06H                                                                   ;0FH,08H
                 DrawGrid       150D,0D,colorState[1],colorState[0]
                 DrawPiecies    150D,0D
 
