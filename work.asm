@@ -2864,13 +2864,16 @@ ENDM GETARINDEXBYBYTE
 
 SECONDQHANDLE MACRO
             LOCAL SKIP
-
-CLEAR_AVAILABLE_PLACES
-CLEAR_AVAILABLE_PLACES2
-FIRSTQHANDLEM
-FIRSTQHANDLE2M
-DRAW_AVAILABLE_PLACES
-DRAW_AVAILABLE_PLACES2
+            local blabla
+            local blabla2
+            local blabla3
+            
+            CLEAR_AVAILABLE_PLACES
+            CLEAR_AVAILABLE_PLACES2
+            FIRSTQHANDLEM
+            FIRSTQHANDLE2M
+            DRAW_AVAILABLE_PLACES
+            DRAW_AVAILABLE_PLACES2
 
                   GETARINDEX startRowCursor,startColCursor
 
@@ -2885,7 +2888,34 @@ DRAW_AVAILABLE_PLACES2
                   GETARINDEX endRowCursor,endColCursor
                   
                   CMP cursorState[BX],0
-                  JE SKIP
+                  jne blabla
+                  jmp SKIP
+                blabla:
+
+                cmp gridState[bx],0
+                jne blabla2
+                  jmp blabla3
+                blabla2:
+              ;---------------------------
+              Pusha
+                getDrawPosition 30d,0d,whiterow,whitecol
+                DRAWCELL        cx,dx,0fh
+                GETIMGDATA      endRowCursor,endColCursor
+                DRAWWITHSOURCE  [bx],60D,60D,whiterow,whitecol,30D,0D
+                mov             al,whiterow
+                inc             al
+                mov             whiterow,al
+                cmp al,8d
+                JNE er
+                mov al,0d
+                mov ah,1h
+                mov             whiterow,al
+                mov             whitecol,ah
+                er:
+              popa
+              ;-----------------------------
+            blabla3:
+
                   PUSHA
                   mov si,cx ;START INDEX
                   mov dh,BYTE PTR gridState[si] ;DATA OF FIRST INDEX
@@ -5015,6 +5045,12 @@ ENDM PRINTCURRTIMER
   COLN              DB  ':','$'
 
   f6                db  0
+
+  whiterow          db  0
+  whitecol          db  0
+
+  blackrow          db  0D
+  blackcol          db  10D
   ;---------------------------------------------------------------------------------------------------
  
 
@@ -5117,6 +5153,12 @@ MAIN PROC FAR
                 CALL           EnterGraphics
                 mov            curColCursor,00h
                 mov            curRowCursor,07h
+                mov            curColCursor2,00h
+                mov            curRowCursor2,00h
+                mov            whiterow,0D
+                mov            whitecol,0D
+                mov            blackrow,0D
+                mov            blackcol,10D
                 INITIALIZEGRID 42H,06H                                                                   ;0FH,08H
                 DrawGrid       150D,0D,colorState[1],colorState[0]
                 DrawPiecies    150D,0D
@@ -5124,6 +5166,23 @@ MAIN PROC FAR
                 DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                 DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
 
+  ;----------------------
+  ; getDrawPosition 30d,0d,whiterow,whitecol
+  ; DRAWCELL        cx,dx,0fh
+  ; GETIMGDATA      0,0
+  ; DRAWWITHSOURCE  [bx],borderwidth,borderheight,whiterow,whitecol,30D,0D
+  ; mov             al,whitecol
+  ; inc             al
+  ; mov             whitecol,al
+
+  ; getDrawPosition 30d,0d,blackrow,blackcol
+  ; DRAWCELL        cx,dx,0fh
+  ; GETIMGDATA      0,0
+  ; DRAWWITHSOURCE  [bx],borderwidth,borderheight,blackrow,blackcol,30D,0D
+  ; mov             al,blackcol
+  ; inc             al
+  ; mov             blackcol,al
+  ;---------------------
                 INITIALIZETIME
   curs:         
                 CURSORMOV
