@@ -2969,7 +2969,10 @@ SECONDQHANDLE2 MACRO
             local blabla2
             local blabla3
             local er
-
+      pusha
+        movecursor 60d,31d
+        ShowMessage clear
+        popa
             CLEAR_AVAILABLE_PLACES
             CLEAR_AVAILABLE_PLACES2
             FIRSTQHANDLEM
@@ -3759,9 +3762,6 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES
 
-
-
-
 DRAW_AVAILABLE_PLACES2 MACRO
 LOCAL loop9
 LOCAL loop10
@@ -3813,8 +3813,6 @@ beforeloop9:
 
 
 ENDM DRAW_AVAILABLE_PLACES2
-
-
 
 DRAW_AVAILABLE_PLACES3 MACRO
 LOCAL loop9
