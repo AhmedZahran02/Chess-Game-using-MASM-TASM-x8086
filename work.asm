@@ -3709,7 +3709,10 @@ DRAW_AVAILABLE_PLACES MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
-
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
 mov al,0
 mov ah,0
 loop9:
@@ -3720,20 +3723,33 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp cursorState[bx],0
- je break6
+ je BREAK7
  popa
  mov dummyData1,al
  mov dummyData2,ah
  pusha
 DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
+popa
+PUSHA
+CMP gridState[BX],5D
+JE BREAK8
+BREAK7:
+JMP BREAK6
+BREAK8:
+; code to be executed if the selected is king
 break6:
 popa
 inc al
 cmp al,8
-jne loop10
+je beforeloop10
+jmp loop10
+beforeloop10:
 inc ah
 cmp ah,8
-jne loop9
+je beforeloop9
+jmp loop9
+beforeloop9:
+
 
 ENDM DRAW_AVAILABLE_PLACES
 
@@ -5099,6 +5115,8 @@ ENDM PRINTCURRTIMER
 
   blackrow          db  0D
   blackcol          db  10D
+  
+  CHECKSTRING DB 'WARNING!!! :CHECK','$'
   ;---------------------------------------------------------------------------------------------------
  
 
@@ -5777,6 +5795,9 @@ waitkey PROC                                                                    
                 INT            16h
                 ret
 waitkey ENDP
+
+
+
 
 END MAIN
 
