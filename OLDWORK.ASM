@@ -429,7 +429,6 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             INC CX
             CMP CX,4D
         JNE  BIGGERLOOP8 
-
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO
@@ -2868,7 +2867,10 @@ SECONDQHANDLE MACRO
             local blabla2
             local blabla3
             local er
-            
+            pusha
+        movecursor 2d,31d
+        ShowMessage clear
+        popa
             CLEAR_AVAILABLE_PLACES
             CLEAR_AVAILABLE_PLACES2
             FIRSTQHANDLEM
@@ -2925,7 +2927,7 @@ SECONDQHANDLE MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
-                  CHECKMATE
+                  
                 ;count down start
                   PUSHA
                   GETTIME
@@ -2957,6 +2959,7 @@ SECONDQHANDLE MACRO
                   dec bl
                   mov BYTE PTR stateOfQ,bl
                   
+                  CHECKMATE
                   
 ENDM SECONDQHANDLE
 
@@ -3022,7 +3025,7 @@ SECONDQHANDLE2 MACRO
                   mov si,bx ;END INDEX
                   mov gridState[si],dh ; MOVE START TO END
 
-                  CHECKMATE
+                  
                 ;count down start
                   PUSHA
                   GETTIME
@@ -3053,7 +3056,7 @@ SECONDQHANDLE2 MACRO
                   mov bl,BYTE PTR stateOfQ2
                   dec bl
                   mov BYTE PTR stateOfQ2,bl
-                  
+                  CHECKMATE
                   
 ENDM SECONDQHANDLE2
 
@@ -3152,7 +3155,8 @@ LOCAL LOOPAGAIN1
 LOCAL CONTINUOUEGAME1
 LOCAL LOOPAGAIN2
 LOCAL CONTINUOUEGAME2
-
+LOCAL not4f
+LOCAL not4f2
 MOV BX, 64
 LOOPAGAIN1:
 DEC BX
@@ -3163,7 +3167,13 @@ JNZ LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL
-
+  movecursor 37,30
+  ShowMessage WINNERISWHITE
+  not4f:
+  mov ah,0
+  int 16h
+  cmp ah,3Eh;f4
+  jnz not4f
 JMP faraway
 CONTINUOUEGAME1:
 
@@ -3176,6 +3186,13 @@ CMP BX,0
 JNZ LOOPAGAIN2
 MOV AL,2
 MOV WINNER,AL
+  movecursor 37,30
+  ShowMessage WINNERISBLACK
+  not4f2:
+  mov ah,0
+  int 16h
+  cmp ah,3Eh;f4
+  jnz not4f2
 JMP faraway
 CONTINUOUEGAME2:
 
@@ -3694,7 +3711,10 @@ DRAW_AVAILABLE_PLACES MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
-
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
 mov al,0
 mov ah,0
 loop9:
@@ -3705,24 +3725,98 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp cursorState[bx],0
- je break6
+ je BREAK7
  popa
  mov dummyData1,al
  mov dummyData2,ah
  pusha
 DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
+popa
+PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
+CMP gridState[BX],5D
+JE BREAK8
+BREAK7:
+JMP BREAK6
+BREAK8:
+         pusha
+        movecursor 2d,31d
+        ShowMessage CHECKSTRING
+        popa
 break6:
 popa
 inc al
 cmp al,8
-jne loop10
+je beforeloop10
+jmp loop10
+beforeloop10:
 inc ah
 cmp ah,8
-jne loop9
+je beforeloop9
+jmp loop9
+beforeloop9:
+
 
 ENDM DRAW_AVAILABLE_PLACES
 
+
+
+
 DRAW_AVAILABLE_PLACES2 MACRO
+LOCAL loop9
+LOCAL loop10
+LOCAL break6
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
+mov al,0
+mov ah,0
+loop9:
+mov al,0
+loop10:
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+ GETARINDEXBYBYTE dummyData1,dummyData2
+ cmp cursorState2[bx],0
+ je BREAK7
+ popa
+ mov dummyData1,al
+ mov dummyData2,ah
+ pusha
+DRAWWITHSOURCE       select2data,select2width,select2height,dummyData1,dummyData2,150D,0D 
+popa
+PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
+CMP gridState[BX],12D
+JE BREAK8
+BREAK7:
+JMP BREAK6
+BREAK8:
+         pusha
+        movecursor 80d,31d
+        ShowMessage CHECKSTRING
+        popa
+break6:
+popa
+inc al
+cmp al,8
+je beforeloop10
+jmp loop10
+beforeloop10:
+inc ah
+cmp ah,8
+je beforeloop9
+jmp loop9
+beforeloop9:
+
+
+ENDM DRAW_AVAILABLE_PLACES2
+
+
+
+DRAW_AVAILABLE_PLACES3 MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
@@ -3752,7 +3846,7 @@ inc ah
 cmp ah,8
 jne loop9
 
-ENDM DRAW_AVAILABLE_PLACES2
+ENDM DRAW_AVAILABLE_PLACES3
 
 DrawPiecies MACRO A,B
         ;white
@@ -4068,6 +4162,7 @@ ENDM MAINMAIN
 
 STATUSLINE MACRO
   LOCAL LOOPXXXX
+  LOCAL WHITEDIDNTWIN
   MOV BL,10
   LOOPXXXX:
   movecursorWithPageNumber BL,18,0
@@ -5083,6 +5178,8 @@ ENDM PRINTCURRTIMER
 
   blackrow          db  0D
   blackcol          db  10D
+  
+  CHECKSTRING       DB  'WARNING!!! :CHECK','$'
   ;---------------------------------------------------------------------------------------------------
  
 
@@ -5218,6 +5315,7 @@ MAIN PROC FAR
                 INITIALIZETIME
   curs:         
                 CURSORMOV
+
                 JMP            curs
 
                 EXT
@@ -5256,6 +5354,9 @@ waitkey PROC                                                                    
                 INT            16h
                 ret
 waitkey ENDP
+
+
+
 
 END MAIN
 
