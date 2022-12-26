@@ -123,12 +123,12 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       INC BX
                       INC CX
                       INC SI
-                      CMP SI,imgwidth
+                      CMP SI,WORD ptr imgwidth
                       JNE innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
-                      CMP DI,imgheight
+                      CMP DI,WORD ptr imgheight
                       JNE  drawLoop
                       GOAWAY:
                 ENDM        DRAW
@@ -154,12 +154,12 @@ DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       INC BX
                       INC CX
                       INC SI
-                      CMP SI,imgwidth
+                      CMP SI,WORD PTR imgwidth
                       JNE innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
-                      CMP DI,imgheight
+                      CMP DI,WORD PTR imgheight
                       JNE  drawLoop
                 ENDM        DRAWWITHSOURCE
 
@@ -985,14 +985,14 @@ LOCAL temp40
 LOCAL temp30
 
 
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 mov ah,dh
 mov al,dl
 First_Loop:
 inc ah
-mov dummyData1,ah
-mov dummyData2,al
+mov byte ptr dummyData1,ah
+mov byte ptr dummyData2,al
 push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
@@ -1010,7 +1010,7 @@ temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov byte ptr cursorState[bx],1
 jmp First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
@@ -1021,7 +1021,7 @@ temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
-mov cursorState[bx],1
+mov byte ptr cursorState[bx],1
 break12:
 
 
@@ -1167,8 +1167,8 @@ LOCAL temp40
 LOCAL temp30
 
 
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 mov ah,dh
 mov al,dl
 First_Loop:
@@ -1349,8 +1349,8 @@ LOCAL temp40
 LOCAL temp30
 
 
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 mov ah,dh
 mov al,dl
 First_Loop:
@@ -1535,8 +1535,8 @@ LOCAL temp40
 LOCAL temp30
 
 
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 mov ah,dh
 mov al,dl
 First_Loop:
@@ -1695,26 +1695,26 @@ break42:
 ENDM HANDLEBISHOP2
 
 HANDLEQUEEN MACRO x,y
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 pusha
 HANDLEROOK x,y
 popa
-mov x,dh
-mov y,dl
+mov byte ptr x,dh
+mov byte ptr y,dl
 pusha
 HANDLEBISHOP x,y
 popa
 ENDM HANDLEQUEEN
 
 HANDLEQUEEN2 MACRO x,y
-mov dh,x
-mov dl,y
+mov dh,byte ptr x
+mov dl,byte ptr y
 pusha
 HANDLEROOK2 x,y
 popa
-mov x,dh
-mov y,dl
+mov byte ptr x,dh
+mov byte ptr y,dl
 pusha
 HANDLEBISHOP2 x,y
 popa
@@ -1863,8 +1863,8 @@ LOCAL TWOMOVES
 LOCAL SEEIFGREATERTAHN47OREQUAL
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 INC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
@@ -1876,8 +1876,8 @@ JMP CONTINUOUECHECK
 ITSVALID1:
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
@@ -1887,8 +1887,8 @@ CMP BX,0
 JNZ CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 INC CX
 ;;;;;;;;;;;;;;
@@ -1900,8 +1900,8 @@ CONTINUOUECHECK:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
@@ -1913,8 +1913,8 @@ JMP CONTINUOUECHECK2
 ITSVALID2:
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC CX
 ;;;;;;;;;;;;;
@@ -1924,8 +1924,8 @@ CMP BX,0
 JNZ CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC CX
 ;;;;;;;;;;;;;;;;;;
@@ -1939,32 +1939,32 @@ CMP DL,1
 JNZ RIGHTNOFOE
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 INC CX
 GETARINDEX AX,CX  ;GET NEW INDEX
 ;;;;;;;;;;;;;
-MOV cursorState[BX],1
+MOV BYTE PTR cursorState[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
 JNZ LEFTNOFOE
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC CX
 GETARINDEX AX,CX  ;GET NEW INDEX
 ;;;;;;;;;;;;;
-MOV cursorState[BX],1
+MOV BYTE PTR cursorState[BX],1
 LEFTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 ;;;;;;;;;;;;;;;;;
 INSIDEGRID AX,CX
@@ -1975,8 +1975,8 @@ ITSVALID3:
 ;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE AX,CX
@@ -1986,8 +1986,8 @@ JMP CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 ;;;;;;;;;;;;;;;;;
 ISEMPTY AL,CL
@@ -1996,8 +1996,8 @@ JZ CANMOVEFORWARD
 ;;ELSE
 JMP CANTMOVE
 CANMOVEFORWARD:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 GETARINDEX AX,CX 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
 CMP BX,56
@@ -2011,8 +2011,8 @@ JMP ONEMOVEONLY
 
 TWOMOVES:
 ;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC AX
 ISEMPTY AL,CL
@@ -2021,19 +2021,19 @@ JZ ITSVALID5
 JMP ONEMOVEONLY
 ITSVALID5:
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 DEC AX
 GETARINDEX AX,CX 
-MOV cursorState[BX],1
+MOV BYTE PTR cursorState[BX],1
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
 ONEMOVEONLY:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX
 GETARINDEX AX,CX
-MOV cursorState[BX],1
+MOV BYTE PTR cursorState[BX],1
 CANTMOVE:
 
 
@@ -2056,8 +2056,8 @@ LOCAL TWOMOVES
 LOCAL SEEIFGREATERTAHN47OREQUAL
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
@@ -2069,8 +2069,8 @@ JMP CONTINUOUECHECK
 ITSVALID1:
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT RIGHT
@@ -2080,8 +2080,8 @@ CMP BX,0
 JNZ CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC CX
 ;;;;;;;;;;;;;;
@@ -2093,8 +2093,8 @@ CONTINUOUECHECK:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
@@ -2106,8 +2106,8 @@ JMP CONTINUOUECHECK2
 ITSVALID2:
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 DEC CX
 ;;;;;;;;;;;;;
@@ -2117,8 +2117,8 @@ CMP BX,0
 JNZ CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 DEC CX
 ;;;;;;;;;;;;;;;;;;
@@ -2132,32 +2132,32 @@ CMP DL,1
 JNZ RIGHTNOFOE
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC CX
 GETARINDEX AX,CX  ;GET NEW INDEX
 ;;;;;;;;;;;;;
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
 JNZ LEFTNOFOE
 ;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 DEC CX
 GETARINDEX AX,CX  ;GET NEW INDEX
 ;;;;;;;;;;;;;
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 LEFTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MOV FOWARD
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 ;;;;;;;;;;;;;;;;;
 INSIDEGRID AX,CX
@@ -2168,8 +2168,8 @@ ITSVALID3:
 ;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE2 AX,CX
@@ -2179,8 +2179,8 @@ JMP CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
 
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 ;;;;;;;;;;;;;;;;;
 ISEMPTY AL,CL
@@ -2189,8 +2189,8 @@ JZ CANMOVEFORWARD
 ;;ELSE
 JMP CANTMOVE
 CANMOVEFORWARD:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 GETARINDEX AX,CX 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
 CMP BX,16
@@ -2204,8 +2204,8 @@ JMP ONEMOVEONLY
 
 TWOMOVES:
 ;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC AX
 ISEMPTY AL,CL
@@ -2214,19 +2214,19 @@ JZ ITSVALID5
 JMP ONEMOVEONLY
 ITSVALID5:
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 INC AX
 GETARINDEX AX,CX 
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY ONE
 ONEMOVEONLY:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 INC AX
 GETARINDEX AX,CX
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 CANTMOVE:
 
 
@@ -2258,8 +2258,8 @@ LOCAL CANMOVE8
 LOCAL CHKIFWHITE8
 LOCAL CANTMOVE8
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
@@ -2568,15 +2568,15 @@ LOCAL CANMOVE8
 LOCAL CHKIFWHITE8
 LOCAL CANTMOVE8
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
 JZ CANTMOVE1
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
@@ -2585,8 +2585,8 @@ JNZ CHKIFWHITE1
 JMP CANMOVE1
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE1:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
@@ -2597,20 +2597,20 @@ MOV AX,X
 MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 GETARINDEX AX,CX
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 CANTMOVE1:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
 JZ CANTMOVE2
 ;;;;;;;;;;;;;
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
@@ -2620,8 +2620,8 @@ JNZ CHKIFWHITE2
 JMP CANMOVE2
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE2:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
@@ -2629,12 +2629,12 @@ CMP BX,0
 JZ CANTMOVE2
 ;;;;;;;;;;;;;;;
 CANMOVE2:
-MOV AX,X
-MOV CX,Y
+MOV AX,WORD PTR X
+MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 GETARINDEX AX,CX
-MOV cursorState2[BX],1
+MOV BYTE PTR cursorState2[BX],1
 CANTMOVE2:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2890,12 +2890,12 @@ SECONDQHANDLE MACRO
 
                   GETARINDEX endRowCursor,endColCursor
                   
-                  CMP cursorState[BX],0
+                  CMP BYTE PTR cursorState[BX],0
                   jne blabla
                   jmp SKIP
                 blabla:
 
-                cmp gridState[bx],0
+                cmp BYTE PTR gridState[bx],0
                 jne blabla2
                   jmp blabla3
                 blabla2:
@@ -2905,15 +2905,15 @@ SECONDQHANDLE MACRO
                 DRAWCELL        cx,dx,0fh
                 GETIMGDATA      endRowCursor,endColCursor
                 DRAWWITHSOURCE  [bx],60D,60D,whiterow,whitecol,30D,0D
-                mov             al,whiterow
+                mov             al,BYTE PTR whiterow
                 inc             al
-                mov             whiterow,al
+                mov            BYTE PTR  whiterow,al
                 cmp al,8d
                 JNE er
                 mov al,0d
                 mov ah,1h
-                mov             whiterow,al
-                mov             whitecol,ah
+                mov            BYTE PTR  whiterow,al
+                mov            BYTE PTR  whitecol,ah
                 er:
               popa
               ;-----------------------------
@@ -2969,7 +2969,10 @@ SECONDQHANDLE2 MACRO
             local blabla2
             local blabla3
             local er
-
+      pusha
+        movecursor 60d,31d
+        ShowMessage clear
+        popa
             CLEAR_AVAILABLE_PLACES
             CLEAR_AVAILABLE_PLACES2
             FIRSTQHANDLEM
@@ -3073,20 +3076,20 @@ CLEAR_AVAILABLE_PLACES MACRO
     Nloop9:       
                   mov                   AL,0
     Nloop10:      
-                  mov                   dummyData1,al
-                  mov                   dummyData2,ah
+                  mov                  BYTE PTR  dummyData1,al
+                  mov                  BYTE PTR  dummyData2,ah
                   pusha
                   GETARINDEXBYBYTE      dummyData1,dummyData2
-                  cmp                   cursorState[bx],0
+                  cmp                  BYTE PTR  cursorState[bx],0
                   JNE                   TMP
                   JMP                   Nbreak6
     TMP:          
-                  MOV                   cursorState[bx],0
+                  MOV                  BYTE PTR  cursorState[bx],0
                   popa
-                  MOV                   dummyData3,0D
-                  MOV                   dummyData4,0D
-                  ADD                   dummyData3,al
-                  ADD                   dummyData4,ah
+                  MOV                  BYTE PTR  dummyData3,0D
+                  MOV                  BYTE PTR  dummyData4,0D
+                  ADD                  BYTE PTR  dummyData3,al
+                  ADD                  BYTE PTR  dummyData4,ah
                   pusha
                   UPDATECELL            dummyData3,dummyData4,150D,0D
                   
@@ -3118,20 +3121,20 @@ CLEAR_AVAILABLE_PLACES2 MACRO
     Nloop9:       
                   mov                   AL,0
     Nloop10:      
-                  mov                   dummyData1,al
-                  mov                   dummyData2,ah
+                  mov                  BYTE PTR  dummyData1,al
+                  mov                  BYTE PTR  dummyData2,ah
                   pusha
                   GETARINDEXBYBYTE      dummyData1,dummyData2
-                  cmp                   cursorState2[bx],0
+                  cmp                  BYTE PTR  cursorState2[bx],0
                   JNE                   TMP
                   JMP                   Nbreak6
     TMP:          
-                  MOV                   cursorState2[bx],0
+                  MOV                  BYTE PTR  cursorState2[bx],0
                   popa
-                  MOV                   dummyData3,0D
-                  MOV                   dummyData4,0D
-                  ADD                   dummyData3,al
-                  ADD                   dummyData4,ah
+                  MOV                  BYTE PTR  dummyData3,0D
+                  MOV                  BYTE PTR  dummyData4,0D
+                  ADD                  BYTE PTR  dummyData3,al
+                  ADD                 BYTE PTR   dummyData4,ah
                   pusha
                   UPDATECELL            dummyData3,dummyData4,150D,0D
                   
@@ -3166,7 +3169,7 @@ CMP BX,0
 JNZ LOOPAGAIN1
 
 MOV AL,1
-MOV WINNER,AL
+MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
   movecursor 37,30
   ShowMessage WINNERISWHITE
   not4f:
@@ -3720,21 +3723,21 @@ mov ah,0
 loop9:
 mov al,0
 loop10:
- mov dummyData1,al
- mov dummyData2,ah
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
- cmp cursorState[bx],0
+ cmp BYTE PTR cursorState[bx],0
  je BREAK7
  popa
- mov dummyData1,al
- mov dummyData2,ah
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
  pusha
 DRAWWITHSOURCE       selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D 
 popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
-CMP gridState[BX],5D
+CMP BYTE PTR gridState[BX],5D
 JE BREAK8
 BREAK7:
 JMP BREAK6
@@ -3759,9 +3762,6 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES
 
-
-
-
 DRAW_AVAILABLE_PLACES2 MACRO
 LOCAL loop9
 LOCAL loop10
@@ -3775,21 +3775,21 @@ mov ah,0
 loop9:
 mov al,0
 loop10:
- mov dummyData1,al
- mov dummyData2,ah
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
- cmp cursorState2[bx],0
+ cmp BYTE PTR cursorState2[bx],0
  je BREAK7
  popa
- mov dummyData1,al
- mov dummyData2,ah
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
  pusha
 DRAWWITHSOURCE       select2data,select2width,select2height,dummyData1,dummyData2,150D,0D 
 popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
-CMP gridState[BX],12D
+CMP BYTE PTR gridState[BX],12D
 JE BREAK8
 BREAK7:
 JMP BREAK6
@@ -3813,8 +3813,6 @@ beforeloop9:
 
 
 ENDM DRAW_AVAILABLE_PLACES2
-
-
 
 DRAW_AVAILABLE_PLACES3 MACRO
 LOCAL loop9
@@ -4120,7 +4118,7 @@ ENDM validateName
 
 movecursorWithPageNumber MACRO x,y,p ;move cursor
                 mov         ah,2
-                mov         bh,p
+                mov         bh,BYTE PTR p
                 mov cl,x
                 mov ch,y
                 mov         dh,ch
@@ -4164,6 +4162,7 @@ STATUSLINE MACRO
   LOCAL LOOPXXXX
   LOCAL WHITEDIDNTWIN
   MOV BL,10
+  ;;;;;;;;;;;;;;;;; --------- lined
   LOOPXXXX:
   movecursorWithPageNumber BL,18,0
   mov ah,2
@@ -4172,7 +4171,7 @@ STATUSLINE MACRO
   INC BL
   CMP BL,70
   JNZ LOOPXXXX
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   movecursorWithPageNumber 30,20,0
 
   CMP WINNER,1
@@ -4411,10 +4410,10 @@ GETARINDEX MACRO X,Y ;OUTPUT IN BX
 ENDM GETARINDEX
 
 GETARINDEXBYTE MACRO X,Y ;OUTPUT IN BX
-    MOV AL,X 
+    MOV AL,byte ptr X 
     MOV BL , 8D
     MUL BL 
-    MOV CL , Y 
+    MOV CL , byte ptr Y 
     MOV CH , 0 
     ADD AX , CX
     MOV BX,AX
@@ -4456,10 +4455,10 @@ GETIMGDATA MACRO X,Y
     ;RETURNS THE IMAGE DATA IN BX 
     
     ; CONVERTING 2D TO 1D 
-    MOV AX,X 
+    MOV AX,word ptr X 
     MOV BL , 8D
     MUL BL 
-    ADD AX , Y 
+    ADD AX ,word ptr  Y 
 
     ; GETTING THE STATE OF THE GRID AT (X,Y) WHICH IS 0 --> 12
     LEA SI,gridState
@@ -4604,8 +4603,8 @@ LOCAL BLACK
 LOCAL RETURN 
 
 MOV AX ,0 
-MOV AL,X
-MOV CL,Y
+MOV AL,byte ptr X
+MOV CL,byte ptr Y
 MOV CH,0
 
 LEA SI,gridState 
@@ -4633,8 +4632,8 @@ LOCAL BLACK
 LOCAL RETURN 
 
 MOV AX ,0 
-MOV AL,X
-MOV CL,Y
+MOV AL,byte ptr X
+MOV CL,byte ptr Y
 MOV CH,0
 
 LEA SI,gridState 
@@ -4662,7 +4661,7 @@ LOCAL VALID
 LOCAL RETURN 
 
 MOV AL , X 
-MOV AH , Y
+MOV AH ,Y
 
 CMP AL , 7 
 JG NOTVALID
