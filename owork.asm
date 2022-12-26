@@ -67,7 +67,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
                 int 10h
 ENDM        ShowCMessage
 
-TOSTRING MACRO OutMessage  
+TOSTRING MACRO OutMessage
     LOCAL divide
     LOCAL OUTH
     LOCAL MAKESTR
@@ -431,7 +431,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
         JNE  BIGGERLOOP8 
 ENDM DrawGrid
 
-FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player press his first Q to select a piece want to move
+FIRSTQHANDLE MACRO
     LOCAL PAWNTEMP
     local ROOKTEMP
     local KNIGHTTEMP
@@ -576,9 +576,7 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   
 ENDM FIRSTQHANDLE
 
-;This Macro is FIRSTQHANDLE but modified and Responsible for handling some 
-;corner cases when first player press his second Q to select a place he want to move the selected piece to
-FIRSTQHANDLEM MACRO 
+FIRSTQHANDLEM MACRO
     LOCAL PAWNTEMP
     local ROOKTEMP
     local KNIGHTTEMP
@@ -700,7 +698,7 @@ FIRSTQHANDLEM MACRO
                   
 ENDM FIRSTQHANDLEM
 
-FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player press his first ENTER to select a piece want to move
+FIRSTQHANDLE2 MACRO
     LOCAL PAWNTEMP
     local ROOKTEMP
     local KNIGHTTEMP
@@ -845,9 +843,7 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   
 ENDM FIRSTQHANDLE2
 
-;This Macro is FIRSTQHANDLE2 but modified and Responsible for handling some 
-;corner cases when second player press his second ENTER to select a place he want to move the selected piece tos
-FIRSTQHANDLE2M MACRO 
+FIRSTQHANDLE2M MACRO
     LOCAL PAWNTEMP
     local ROOKTEMP
     local KNIGHTTEMP
@@ -962,7 +958,7 @@ FIRSTQHANDLE2M MACRO
                   
 ENDM FIRSTQHANDLE2M
 
-HANDLEROOK MACRO x,y  ;This Macro is Responsible for handling White ROOK Movements Logic
+HANDLEROOK MACRO x,y
 LOCAL break1
 LOCAL break2
 LOCAL break3
@@ -1144,7 +1140,7 @@ break42:
 
 ENDM HANDLEROOK
 
-HANDLEROOK2 MACRO x,y ;This Macro is Responsible for handling Black ROOK Movements Logic
+HANDLEROOK2 MACRO x,y
 LOCAL break1
 LOCAL break2
 LOCAL break3
@@ -1326,7 +1322,7 @@ break42:
 
 ENDM HANDLEROOK2
 
-HANDLEBISHOP MACRO x,y ;This Macro is Responsible for handling White BISHOP Movements Logic
+HANDLEBISHOP MACRO x,y
 LOCAL break1
 LOCAL break2
 LOCAL break3
@@ -1512,7 +1508,7 @@ break42:
 
 ENDM HANDLEBISHOP
 
-HANDLEBISHOP2 MACRO x,y ;This Macro is Responsible for handling Black BISHOP Movements Logic
+HANDLEBISHOP2 MACRO x,y
 LOCAL break1
 LOCAL break2
 LOCAL break3
@@ -1698,7 +1694,7 @@ break42:
 
 ENDM HANDLEBISHOP2
 
-HANDLEQUEEN MACRO x,y ;This Macro is Responsible for handling White Queen Movements Logic
+HANDLEQUEEN MACRO x,y
 mov dh,byte ptr x
 mov dl,byte ptr y
 pusha
@@ -1711,7 +1707,7 @@ HANDLEBISHOP x,y
 popa
 ENDM HANDLEQUEEN
 
-HANDLEQUEEN2 MACRO x,y ;This Macro is Responsible for handling Black Queen Movements Logic
+HANDLEQUEEN2 MACRO x,y
 mov dh,byte ptr x
 mov dl,byte ptr y
 pusha
@@ -1724,7 +1720,7 @@ HANDLEBISHOP2 x,y
 popa
 ENDM HANDLEQUEEN2
 
-HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Movements Logic
+HANDLEKNIGHT MACRO X,Y
                 LOCAL VALID
                 LOCAL NOTVALID
                 LOCAL LOOP1 
@@ -1787,7 +1783,7 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
                         RETURN:      
 ENDM HANDLEKNIGHT
 
-HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Movements Logic
+HANDLEKNIGHT2 MACRO X,Y
                 LOCAL VALID
                 LOCAL NOTVALID
                 LOCAL LOOP1 
@@ -1850,7 +1846,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         RETURN:      
 ENDM HANDLEKNIGHT2
 
-HANDLEPAWN MACRO X,Y ;This Macro is Responsible for handling White PAWN Movements Logic
+HANDLEPAWN MACRO X,Y
 LOCAL ITSVALID1
 LOCAL CONTINUOUECHECK
 LOCAL ITSVALID2
@@ -2043,7 +2039,7 @@ CANTMOVE:
 
 ENDM HANDLEPAWN
 
-HANDLEPAWN2 MACRO X,Y ;This Macro is Responsible for handling Black PAWN Movements Logic
+HANDLEPAWN2 MACRO X,Y
 LOCAL ITSVALID1
 LOCAL CONTINUOUECHECK
 LOCAL ITSVALID2
@@ -2236,7 +2232,7 @@ CANTMOVE:
 
 ENDM HANDLEPAWN2
 
-HANDLEKING MACRO X,Y ;This Macro is Responsible for handling White KING Movements Logic
+HANDLEKING MACRO X,Y
 LOCAL CANMOVE1
 LOCAL CHKIFWHITE1
 LOCAL CANTMOVE1
@@ -2546,7 +2542,7 @@ CANTMOVE8:
 
 ENDM HANDLEKING
 
-HANDLEKING2 MACRO X,Y ;This Macro is Responsible for handling Black KING Movements Logic
+HANDLEKING2 MACRO X,Y
 LOCAL CANMOVE1
 LOCAL CHKIFWHITE1
 LOCAL CANTMOVE1
@@ -2856,7 +2852,7 @@ CANTMOVE8:
 
 ENDM HANDLEKING2
 
-GETARINDEXBYBYTE MACRO X,Y ;This Macro is another version from GETARINDEX but by byte
+GETARINDEXBYBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,X 
     MOV BL , 8D
     MUL BL 
@@ -2865,7 +2861,7 @@ GETARINDEXBYBYTE MACRO X,Y ;This Macro is another version from GETARINDEX but by
     MOV BH,0
 ENDM GETARINDEXBYBYTE
 
-SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player press his second Q to move a selected piece to another cell
+SECONDQHANDLE MACRO
             LOCAL SKIP
             local blabla
             local blabla2
@@ -2967,7 +2963,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   
 ENDM SECONDQHANDLE
 
-SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player press his second ENTER to move a selected piece to another cell
+SECONDQHANDLE2 MACRO
             LOCAL SKIP
             local blabla
             local blabla2
@@ -3067,7 +3063,7 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                   
 ENDM SECONDQHANDLE2
 
-CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected white piece can move to 
+CLEAR_AVAILABLE_PLACES MACRO
     LOCAL Nloop9
     LOCAL Nloop10
     LOCAL TMP
@@ -3112,7 +3108,7 @@ CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks tha
 
     ENDM CLEAR_AVAILABLE_PLACES
 
-CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected black piece can move to 
+CLEAR_AVAILABLE_PLACES2 MACRO
     LOCAL Nloop9
     LOCAL Nloop10
     LOCAL TMP
@@ -3157,7 +3153,7 @@ CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks th
 
     ENDM CLEAR_AVAILABLE_PLACES2
 
-CHECKMATE MACRO ;This Macro is Responsible for printing to two players when the king is about to die
+CHECKMATE MACRO 
 LOCAL LOOPAGAIN1
 LOCAL CONTINUOUEGAME1
 LOCAL LOOPAGAIN2
@@ -3205,7 +3201,7 @@ CONTINUOUEGAME2:
 
 ENDM CHECKMATE
 
-CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move the cursor or press Q or ENTER or other thing
+CURSORMOV MACRO 
   LOCAL tmplabel10
   LOCAL label6
   LOCAL label7
@@ -3714,7 +3710,7 @@ tmplabel102:
 
 ENDM CURSORMOV
 
-DRAW_AVAILABLE_PLACES MACRO ;This Macro is Responsible for draw marks on the cells that the selected white piece can move to 
+DRAW_AVAILABLE_PLACES MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
@@ -3766,7 +3762,7 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES
 
-DRAW_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for draw marks on the cells that the selected black piece can move to 
+DRAW_AVAILABLE_PLACES2 MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
@@ -3818,7 +3814,7 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES2
 
-DRAW_AVAILABLE_PLACES3 MACRO ;This Macro is modified version from DRAW_AVAILABLE_PLACES and Responsible for handling some corner cases
+DRAW_AVAILABLE_PLACES3 MACRO
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
@@ -3850,7 +3846,7 @@ jne loop9
 
 ENDM DRAW_AVAILABLE_PLACES3
 
-DrawPiecies MACRO A,B ;This Macro is Responsible for drawing the pieces when the game starts
+DrawPiecies MACRO A,B
         ;white
                   DRAW        wrockwidth,wrockheight,0,0,A,B                       ; col,row
                   DRAW        wknightwidth,wknightheight,0,1,A,B                 ; col,row
@@ -3906,7 +3902,7 @@ getDrawPosition MACRO A,B,ROW,COL ;Takes the row and col and set the cx and dx t
  ADD DX,WORD PTR B
 ENDM getDrawPosition
 
-INITIALIZEGRID MACRO A,B ;This Macro is Responsible for initializig the first state of the grid as the initial location of pieces and the color of the cells (A,B)
+INITIALIZEGRID MACRO A,B
 
 mov colorState[0],A
 mov colorState[1],B
@@ -4062,7 +4058,7 @@ ENDM INITIALIZEGRID
 
 ; ENDM isEmpty
 
-ISEMPTY MACRO x,y ;This Macro is of return type boolean and Responsible for checking if the cell is empty cell or contains piece
+ISEMPTY MACRO x,y
 LOCAL break5
 LOCAL empty
 pusha
@@ -4078,7 +4074,7 @@ mov bx,1
 break5:
 ENDM ISEMPTY
 
-validateName MACRO entermsg,name,strFailed ;This Macro is Responsible for validating the name entered by players
+validateName MACRO entermsg,name,strFailed
     LOCAL repeatt
     LOCAL biggerthana
     LOCAL outOfTheValidation
@@ -4120,7 +4116,7 @@ validateName MACRO entermsg,name,strFailed ;This Macro is Responsible for valida
     outOfTheValidation:
 ENDM validateName
 
-movecursorWithPageNumber MACRO x,y,p  ;This Macro is Responsible for moving the cursor
+movecursorWithPageNumber MACRO x,y,p ;move cursor
                 mov         ah,2
                 mov         bh,BYTE PTR p
                 mov cl,x
@@ -4130,7 +4126,7 @@ movecursorWithPageNumber MACRO x,y,p  ;This Macro is Responsible for moving the 
                 int         10h
 ENDM        movecursorWithPageNumber
 
-MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving between screens when player press f2 or esc
+MAINMAIN MACRO player1Name,player2Name
     LOCAL check_for_anotherkey
     LOCAL check_for_f2
     LOCAL check_for_esc
@@ -4162,7 +4158,7 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
 
 ENDM MAINMAIN
 
-STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to players
+STATUSLINE MACRO
   LOCAL LOOPXXXX
   LOCAL WHITEDIDNTWIN
   MOV BL,10
@@ -4196,7 +4192,7 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   BLACKIDNTWIN:
 ENDM STATUSLINE
 
-OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling Game Chat
+OPENCHAT MACRO player1Name,player2Name
             LOCAL dead
             LOCAL mainloop
             LOCAL afterenter
@@ -4405,7 +4401,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
 ENDM OPENCHAT
                 
-GETARINDEX MACRO X,Y  ;This Macro is Responsible for Getting the cell number in 1-d array of size (64) from the row and coloum numbers of the cell and OUTPUT IN BX
+GETARINDEX MACRO X,Y ;OUTPUT IN BX
     MOV AX,X 
     MOV BL , 8D
     MUL BL 
@@ -4413,7 +4409,7 @@ GETARINDEX MACRO X,Y  ;This Macro is Responsible for Getting the cell number in 
     MOV BX,AX
 ENDM GETARINDEX
 
-GETARINDEXBYTE MACRO X,Y ;This Macro is another version from GETARINDEX but by byte
+GETARINDEXBYTE MACRO X,Y ;OUTPUT IN BX
     MOV AL,byte ptr X 
     MOV BL , 8D
     MUL BL 
@@ -4423,7 +4419,7 @@ GETARINDEXBYTE MACRO X,Y ;This Macro is another version from GETARINDEX but by b
     MOV BX,AX
 ENDM GETARINDEX
 
-UPDATECELL MACRO X,Y,A,B ;This Macro is Responsible for updating the cell by current state (piece inside it and color of the cell) 
+UPDATECELL MACRO X,Y,A,B
     LOCAL NOPE
     getDrawPosition A,B,X,Y
     PUSH CX
@@ -4437,7 +4433,7 @@ UPDATECELL MACRO X,Y,A,B ;This Macro is Responsible for updating the cell by cur
     NOPE:
 ENDM UPDATECELL
 
-GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and store it in colored pixels to draw 
+GETIMGDATA MACRO X,Y
     LOCAL RETURN
     LOCAL EMPTY
     LOCAL EMPTY2
@@ -4545,7 +4541,7 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
 
 ENDM GETIMGDATA
 
-ISWHITE MACRO X,Y ;This Macro is of return type boolean and Responsible for checking if the selected piece white or black
+ISWHITE MACRO X,Y 
 LOCAL WHITE 
 LOCAL BLACK 
 LOCAL RETURN 
@@ -4573,7 +4569,7 @@ RETURN:
 
 ENDM ISWHITE
 
-ISWHITE2 MACRO X,Y ;This Macro is another version of ISWHITE that that handles some corner cases when piece is black 
+ISWHITE2 MACRO X,Y 
 LOCAL WHITE 
 LOCAL BLACK 
 LOCAL RETURN 
@@ -4601,7 +4597,7 @@ RETURN:
 
 ENDM ISWHITE2
 
-ISWHITEBYTE MACRO X,Y ;This Macro is another version from ISWHITE but by byte
+ISWHITEBYTE MACRO X,Y 
 LOCAL WHITE 
 LOCAL BLACK 
 LOCAL RETURN 
@@ -4630,7 +4626,7 @@ RETURN:
 
 ENDM ISWHITEBYTE
 
-ISWHITEBYTE2 MACRO X,Y ;This Macro is another version from ISWHITE2 but by byte
+ISWHITEBYTE2 MACRO X,Y 
 LOCAL WHITE 
 LOCAL BLACK 
 LOCAL RETURN 
@@ -4659,7 +4655,7 @@ RETURN:
 
 ENDM ISWHITEBYTE2
 
-INSIDEGRID MACRO X , Y ;This Macro is Responsible for checking if the row number and column number inside the grid or not 
+INSIDEGRID MACRO X , Y 
 LOCAL NOTVALID 
 LOCAL VALID 
 LOCAL RETURN 
@@ -4686,7 +4682,7 @@ RETURN:
 
 ENDM INSIDEGRID
 
-ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for entering the game chat
+ENTERGAMECHAT MACRO player1Name,player2Name
                         LOCAL dead
             LOCAL mainloop
             LOCAL afterenter
@@ -4927,7 +4923,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
 ENDM ENTERGAMECHAT
 
-GETTIME MACRO ;This Macro is Responsible for handling the time (3 sec) for each piece and OUTPUT IN BX AND TIME DATA
+GETTIME MACRO ;OUTPUT IN BX AND TIME DATA
 
     MOV TIME,0
     MOV AH,2CH
@@ -4956,12 +4952,12 @@ GETTIME MACRO ;This Macro is Responsible for handling the time (3 sec) for each 
 
 ENDM GETTIME
 
-INITIALIZETIME MACRO ;This Macro is Responsible for initializing the time when game starts
+INITIALIZETIME MACRO
                   GETTIME
                   MOV     WORD PTR STARTTIME,BX
 ENDM INITIALIZETIME
 
-PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the screen
+PRINTCURRTIMER MACRO 
     LOCAL NSP 
                   movecursor  0,0
                   GETTIME
