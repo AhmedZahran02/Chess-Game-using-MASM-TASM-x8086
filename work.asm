@@ -5245,18 +5245,14 @@ ENDM PRINTCURRTIMER
   wqueendata        db  60D*60D dup(0)
   wkingdata         db  60D*60D dup(0)
 
-
   knightdx          db  1,1,2,2,-2,-2, -1 , -1
   knightdy          db  -2,2,1,-1,1,-1,2,-2
-    
+  
   king_dx           db  -1,-1,0,1,1,1,0,-1
   king_dy           db  0,1,1,1,0,-1,-1,-1
-  ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-  ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-  ; soldier_dx        db  1 ,
-  ; soldier_dy        db  1 ,
+
   WINNER            db  0
-  thename           db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
+  thename           db  16,?,16 dup('$'),'$'                                                                                        ; max size 15 char last digit for $
   proceed           db  'Please Enter key to continue','$'
   op1               db  'To start chatting press F1','$'
   op2               db  'To start the game press F2','$'

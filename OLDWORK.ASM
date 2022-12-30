@@ -597,22 +597,15 @@ FIRSTQHANDLEM MACRO
     local temp151
     local temp150
     local temp100
-                  ;if the cell is empty get out
-                ;   cmp bl,6
-                ;   jz isapawn
-                ;   jmp getouttt
-                ;   isapawn:  
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   getouttt: 
+    local skpp
 
-                ;   isEmpty curRowCursor,curColCursor
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   ;KnightMovements curRowCursor,curColCursor
-                ;   cmp bl,0FFH
-                ;   jnz getoutt
-                ;   jmp outterr
-                ;   getoutt:
-                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                cmp stateOfQ,0
+                jne skpp
+                jmp break80
+                skpp:
+
+                CLEAR_AVAILABLE_PLACES
+
                   GETARINDEX curRowCursor,curColCursor
 
                   pusha
@@ -630,9 +623,6 @@ FIRSTQHANDLEM MACRO
                   jmp break80
                   temp150:
                   popa
-
-              
-
                  
                   mov cl,BYTE PTR startRowCursor
                   mov ch,BYTE PTR startColCursor
@@ -719,22 +709,7 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
     local temp151
     local temp150
     local temp100
-                  ;if the cell is empty get out
-                ;   cmp bl,6
-                ;   jz isapawn
-                ;   jmp getouttt
-                ;   isapawn:  
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   getouttt: 
 
-                ;   isEmpty curRowCursor,curColCursor
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   ;KnightMovements curRowCursor,curColCursor
-                ;   cmp bl,0FFH
-                ;   jnz getoutt
-                ;   jmp outterr
-                ;   getoutt:
-                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor2,curColCursor2
 
                   pusha
@@ -845,6 +820,202 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   
 ENDM FIRSTQHANDLE2
 
+checkqhandle MACRO 
+    LOCAL PAWNTEMP
+    local ROOKTEMP
+    local KNIGHTTEMP
+    local BISHOPTEMP
+    local QUEENTEMP
+    local KINGTEMP
+    local PAWN
+    local ROOK
+    local KNIGHT
+    local BISHOP
+    local QUEEN
+    local KING
+    local NOACTION
+    local outterr
+    local break80
+    local temp151
+    local temp150
+    local temp100
+
+                  GETARINDEX curRowCursor,curColCursor
+
+                  pusha
+                  ISEMPTY curRowCursor,curColCursor
+                    cmp bx,1
+                    jne temp100
+                    jmp break80
+                    temp100:
+                    popa
+
+                  pusha
+                  ISWHITEBYTE curRowCursor,curColCursor
+                  cmp bx,0
+                  jne temp150
+                  jmp break80
+                  temp150:
+                  popa
+                 
+                  mov cl,BYTE PTR curRowCursor
+                  mov ch,BYTE PTR curColCursor
+                  mov BYTE PTR curRowCursor,cl
+                  mov BYTE PTR curColCursor,ch
+
+                ;------------------------
+                  GETARINDEX curRowCursor,curColCursor
+                  CMP BYTE PTR gridState[BX],7d
+                  JNE PAWNTEMP
+                  JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],8d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],9d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],10d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],11d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],12d
+                  JNE KINGTEMP
+                  JMP KING
+                  KINGTEMP:
+                  JMP NOACTION
+                PAWN:
+                  HANDLEPAWN curRowCursor,curColCursor
+                  JMP NOACTION
+                ROOK:
+                  HANDLEROOK curRowCursor,curColCursor
+                  JMP NOACTION
+                KNIGHT:
+                  HANDLEKNIGHT curRowCursor,curColCursor
+                  JMP NOACTION
+                BISHOP:
+                  HANDLEBISHOP curRowCursor,curColCursor
+                  JMP NOACTION
+                QUEEN:
+                  HANDLEQUEEN curRowCursor,curColCursor
+                  JMP NOACTION
+                KING:
+                  HANDLEKING curRowCursor,curColCursor
+                  JMP NOACTION
+                NOACTION:
+                check_AVAILABLE_PLACES
+                CLEAR_AVAILABLE_PLACES
+                ;------------------------------
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  outterr:
+                  break80:
+                  
+ENDM checkqhandle
+
+checkqhandle2 MACRO 
+    LOCAL PAWNTEMP
+    local ROOKTEMP
+    local KNIGHTTEMP
+    local BISHOPTEMP
+    local QUEENTEMP
+    local KINGTEMP
+    local PAWN
+    local ROOK
+    local KNIGHT
+    local BISHOP
+    local QUEEN
+    local KING
+    local NOACTION
+    local outterr
+    local break80
+    local temp151
+    local temp150
+    local temp100
+
+                  GETARINDEX curRowCursor2,curColCursor2
+
+                  pusha
+                  ISEMPTY curRowCursor2,curColCursor2
+                    cmp bx,1
+                    jne temp100
+                    popa
+                    jmp break80
+                    temp100:
+                    popa
+
+                  pusha
+                  ISWHITEBYTE curRowCursor2,curColCursor2
+                  cmp bx,1
+                  jne temp150
+                  popa
+                  jmp break80
+                  temp150:
+                  popa
+             
+                ;------------------------
+                  GETARINDEX curRowCursor2,curColCursor2
+                  CMP BYTE PTR gridState[BX],6d
+                  JNE PAWNTEMP
+                  JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],1d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],2d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],3d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],4d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],5d
+                  JNE KINGTEMP
+                  JMP KING
+                  KINGTEMP:
+                  JMP NOACTION
+
+
+                PAWN:
+                  HANDLEPAWN2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                ROOK:
+                  HANDLEROOK2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                KNIGHT:
+                  HANDLEKNIGHT2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                BISHOP:
+                  HANDLEBISHOP2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                QUEEN:
+                  HANDLEQUEEN2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                KING:
+                  HANDLEKING2 curRowCursor2,curColCursor2
+                  JMP NOACTION
+                NOACTION:
+                ;---------------------------------------------------
+                check_AVAILABLE_PLACES2
+                CLEAR_AVAILABLE_PLACES2
+                ;------------------------------
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  outterr:
+                  break80:
+                  
+ENDM checkqhandle2
+
 ;This Macro is FIRSTQHANDLE2 but modified and Responsible for handling some 
 ;corner cases when second player press his second ENTER to select a place he want to move the selected piece tos
 FIRSTQHANDLE2M MACRO 
@@ -866,28 +1037,22 @@ FIRSTQHANDLE2M MACRO
     local temp151
     local temp150
     local temp100
-                  ;if the cell is empty get out
-                ;   cmp bl,6
-                ;   jz isapawn
-                ;   jmp getouttt
-                ;   isapawn:  
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   getouttt: 
+            local skpp
 
-                ;   isEmpty curRowCursor,curColCursor
-                ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
-                ;   ;KnightMovements curRowCursor,curColCursor
-                ;   cmp bl,0FFH
-                ;   jnz getoutt
-                ;   jmp outterr
-                ;   getoutt:
-                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                cmp stateOfQ2,0
+                jne skpp
+                jmp break80
+                skpp:
+
+    CLEAR_AVAILABLE_PLACES2
+
                   GETARINDEX startRowCursor2,startColCursor2
 
                   pusha
                   ISEMPTY startRowCursor2,startColCursor2
                     cmp bx,1
                     jne temp100
+                    popa
                     jmp break80
                     temp100:
                     popa
@@ -896,14 +1061,9 @@ FIRSTQHANDLE2M MACRO
                   ISWHITEBYTE startRowCursor2,startColCursor2
                   cmp bx,1
                   jne temp150
+                  popa
                   jmp break80
                   temp150:
-                  popa
-
-              
-
-                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D 
                   popa
              
                 ;------------------------
@@ -933,6 +1093,8 @@ FIRSTQHANDLE2M MACRO
                   JMP KING
                   KINGTEMP:
                   JMP NOACTION
+
+
                 PAWN:
                   HANDLEPAWN2 startRowCursor2,startColCursor2
                   JMP NOACTION
@@ -952,6 +1114,7 @@ FIRSTQHANDLE2M MACRO
                   HANDLEKING2 startRowCursor2,startColCursor2
                   JMP NOACTION
                 NOACTION:
+                ;---------------------------------------------------
                 PUSHA
                 DRAW_AVAILABLE_PLACES2
                 POPA
@@ -2875,12 +3038,6 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
         movecursor 2d,31d
         ShowMessage clear
         popa
-            ; CLEAR_AVAILABLE_PLACES
-            ; CLEAR_AVAILABLE_PLACES2
-            ; FIRSTQHANDLEM
-            ; FIRSTQHANDLE2M
-            ; DRAW_AVAILABLE_PLACES
-            ; DRAW_AVAILABLE_PLACES2
 
                   GETARINDEX startRowCursor,startColCursor
 
@@ -2963,7 +3120,9 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   dec bl
                   mov BYTE PTR stateOfQ,bl
                   
-                  CHECKMATE
+                  FIRSTQHANDLE2M
+                  
+                  checkqhandle
                   
 ENDM SECONDQHANDLE
 
@@ -2977,12 +3136,6 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
         movecursor 60d,31d
         ShowMessage clear
         popa
-            ; CLEAR_AVAILABLE_PLACES
-            ; CLEAR_AVAILABLE_PLACES2
-            ; FIRSTQHANDLEM
-            ; FIRSTQHANDLE2M
-            ; DRAW_AVAILABLE_PLACES
-            ; DRAW_AVAILABLE_PLACES2
 
                   GETARINDEX startRowCursor2,startColCursor2
 
@@ -3063,8 +3216,10 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                   mov bl,BYTE PTR stateOfQ2
                   dec bl
                   mov BYTE PTR stateOfQ2,bl
-                  CHECKMATE
-                  
+
+                  FIRSTQHANDLEM
+
+                  checkqhandle2               
 ENDM SECONDQHANDLE2
 
 CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected white piece can move to 
@@ -3110,6 +3265,10 @@ CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks tha
                   JMP                   Nloop9
     TMP3:
 
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                  DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+                  DRAW_AVAILABLE_PLACES2
+
     ENDM CLEAR_AVAILABLE_PLACES
 
 CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected black piece can move to 
@@ -3154,6 +3313,9 @@ CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks th
                   JE                   TMP3
                   JMP                   Nloop9
     TMP3:
+                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                  DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+                  DRAW_AVAILABLE_PLACES
 
     ENDM CLEAR_AVAILABLE_PLACES2
 
@@ -3796,7 +3958,7 @@ PUSHA
 CMP BYTE PTR gridState[BX],12D
 JE BREAK8
 BREAK7:
-JMP BREAK6
+JMP break6
 BREAK8:
          pusha
         movecursor 80d,31d
@@ -3818,37 +3980,103 @@ beforeloop9:
 
 ENDM DRAW_AVAILABLE_PLACES2
 
-DRAW_AVAILABLE_PLACES3 MACRO ;This Macro is modified version from DRAW_AVAILABLE_PLACES and Responsible for handling some corner cases
+check_AVAILABLE_PLACES MACRO ;This Macro is Responsible for draw marks on the cells that the selected white piece can move to 
 LOCAL loop9
 LOCAL loop10
 LOCAL break6
-
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
 mov al,0
 mov ah,0
 loop9:
 mov al,0
 loop10:
- mov dummyData1,al
- mov dummyData2,ah
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
- cmp cursorState2[bx],0
- je break6
+ cmp BYTE PTR cursorState[bx],0
+ je BREAK7
  popa
- mov dummyData1,al
- mov dummyData2,ah
- pusha
-DRAWWITHSOURCE       select2data,select2width,select2height,dummyData1,dummyData2,150D,0D 
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
+
+PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
+CMP BYTE PTR gridState[BX],5D
+JE BREAK8
+BREAK7:
+JMP BREAK6
+BREAK8:
+         pusha
+        movecursor 2d,31d
+        ShowMessage CHECKSTRING
+        popa
 break6:
 popa
 inc al
 cmp al,8
-jne loop10
+je beforeloop10
+jmp loop10
+beforeloop10:
 inc ah
 cmp ah,8
-jne loop9
+je beforeloop9
+jmp loop9
+beforeloop9:
 
-ENDM DRAW_AVAILABLE_PLACES3
+ENDM check_AVAILABLE_PLACES
+
+check_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for draw marks on the cells that the selected black piece can move to 
+LOCAL loop9
+LOCAL loop10
+LOCAL break6
+LOCAL BREAK7
+LOCAL BREAK8
+local beforeloop9
+local beforeloop10
+mov al,0
+mov ah,0
+loop9:
+mov al,0
+loop10:
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
+ pusha
+ GETARINDEXBYBYTE dummyData1,dummyData2
+ cmp BYTE PTR cursorState2[bx],0
+ je BREAK7
+ popa
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
+
+PUSHA
+ GETARINDEXBYBYTE dummyData1,dummyData2
+CMP BYTE PTR gridState[BX],12D
+JE BREAK8
+BREAK7:
+JMP break6
+BREAK8:
+         pusha
+        movecursor 80d,31d
+        ShowMessage CHECKSTRING
+        popa
+break6:
+popa
+inc al
+cmp al,8
+je beforeloop10
+jmp loop10
+beforeloop10:
+inc ah
+cmp ah,8
+je beforeloop9
+jmp loop9
+beforeloop9:
+
+ENDM check_AVAILABLE_PLACES2
 
 DrawPiecies MACRO A,B ;This Macro is Responsible for drawing the pieces when the game starts
         ;white
