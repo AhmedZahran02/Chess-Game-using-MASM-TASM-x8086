@@ -3557,7 +3557,7 @@ tmplabel102:
                   mov             curColCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,11h
-                  Jz far ptr              label5
+                  jz             label5
 
                   JMP far ptr             cursorLoop
     label5:
@@ -3599,7 +3599,7 @@ tmplabel102:
                   mov             curColCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4bh
-                  Jz far ptr              label52
+                  jz              label52
 
                   JMP far ptr             cursorLoop
     label52:
@@ -3640,7 +3640,7 @@ tmplabel102:
                   mov             curColCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,20h
-                  Jz far ptr              label4
+                  jz              label4
                   JMP far ptr             cursorLoop
     label4:
 
@@ -3679,7 +3679,7 @@ tmplabel102:
                   mov             curColCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4dh
-                  Jz far ptr              label42
+                  jz              label42
                   JMP far ptr             cursorLoop
     label42:
 
@@ -3720,7 +3720,7 @@ tmplabel102:
                   mov             curRowCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,11h
-                  Jz far ptr              label2
+                  jz              label2
 
                   JMP far ptr             cursorLoop
     label2:
@@ -3762,7 +3762,7 @@ tmplabel102:
                   mov             curRowCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,48h
-                  Jz far ptr              label22
+                  jz              label22
 
                   JMP far ptr             cursorLoop
     label22:
@@ -3805,7 +3805,7 @@ tmplabel102:
                   mov             curRowCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,1fh
-                  Jz far ptr              label1
+                  jz              label1
                   JMP far ptr             cursorLoop
     label1:
 
@@ -3844,7 +3844,7 @@ tmplabel102:
                   mov             curRowCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,50h
-                  Jz far ptr              label12
+                  jz              label12
                   JMP far ptr             cursorLoop
     label12:
 
@@ -4372,7 +4372,7 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
     mov ah,0
     int 16h 
     cmp ah,3bh;f1 scan code
-    Jz far ptr skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    jz skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
     JMP far ptr check_for_f2
     skipf2chk:
     ;open chat
@@ -4385,7 +4385,7 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
 
     check_for_esc:
     cmp al,01Bh;esc ascii
-    Jz far ptr skipescchk
+    jz skipescchk
     JMP far ptr check_for_anotherkey;;;;;;;;;;;;;;;;;;
     skipescchk:
     ;exist game
