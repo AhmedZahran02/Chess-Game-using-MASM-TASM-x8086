@@ -4587,7 +4587,7 @@ SEEIFRECIVING:
     NOTF1:
 
 
-    ;IF F2 PRINT GASER WANTS TO PLAY
+    ;IF F2 PRINT p1 WANTS TO PLAY
     cmp ah,3ch;f2 scan code
     jz lllxx;;;;;;;;;;;;;;;;;;;;;;;;;;;
     jmp far ptr NOTF2
@@ -5512,10 +5512,10 @@ connect MACRO
   F1_INVITATION     DB  'SENT YOU A CHAT INVITATION PRESS F1 TO PROCCED','$'
   F2_INVITATION     DB  'SENT YOU A GAME INVITATION PRESS F2 TO PROCCED','$'
   INVITE            DB  0
-  senttf1             DB  0
-  recivedf1           DB  0
-  senttf2             DB  0
-  recivedf2           DB  0
+  senttf1           DB  0
+  recivedf1         DB  0
+  senttf2           DB  0
+  recivedf2         DB  0
   ;------------black pieces---------------
   bbishopwidth      equ 60D
   bbishopheight     equ 60D
@@ -5774,18 +5774,18 @@ MAIN PROC FAR
   ;CHOICE MENU
   faraway:      
 
-          call           far ptr     CLS
-          movecursor     17H,03H
-          ShowMessage    op1
-          movecursor     17H,08H
-          ShowMessage    op2
-          movecursor     17H,0DH
-          ShowMessage    op3
-          STATUSLINE
-          ;MAINMAIN       thename,thename
+                call             far ptr     CLS
+                movecursor       17H,03H
+                ShowMessage      op1
+                movecursor       17H,08H
+                ShowMessage      op2
+                movecursor       17H,0DH
+                ShowMessage      op3
+                STATUSLINE
+  ;MAINMAIN       thename,thename
   
-          RESETMAINFLAGS INVITE,senttf1,recivedf1,senttf2,recivedf2
-          MAINMAINSERIAL thename,thename
+                RESETMAINFLAGS   INVITE,senttf1,recivedf1,senttf2,recivedf2
+                MAINMAINSERIAL   thename,thename
   ;GAME SCREEN
   play:         
                 CALL             EnterGraphics
