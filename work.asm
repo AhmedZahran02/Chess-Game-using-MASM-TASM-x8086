@@ -38,7 +38,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
            clp: 
                 MOV AL,byte ptr [SI]
                 cmp al,'$'
-                Je far ptr otc
+                je otc
                 mov ah,9 ;Display
                 mov bh,0 ;Page 0
                 mov cx,1h ;1 times
@@ -47,7 +47,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
                 inc SI
                 
                 cmp byte ptr [si],'$'
-                Je far ptr otc
+                je otc
                 mov ah,3h
                 mov bh,0h
                 int 10h
@@ -86,7 +86,7 @@ TOSTRING MACRO OutMessage
     mov di,offset OutMessage    
     MAKESTR:
     CMP SI,0
-    Je far ptr OUTH
+    je OUTH
     DEC SI
     POP BX
     mov [di],BH
@@ -1917,7 +1917,7 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
                         INSIDEGRID AL,DL
                         POP AX
                         CMP BX,0 
-                        Je far ptr NOTVALID 
+                        je NOTVALID 
 
                         CHECK2:
 
@@ -1944,7 +1944,7 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
 
                         NOTVALID:
                           CMP CX,0
-                          Je far ptr RETURN
+                          je RETURN
                           DEC CX
                           JMP far ptr LOOP1
                         RETURN:      
@@ -1980,7 +1980,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         INSIDEGRID AL,DL
                         POP AX
                         CMP BX,0 
-                        Je far ptr NOTVALID 
+                        je NOTVALID 
 
                         CHECK2:
 
@@ -2007,7 +2007,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
 
                         NOTVALID:
                           CMP CX,0
-                          Je far ptr RETURN
+                          je RETURN
                           DEC CX
                           JMP far ptr LOOP1
                         RETURN:      
@@ -3260,12 +3260,12 @@ CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks tha
                   popa
                   inc                   al
                   cmp                   al,8
-                  Je far ptr                   TMP2
+                  je                   TMP2
                   JMP far ptr                   Nloop10
     TMP2:         
                   inc                   ah
                   cmp                   ah,8
-                  Je far ptr                   TMP3
+                  je                   TMP3
                   JMP far ptr                   Nloop9
     TMP3:
 
@@ -3309,12 +3309,12 @@ CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks th
                   popa
                   inc                   al
                   cmp                   al,8
-                  Je far ptr                   TMP2
+                  je                   TMP2
                   JMP far ptr                   Nloop10
     TMP2:         
                   inc                   ah
                   cmp                   ah,8
-                  Je far ptr                   TMP3
+                  je                   TMP3
                   JMP far ptr                   Nloop9
     TMP3:
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
@@ -3460,7 +3460,7 @@ tmplabel102:
                   cmp             ah,40h
                   Jnz far ptr             temp23
                   cmp f6,0
-                  Je far ptr set
+                  je set
                   mov f6,0
                   JMP far ptr temp23
                   set:
@@ -3539,14 +3539,14 @@ tmplabel102:
 
                   mov bx,firstIndex
                   cmp cursorState[bx],0
-                  Je far ptr skip1
+                  je skip1
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip1:
 
                   cmp cursorState2[bx],0
-                  Je far ptr skip1e
+                  je skip1e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3581,14 +3581,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  Je far ptr skip12
+                  je skip12
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip12:
 
                   cmp cursorState[bx],0
-                  Je far ptr skip12e
+                  je skip12e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3623,14 +3623,14 @@ tmplabel102:
                   mov bx,firstIndex
 
                   cmp cursorState[bx],0
-                  Je far ptr skip2
+                  je skip2
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip2:
 
                   cmp cursorState2[bx],0
-                  Je far ptr skip2e
+                  je skip2e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3662,14 +3662,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  Je far ptr skip22
+                  je skip22
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip22:
 
                   cmp cursorState[bx],0
-                  Je far ptr skip22e
+                  je skip22e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3703,14 +3703,14 @@ tmplabel102:
                   mov bx,firstIndex
 
                   cmp cursorState[bx],0
-                  Je far ptr skip3
+                  je skip3
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip3:
 
                   cmp cursorState2[bx],0
-                  Je far ptr skip3e
+                  je skip3e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3744,14 +3744,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  Je far ptr skip32
+                  je skip32
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip32:
 
                   cmp cursorState[bx],0
-                  Je far ptr skip32e
+                  je skip32e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3788,14 +3788,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex
                   cmp cursorState[bx],0
-                  Je far ptr skip4
+                  je skip4
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip4:
 
                   cmp cursorState2[bx],0
-                  Je far ptr skip4e
+                  je skip4e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3827,14 +3827,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  Je far ptr skip42
+                  je skip42
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip42:
 
                   cmp cursorState[bx],0
-                  Je far ptr skip42e
+                  je skip42e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3899,7 +3899,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState[bx],0
- Je far ptr BREAK7
+ je BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -3909,7 +3909,7 @@ popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],5D
-Je far ptr BREAK8
+je BREAK8
 BREAK7:
 JMP far ptr BREAK6
 BREAK8:
@@ -3921,12 +3921,12 @@ break6:
 popa
 inc al
 cmp al,8
-Je far ptr beforeloop10
+je beforeloop10
 JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-Je far ptr beforeloop9
+je beforeloop9
 JMP far ptr loop9
 beforeloop9:
 
@@ -3951,7 +3951,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState2[bx],0
- Je far ptr BREAK7
+ je BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -3961,7 +3961,7 @@ popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],12D
-Je far ptr BREAK8
+je BREAK8
 BREAK7:
 JMP far ptr break6
 BREAK8:
@@ -3973,12 +3973,12 @@ break6:
 popa
 inc al
 cmp al,8
-Je far ptr beforeloop10
+je beforeloop10
 JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-Je far ptr beforeloop9
+je beforeloop9
 JMP far ptr loop9
 beforeloop9:
 
@@ -4003,7 +4003,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState[bx],0
- Je far ptr BREAK7
+ je BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -4011,7 +4011,7 @@ loop10:
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],5D
-Je far ptr BREAK8
+je BREAK8
 BREAK7:
 JMP far ptr BREAK6
 BREAK8:
@@ -4023,12 +4023,12 @@ break6:
 popa
 inc al
 cmp al,8
-Je far ptr beforeloop10
+je beforeloop10
 JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-Je far ptr beforeloop9
+je beforeloop9
 JMP far ptr loop9
 beforeloop9:
 
@@ -4052,7 +4052,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState2[bx],0
- Je far ptr BREAK7
+ je BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -4060,7 +4060,7 @@ loop10:
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],12D
-Je far ptr BREAK8
+je BREAK8
 BREAK7:
 JMP far ptr break6
 BREAK8:
@@ -4072,12 +4072,12 @@ break6:
 popa
 inc al
 cmp al,8
-Je far ptr beforeloop10
+je beforeloop10
 JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-Je far ptr beforeloop9
+je beforeloop9
 JMP far ptr loop9
 beforeloop9:
 
@@ -4301,7 +4301,7 @@ LOCAL empty
 pusha
 GETARINDEXBYBYTE x,y
 cmp  gridState[bx],0
-Je far ptr empty
+je empty
 popa
 mov bx,0
 JMP far ptr break5
@@ -4522,7 +4522,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
                   mov         bl,ah
                   cmp         bl,3dh            ; F3 key
-                  Je far ptr          deadmid
+                  je          deadmid
 
                   mov         bl,al
                   cmp         bl,13
@@ -4706,7 +4706,7 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     MOV AH,0H
 
     CMP AX,0
-    Je far ptr EMPTY2
+    je EMPTY2
     
     ; DEC AX 
     ; MOV BX,360D
@@ -4720,30 +4720,30 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     ; JMP far ptr RETURN 
     
     CMP AX,1D
-    Je far ptr B1
+    je B1
 
    CMP AX,2D
-   Je far ptr B2
+   je B2
    CMP AX,3D
-   Je far ptr B3
+   je B3
    CMP AX,4D
-   Je far ptr B4
+   je B4
    CMP AX,5D
-   Je far ptr B5
+   je B5
    CMP AX,6D
-   Je far ptr B6
+   je B6
    CMP AX,7D
-   Je far ptr B7
+   je B7
    CMP AX,8D
-   Je far ptr B8
+   je B8
    CMP AX,9D
-   Je far ptr B9
+   je B9
    CMP AX,10D
-   Je far ptr B10
+   je B10
    CMP AX,11D
-   Je far ptr B11
+   je B11
    CMP AX,12D
-   Je far ptr B12
+   je B12
 
    EMPTY2: JMP far ptr EMPTY
        
@@ -4991,7 +4991,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
     mainloop:     
                   
                 cmp f6,1
-                Je far ptr enter
+                je enter
                 JMP far ptr AGAIN
                 enter:
                   mov         ah,01
@@ -5006,7 +5006,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   cmp             ah,40h
                   Jnz far ptr             temp88
                   cmp f6,0
-                  Je far ptr set2
+                  je set2
                   mov f6,0
                   JMP far ptr temp88
                   set2:
@@ -5032,7 +5032,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   mov         bl,ah
                   cmp         bl,40H            ; F6 key
-                  Je far ptr          deadmid
+                  je          deadmid
 
                   mov         bl,al
                   cmp         bl,13
