@@ -3123,6 +3123,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   FIRSTQHANDLE2M
                   
                   checkqhandle
+                  CHECKMATE
                   
 ENDM SECONDQHANDLE
 
@@ -3219,7 +3220,8 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
 
                   FIRSTQHANDLEM
 
-                  checkqhandle2               
+                  checkqhandle2        
+                  CHECKMATE       
 ENDM SECONDQHANDLE2
 
 CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected white piece can move to 
@@ -3426,6 +3428,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
 
                   
 cursorLoop:
+
                   PRINTCURRTIMER
 
                   mov         ah,01
@@ -4556,11 +4559,13 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   out         dx , al
                   jmp         AGAIN
            
-    ;Receiving a value
+  
     deadmid:      
                   jmp         dead
-                  
-    AGAIN:        
+
+                
+    AGAIN:     
+      ;Receiving a value     
     ;Check that Data Ready
                   mov         dx , 3FDH         ; Line Status Register
           
@@ -5245,16 +5250,12 @@ ENDM PRINTCURRTIMER
   wqueendata        db  60D*60D dup(0)
   wkingdata         db  60D*60D dup(0)
 
-
   knightdx          db  1,1,2,2,-2,-2, -1 , -1
   knightdy          db  -2,2,1,-1,1,-1,2,-2
-    
+  
   king_dx           db  -1,-1,0,1,1,1,0,-1
   king_dy           db  0,1,1,1,0,-1,-1,-1
-  ; queen_dx          db  1, 1 , 0,  0 , -1 , -1 , 1 , -1
-  ; queen_dy          db  1,-1 , 1, -1 , -1 ,  1 , 0 ,  0
-  ; soldier_dx        db  1 ,
-  ; soldier_dy        db  1 ,
+
   WINNER            db  0
   thename           db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
   proceed           db  'Please Enter key to continue','$'
