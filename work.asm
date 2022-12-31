@@ -3753,12 +3753,12 @@ handlereceive MACRO
                   ; ;print char TODO                  ;char recived then print it
                   ; jmp quit
                   
-                       pusha
-                  mov al,received1
-                  TOSTRING nameq
-                  movecursor 2d,31d
-                  ShowMessage nameq
-                  popa
+                  ;      pusha
+                  ; mov al,received1
+                  ; TOSTRING nameq
+                  ; movecursor 2d,31d
+                  ; ShowMessage nameq
+                  ; popa
                   
                   handleq:
                   cmp received1, 127d
