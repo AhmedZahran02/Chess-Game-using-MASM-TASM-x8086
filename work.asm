@@ -3492,9 +3492,21 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   mov         ah,0
                   int         16h
 
+                  SEEIFRECIVING22:
                   ;if f4 is pressed return to main screen  
                   cmp ah,3Eh
                   jnz dontexit
+
+                  ;Check that Transmitter Holding Register is Empty
+                  mov dx , 3FDH         ; Line Status Register
+                  In  al , dx           ;Read Line Status 
+                  AND al , 00100000b
+                  jz SEEIFRECIVING22             ;jump untill it is empty
+                  ;If empty put the VALUE in Transmit data register
+                  mov dx , 3F8H         ; Transmit data register
+                  add ah,100d
+                  mov al,AH   ; al,VALUE
+                  out dx , al
                   jmp faraway  
                   dontexit: 
 
@@ -3731,7 +3743,7 @@ handlereceive MACRO
   local temp2
   local temp3
   local temp4
-
+  LOCAL dontexit2
       ;Receiving a value       
                   ;Check that Data Ready
                   mov         dx , 3FDH         ; Line Status Register
@@ -3745,6 +3757,13 @@ handlereceive MACRO
                   mov         dx , 03F8H
                   in          al , dx
                   MOV              AH,0
+
+                  ;if f4 is pressed return to main screen  2E
+                  cmp al,0A2h ; +100
+                  jnz dontexit2
+                  jmp faraway  
+                  dontexit2: 
+
                   ; mov bl , al
                   ; and bl,10000000b
                   ; jnz temp3
@@ -4575,6 +4594,98 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   BLACKIDNTWIN:
 ENDM STATUSLINE
 
+RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
+    LOCAL loopxx
+    LOCAL loopxxx
+    LOCAL exist1
+    LOCAL exist2
+    LOCAL VERYLATE1
+    LOCAL VERYLATE2
+
+    mov dx,3fbh           ; Line Control Register
+    mov al,10000000b      ;Set Divisor Latch Access Bit
+    out dx,al
+
+
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+    mov dx,3f8h
+    mov al,0ch
+    out dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+    mov dx,3f9h
+    mov al,00h
+    out dx,al
+
+
+    ;Set port configuration
+    mov dx,3fbh
+    mov al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+    out dx,al
+
+inc ah
+lea si, PLAYERNAME1
+lea di, PLAYERNAME2
+loopxxx:
+    ;Check that Transmitter Holding Register is Empty
+    mov dx , 3FDH         ; Line Status Register
+    In  al , dx           ;Read Line Status 
+    AND al , 00100000b
+    jnz VERYLATE2            ;jump untill it is empty
+    jmp far ptr loopxxx
+    VERYLATE2:
+    ;If empty put the VALUE in Transmit data register
+    mov dx , 3F8H         ; Transmit data register
+    mov al,[bx]   ; al,VALUE
+    out dx , al
+
+    inc bx
+
+    cmp al,'$'
+    jz exist2
+    jmp loopxxx
+    exist2:
+
+cmp ah,2
+jz getoutandplay1
+JMP far ptr    exist1
+getoutandplay1:
+
+
+reciveloop:
+inc ah
+lea bx, PLAYERNAME2
+loopxx:
+    ;Check that Data Ready
+    mov dx , 3FDH         ; Line Status Register
+    in  al , dx
+    AND al , 00000001b
+    jnz VERYLATE1
+    jmp far ptr loopxx   ;jump IF NOT  it recive data
+    VERYLATE1:
+    ;If Ready read the VALUE in Receive data register
+    mov dx , 03F8H
+    in  al , dx
+    mov [bx],al
+
+    inc bx
+
+    cmp al,'$'
+    jz exist1
+    jmp loopxx
+    exist1:
+
+cmp ah,2
+jz getoutandplay2
+JMP far ptr    begining
+getoutandplay2:
+
+
+
+ENDM RECIVENAME
+
 OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling Game Chat
             LOCAL dead
             LOCAL mainloop
@@ -4584,7 +4695,8 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
             local midh
             local CHK
             local AGAIN
-
+            local skip1111
+            local skip111
                   mov  al, 01h   ; select display page 1
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
@@ -4666,9 +4778,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
                   pop         ax
 
-                  mov         bl,ah
-                  cmp         bl,3dh            ; F3 key
-                  je          deadmid
+
 
                   mov         bl,al
                   cmp         bl,13
@@ -4702,9 +4812,22 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   JZ          AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
+
+                  mov         bl,ah
+                  cmp         bl,3dh            ; F3 key
+                  jne          skip111
+
                   mov         dx , 3F8H         ; Transmit data register
                   mov         al,bl
                   out         dx , al
+                  jmp deadmid
+                  skip111:
+
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov         al,bl
+                  out         dx , al
+
+
                   jmp         AGAIN
            
     ;Receiving a value
@@ -4723,6 +4846,12 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   mov         dx , 03F8H
                   in          al , dx
                   
+                  mov         bl,al
+                  cmp         bl,3dh            ; F3 key
+                  jne          skip1111
+                  JMP far ptr  dead
+                  skip1111:
+
                   pop         cx
                   pop         dx
                   push        dx
@@ -4781,6 +4910,17 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   mov  al, 00h   ; select display page 0
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
+                  RESETMAINFLAGS INVITE,senttf1,recivedf1,senttf2,recivedf2
+                  ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
+                  mov ah, 6               
+                  mov al, 0               ; number of lines to scroll
+                  mov bh, 07               ; attribute
+                  mov ch, 18               ; row top
+                  mov cl, 0               ; col left
+                  mov dh, 25              ; row bottom
+                  mov dl, 80              ; col right
+                  int 10h
+                  ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
 
 ENDM OPENCHAT
                 
@@ -5439,7 +5579,8 @@ connect MACRO
   king_dy           db  0,1,1,1,0,-1,-1,-1
 
   WINNER            db  0
-  thename           db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
+  thename           db  16,?,16 dup('$')
+  theOthername      db  16,?,16 dup('$')                                                                                            ; max size 15 char last digit for $
   proceed           db  'Please Enter key to continue','$'
   op1               db  'To start chatting press F1','$'
   op2               db  'To start the game press F2','$'
@@ -5699,6 +5840,8 @@ MAIN PROC FAR
                 movecursor       17H,0AH
                 ShowMessage      proceed
                 call             waitkey
+                ;RECIVENAME       thename,theOthername
+                
   ;CHOICE MENU
   faraway:      
 
@@ -5711,9 +5854,8 @@ MAIN PROC FAR
           ShowMessage    op3
           STATUSLINE
           ;MAINMAIN       thename,thename
-  
           RESETMAINFLAGS INVITE,senttf1,recivedf1,senttf2,recivedf2
-          MAINMAINSERIAL thename,thename
+          MAINMAINSERIAL thename,theOthername
   ;GAME SCREEN
   play:         
                 CALL             EnterGraphics
