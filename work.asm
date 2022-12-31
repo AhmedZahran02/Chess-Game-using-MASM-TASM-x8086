@@ -498,8 +498,10 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   dec BX
                   CMP word ptr timeState[si],BX
                   Jle  temp151
+                  ; U STILL IN FREEZE DUDE 
                   JMP  break80
                   temp151:
+                  ; FREEZE FINISHED U CAN MOVE THE PIECE ?
                   mov word ptr timeState[si],0D
                   popa
                 ;end handle count down
