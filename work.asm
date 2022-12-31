@@ -4692,12 +4692,7 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
 ENDM STATUSLINE
 
 RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
-    LOCAL loopxx
-    LOCAL loopxxx
-    LOCAL exist1
-    LOCAL exist2
-    LOCAL VERYLATE1
-    LOCAL VERYLATE2
+
 
     mov dx,3fbh           ; Line Control Register
     mov al,10000000b      ;Set Divisor Latch Access Bit
@@ -4722,62 +4717,37 @@ RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
     mov al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
     out dx,al
 
-inc ah
-lea si, PLAYERNAME1
-lea di, PLAYERNAME2
-loopxxx:
-    ;Check that Transmitter Holding Register is Empty
-    mov dx , 3FDH         ; Line Status Register
-    In  al , dx           ;Read Line Status 
-    AND al , 00100000b
-    jnz VERYLATE2            ;jump untill it is empty
-    jmp far ptr loopxxx
-    VERYLATE2:
-    ;If empty put the VALUE in Transmit data register
-    mov dx , 3F8H         ; Transmit data register
-    mov al,[bx]   ; al,VALUE
-    out dx , al
-
-    inc bx
-
-    cmp al,'$'
-    jz exist2
-    jmp loopxxx
-    exist2:
-
-cmp ah,2
-jz getoutandplay1
-JMP far ptr    exist1
-getoutandplay1:
+; inc ah
+; lea si, PLAYERNAME1
+; lea di, PLAYERNAME2
+; loopxxx:
+;     ;Check that Transmitter Holding Register is Empty
+;     mov dx , 3FDH         ; Line Status Register
+;     In  al , dx           ;Read Line Status 
+;     AND al , 00100000b
+;     jnz VERYLATE2            ;jump untill it is empty
+;     jmp far ptr loopxxx
+;     VERYLATE2:
+;     ;If empty put the VALUE in Transmit data register
+;     mov dx , 3F8H         ; Transmit data register
+;     mov al,[bx]   ; al,VALUE
+;     out dx , al
 
 
-reciveloop:
-inc ah
-lea bx, PLAYERNAME2
-loopxx:
-    ;Check that Data Ready
-    mov dx , 3FDH         ; Line Status Register
-    in  al , dx
-    AND al , 00000001b
-    jnz VERYLATE1
-    jmp far ptr loopxx   ;jump IF NOT  it recive data
-    VERYLATE1:
-    ;If Ready read the VALUE in Receive data register
-    mov dx , 03F8H
-    in  al , dx
-    mov [bx],al
+;     ;Check that Data Ready
+;     mov dx , 3FDH         ; Line Status Register
+;     in  al , dx
+;     AND al , 00000001b
+;     jnz VERYLATE1
+;     jmp far ptr loopxx   ;jump IF NOT  it recive data
+;     VERYLATE1:
+;     ;If Ready read the VALUE in Receive data register
+;     mov dx , 03F8H
+;     in  al , dx
+;     mov [bx],al
 
-    inc bx
 
-    cmp al,'$'
-    jz exist1
-    jmp loopxx
-    exist1:
 
-cmp ah,2
-jz getoutandplay2
-JMP far ptr    begining
-getoutandplay2:
 
 
 
@@ -4910,8 +4880,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
     ;If empty put the VALUE in Transmit data register
 
-                  mov         bl,ah
-                  cmp         bl,3dh            ; F3 key
+                  cmp         ah,3dh            ; F3 key
                   jne          skip111
 
                   mov         dx , 3F8H         ; Transmit data register
@@ -5912,7 +5881,7 @@ MAIN PROC FAR
                 movecursor       17H,0AH
                 ShowMessage      proceed
                 call             waitkey
-                ;RECIVENAME       thename,theOthername
+                RECIVENAME       thename,theOthername
                 
   ;CHOICE MENU
   faraway:      
@@ -5928,7 +5897,7 @@ MAIN PROC FAR
   ;MAINMAIN       thename,thename
   
                 RESETMAINFLAGS   INVITE,senttf1,recivedf1,senttf2,recivedf2
-                MAINMAINSERIAL   thename,thename
+                MAINMAINSERIAL   thename,theOthername
   ;GAME SCREEN
   play:         
                 CALL             EnterGraphics
