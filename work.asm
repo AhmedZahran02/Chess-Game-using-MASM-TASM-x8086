@@ -38,7 +38,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
            clp: 
                 MOV AL,byte ptr [SI]
                 cmp al,'$'
-                je otc
+                Je far ptr otc
                 mov ah,9 ;Display
                 mov bh,0 ;Page 0
                 mov cx,1h ;1 times
@@ -47,7 +47,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
                 inc SI
                 
                 cmp byte ptr [si],'$'
-                je otc
+                Je far ptr otc
                 mov ah,3h
                 mov bh,0h
                 int 10h
@@ -56,7 +56,7 @@ ShowCMessage MACRO MyMessage, X ;PRINT STRING WITH COLOR X
                 INC DL
                 int 10h
                 
-                jmp clp
+                JMP far ptr clp
                 otc: 
                 mov ah,3h
                 mov bh,0h
@@ -81,17 +81,17 @@ TOSTRING MACRO OutMessage
         INC SI 
         MOV AH,0 
         cmp AL, 0
-        jne divide
+        Jne far ptr divide
         
     mov di,offset OutMessage    
     MAKESTR:
     CMP SI,0
-    JE OUTH
+    Je far ptr OUTH
     DEC SI
     POP BX
     mov [di],BH
     INC DI
-    JMP MAKESTR
+    JMP far ptr MAKESTR
     OUTH:
 ENDM TOSTRING
 
@@ -108,7 +108,7 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                 POP DX
                 POP CX
                 CMP BX,0H
-                JE GOAWAY
+                Je far ptr GOAWAY
         ; Drawing loop
                       mov di,0
         drawLoop:     
@@ -117,19 +117,19 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       MOV  AL,BYTE PTR[BX]
                       MOV AH,0ch
                       cmp al,0FFH
-                      je skp
+                      Je far ptr skp
                       INT 10H
                       skp:
                       INC BX
                       INC CX
                       INC SI
                       CMP SI,WORD ptr imgwidth
-                      JNE innerloop
+                      Jne far ptr innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
                       CMP DI,WORD ptr imgheight
-                      JNE  drawLoop
+                      Jne far ptr  drawLoop
                       GOAWAY:
                 ENDM        DRAW
 
@@ -148,19 +148,19 @@ DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       MOV  AL,BYTE PTR [BX]
                       MOV AH,0ch
                       cmp al,0FFH
-                      je skp
+                      Je far ptr skp
                       INT 10H
                       skp:
                       INC BX
                       INC CX
                       INC SI
                       CMP SI,WORD PTR imgwidth
-                      JNE innerloop
+                      Jne far ptr innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
                       CMP DI,WORD PTR imgheight
-                      JNE  drawLoop
+                      Jne far ptr  drawLoop
                 ENDM        DRAWWITHSOURCE
 
 OpenFile MACRO  imgfilename, imgfilehandle                                ;OPEN FILE
@@ -204,12 +204,12 @@ DRAWCELL MACRO X,Y,Z       ;DRAW colored CELL WITH COLOR Z
             INC CX
             INC SI
             CMP SI,60D
-            JNE innerloop
+            Jne far ptr innerloop
             SUB CX,SI
             INC DX
             INC DI
             CMP DI,60D
-            JNE  drawLoop
+            Jne far ptr  drawLoop
 ENDM        DRAWCELL
 
 DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x,y with color a dark and b light
@@ -246,7 +246,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP
+        Jne far ptr  BIGGERLOOP
 
             MOV AX,X
             MOV BX,Y 
@@ -272,7 +272,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP2
+        Jne far ptr  BIGGERLOOP2
 
             MOV AX,X
             MOV BX,Y 
@@ -298,7 +298,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP3
+        Jne far ptr  BIGGERLOOP3
 
             MOV AX,X
             MOV BX,Y 
@@ -324,7 +324,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP4        
+        Jne far ptr  BIGGERLOOP4        
 
             MOV AX,X
             MOV BX,Y 
@@ -350,7 +350,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP5
+        Jne far ptr  BIGGERLOOP5
 
             MOV AX,X
             MOV BX,Y 
@@ -376,7 +376,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP6
+        Jne far ptr  BIGGERLOOP6
 
             MOV AX,X
             MOV BX,Y 
@@ -402,7 +402,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP7
+        Jne far ptr  BIGGERLOOP7
 
             MOV AX,X
             MOV BX,Y 
@@ -428,7 +428,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        JNE  BIGGERLOOP8 
+        Jne far ptr  BIGGERLOOP8 
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player press his first Q to select a piece want to move
@@ -452,8 +452,8 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
     local temp100
                   ;if the cell is empty get out
                 ;   cmp bl,6
-                ;   jz isapawn
-                ;   jmp getouttt
+                ;   Jz far ptr isapawn
+                ;   JMP far ptr getouttt
                 ;   isapawn:  
                 ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
                 ;   getouttt: 
@@ -462,8 +462,8 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                 ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
                 ;   ;KnightMovements curRowCursor,curColCursor
                 ;   cmp bl,0FFH
-                ;   jnz getoutt
-                ;   jmp outterr
+                ;   Jnz far ptr getoutt
+                ;   JMP far ptr outterr
                 ;   getoutt:
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   GETARINDEX curRowCursor,curColCursor
@@ -471,16 +471,16 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
-                    jne temp100
-                    jmp break80
+                    Jne far ptr temp100
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
-                  jne temp150
-                  jmp break80
+                  Jne far ptr temp150
+                  JMP far ptr break80
                   temp150:
                   popa
 
@@ -497,8 +497,8 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   dec BX
                   dec BX
                   CMP word ptr timeState[si],BX
-                  JLE temp151
-                  jmp break80
+                  Jle far ptr temp151
+                  JMP far ptr break80
                   temp151:
                   mov word ptr timeState[si],0D
                   popa
@@ -523,48 +523,48 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                 ;------------------------
                   GETARINDEX curRowCursor,curColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 PAWN:
                   HANDLEPAWN curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES
@@ -600,8 +600,8 @@ FIRSTQHANDLEM MACRO
     local skpp
 
                 cmp stateOfQ,0
-                jne skpp
-                jmp break80
+                Jne far ptr skpp
+                JMP far ptr break80
                 skpp:
 
                 CLEAR_AVAILABLE_PLACES
@@ -611,16 +611,16 @@ FIRSTQHANDLEM MACRO
                   pusha
                   ISEMPTY startRowCursor,startColCursor
                     cmp bx,1
-                    jne temp100
-                    jmp break80
+                    Jne far ptr temp100
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE startRowCursor,startColCursor
                   cmp bx,0
-                  jne temp150
-                  jmp break80
+                  Jne far ptr temp150
+                  JMP far ptr break80
                   temp150:
                   popa
                  
@@ -637,48 +637,48 @@ FIRSTQHANDLEM MACRO
                 ;------------------------
                   GETARINDEX startRowCursor,startColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 PAWN:
                   HANDLEPAWN startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING startRowCursor,startColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES
@@ -715,16 +715,16 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   pusha
                   ISEMPTY curRowCursor2,curColCursor2
                     cmp bx,1
-                    jne temp100
-                    jmp break80
+                    Jne far ptr temp100
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor2,curColCursor2
                   cmp bx,1
-                  jne temp150
-                  jmp break80
+                  Jne far ptr temp150
+                  JMP far ptr break80
                   temp150:
                   popa
 
@@ -741,8 +741,8 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   dec BX
                   dec BX
                   CMP word ptr timeState[si],BX
-                  JLE temp151
-                  jmp break80
+                  Jle far ptr temp151
+                  JMP far ptr break80
                   temp151:
                   mov word ptr timeState[si],0D
                   popa
@@ -767,48 +767,48 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                 ;------------------------
                   GETARINDEX curRowCursor2,curColCursor2
                   CMP BYTE PTR gridState[BX],6d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],1d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],2d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],3d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],4d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],5d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 PAWN:
                   HANDLEPAWN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES2
@@ -845,16 +845,16 @@ checkqhandle MACRO
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
-                    jne temp100
-                    jmp break80
+                    Jne far ptr temp100
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
-                  jne temp150
-                  jmp break80
+                  Jne far ptr temp150
+                  JMP far ptr break80
                   temp150:
                   popa
                  
@@ -866,48 +866,48 @@ checkqhandle MACRO
                 ;------------------------
                   GETARINDEX curRowCursor,curColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 PAWN:
                   HANDLEPAWN curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING curRowCursor,curColCursor
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 check_AVAILABLE_PLACES
                 CLEAR_AVAILABLE_PLACES
@@ -943,68 +943,68 @@ checkqhandle2 MACRO
                   pusha
                   ISEMPTY curRowCursor2,curColCursor2
                     cmp bx,1
-                    jne temp100
+                    Jne far ptr temp100
                     popa
-                    jmp break80
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor2,curColCursor2
                   cmp bx,1
-                  jne temp150
+                  Jne far ptr temp150
                   popa
-                  jmp break80
+                  JMP far ptr break80
                   temp150:
                   popa
              
                 ;------------------------
                   GETARINDEX curRowCursor2,curColCursor2
                   CMP BYTE PTR gridState[BX],6d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],1d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],2d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],3d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],4d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],5d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
 
 
                 PAWN:
                   HANDLEPAWN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING2 curRowCursor2,curColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 ;---------------------------------------------------
                 check_AVAILABLE_PLACES2
@@ -1040,8 +1040,8 @@ FIRSTQHANDLE2M MACRO
             local skpp
 
                 cmp stateOfQ2,0
-                jne skpp
-                jmp break80
+                Jne far ptr skpp
+                JMP far ptr break80
                 skpp:
 
     CLEAR_AVAILABLE_PLACES2
@@ -1051,68 +1051,68 @@ FIRSTQHANDLE2M MACRO
                   pusha
                   ISEMPTY startRowCursor2,startColCursor2
                     cmp bx,1
-                    jne temp100
+                    Jne far ptr temp100
                     popa
-                    jmp break80
+                    JMP far ptr break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE startRowCursor2,startColCursor2
                   cmp bx,1
-                  jne temp150
+                  Jne far ptr temp150
                   popa
-                  jmp break80
+                  JMP far ptr break80
                   temp150:
                   popa
              
                 ;------------------------
                   GETARINDEX startRowCursor2,startColCursor2
                   CMP BYTE PTR gridState[BX],6d
-                  JNE PAWNTEMP
-                  JMP PAWN
+                  Jne far ptr PAWNTEMP
+                  JMP far ptr PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],1d
-                  JNE ROOKTEMP
-                  JMP ROOK
+                  Jne far ptr ROOKTEMP
+                  JMP far ptr ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],2d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
+                  Jne far ptr KNIGHTTEMP
+                  JMP far ptr KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],3d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
+                  Jne far ptr BISHOPTEMP
+                  JMP far ptr BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],4d
-                  JNE QUEENTEMP
-                  JMP QUEEN
+                  Jne far ptr QUEENTEMP
+                  JMP far ptr QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],5d
-                  JNE KINGTEMP
-                  JMP KING
+                  Jne far ptr KINGTEMP
+                  JMP far ptr KING
                   KINGTEMP:
-                  JMP NOACTION
+                  JMP far ptr NOACTION
 
 
                 PAWN:
                   HANDLEPAWN2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 ROOK:
                   HANDLEROOK2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KNIGHT:
                   HANDLEKNIGHT2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 BISHOP:
                   HANDLEBISHOP2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 QUEEN:
                   HANDLEQUEEN2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 KING:
                   HANDLEKING2 startRowCursor2,startColCursor2
-                  JMP NOACTION
+                  JMP far ptr NOACTION
                 NOACTION:
                 ;---------------------------------------------------
                 PUSHA
@@ -1164,26 +1164,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp30
-jmp break12
+Jne far ptr temp30
+JMP far ptr break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp40
-jmp break1
+Jne far ptr temp40
+JMP far ptr break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov byte ptr cursorState[bx],1
-jmp First_Loop
+JMP far ptr First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp26
-jmp break12
+Jne far ptr temp26
+JMP far ptr break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1202,26 +1202,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp31
-jmp break22
+Jne far ptr temp31
+JMP far ptr break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp32
-jmp break2
+Jne far ptr temp32
+JMP far ptr break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Second_Loop
+JMP far ptr Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp27
-jmp break22
+Jne far ptr temp27
+JMP far ptr break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1240,26 +1240,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp33
-jmp break32
+Jne far ptr temp33
+JMP far ptr break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp34
-jmp break3
+Jne far ptr temp34
+JMP far ptr break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Third_Loop
+JMP far ptr Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp28
-jmp break32
+Jne far ptr temp28
+JMP far ptr break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1278,26 +1278,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp35
-jmp break42
+Jne far ptr temp35
+JMP far ptr break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp36
-jmp break4
+Jne far ptr temp36
+JMP far ptr break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Fourth_Loop
+JMP far ptr Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp29
-jmp break42
+Jne far ptr temp29
+JMP far ptr break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1346,26 +1346,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp30
-jmp break12
+Jne far ptr temp30
+JMP far ptr break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp40
-jmp break1
+Jne far ptr temp40
+JMP far ptr break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp First_Loop
+JMP far ptr First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp26
-jmp break12
+Jne far ptr temp26
+JMP far ptr break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1384,26 +1384,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp31
-jmp break22
+Jne far ptr temp31
+JMP far ptr break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp32
-jmp break2
+Jne far ptr temp32
+JMP far ptr break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Second_Loop
+JMP far ptr Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp27
-jmp break22
+Jne far ptr temp27
+JMP far ptr break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1422,26 +1422,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp33
-jmp break32
+Jne far ptr temp33
+JMP far ptr break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp34
-jmp break3
+Jne far ptr temp34
+JMP far ptr break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Third_Loop
+JMP far ptr Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp28
-jmp break32
+Jne far ptr temp28
+JMP far ptr break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1460,26 +1460,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp35
-jmp break42
+Jne far ptr temp35
+JMP far ptr break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp36
-jmp break4
+Jne far ptr temp36
+JMP far ptr break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Fourth_Loop
+JMP far ptr Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp29
-jmp break42
+Jne far ptr temp29
+JMP far ptr break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1529,26 +1529,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp30
-jmp break12
+Jne far ptr temp30
+JMP far ptr break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp40
-jmp break1
+Jne far ptr temp40
+JMP far ptr break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp First_Loop
+JMP far ptr First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp26
-jmp break12
+Jne far ptr temp26
+JMP far ptr break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1568,26 +1568,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp31
-jmp break22
+Jne far ptr temp31
+JMP far ptr break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp32
-jmp break2
+Jne far ptr temp32
+JMP far ptr break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Second_Loop
+JMP far ptr Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp27
-jmp break22
+Jne far ptr temp27
+JMP far ptr break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1607,26 +1607,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp33
-jmp break32
+Jne far ptr temp33
+JMP far ptr break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp34
-jmp break3
+Jne far ptr temp34
+JMP far ptr break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Third_Loop
+JMP far ptr Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp28
-jmp break32
+Jne far ptr temp28
+JMP far ptr break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1646,26 +1646,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp35
-jmp break42
+Jne far ptr temp35
+JMP far ptr break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp36
-jmp break4
+Jne far ptr temp36
+JMP far ptr break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-jmp Fourth_Loop
+JMP far ptr Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
-jne temp29
-jmp break42
+Jne far ptr temp29
+JMP far ptr break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1715,26 +1715,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp30
-jmp break12
+Jne far ptr temp30
+JMP far ptr break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp40
-jmp break1
+Jne far ptr temp40
+JMP far ptr break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp First_Loop
+JMP far ptr First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp26
-jmp break12
+Jne far ptr temp26
+JMP far ptr break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1754,26 +1754,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp31
-jmp break22
+Jne far ptr temp31
+JMP far ptr break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp32
-jmp break2
+Jne far ptr temp32
+JMP far ptr break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Second_Loop
+JMP far ptr Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp27
-jmp break22
+Jne far ptr temp27
+JMP far ptr break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1793,26 +1793,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp33
-jmp break32
+Jne far ptr temp33
+JMP far ptr break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp34
-jmp break3
+Jne far ptr temp34
+JMP far ptr break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Third_Loop
+JMP far ptr Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp28
-jmp break32
+Jne far ptr temp28
+JMP far ptr break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1832,26 +1832,26 @@ push ax
 INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp35
-jmp break42
+Jne far ptr temp35
+JMP far ptr break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
-jne temp36
-jmp break4
+Jne far ptr temp36
+JMP far ptr break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-jmp Fourth_Loop
+JMP far ptr Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
-jne temp29
-jmp break42
+Jne far ptr temp29
+JMP far ptr break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1917,7 +1917,7 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
                         INSIDEGRID AL,DL
                         POP AX
                         CMP BX,0 
-                        JE NOTVALID 
+                        Je far ptr NOTVALID 
 
                         CHECK2:
 
@@ -1932,11 +1932,11 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
                         pusha
                         ISWHITEBYTE dummyData1,dummyData2 ;out in bx
                         cmp bx,0 ;check if black
-                        jne skp  ; jmp if white
+                        Jne far ptr skp  ; JMP far ptr if white
                         popa
 
                         mov cursorState[bx],1
-                        jmp NOTVALID
+                        JMP far ptr NOTVALID
                         
                         skp:
                           POPA
@@ -1944,9 +1944,9 @@ HANDLEKNIGHT MACRO X,Y ;This Macro is Responsible for handling White KNIGHT Move
 
                         NOTVALID:
                           CMP CX,0
-                          JE RETURN
+                          Je far ptr RETURN
                           DEC CX
-                          JMP LOOP1
+                          JMP far ptr LOOP1
                         RETURN:      
 ENDM HANDLEKNIGHT
 
@@ -1980,7 +1980,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         INSIDEGRID AL,DL
                         POP AX
                         CMP BX,0 
-                        JE NOTVALID 
+                        Je far ptr NOTVALID 
 
                         CHECK2:
 
@@ -1995,11 +1995,11 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         pusha
                         ISWHITEBYTE2 dummyData1,dummyData2 ;out in bx
                         cmp bx,1 ;check if white
-                        jne skp  ; jmp if black
+                        Jne far ptr skp  ; JMP far ptr if black
                         popa
 
                         mov cursorState2[bx],1
-                        jmp NOTVALID
+                        JMP far ptr NOTVALID
                         
                         skp:
                           POPA
@@ -2007,9 +2007,9 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
 
                         NOTVALID:
                           CMP CX,0
-                          JE RETURN
+                          Je far ptr RETURN
                           DEC CX
-                          JMP LOOP1
+                          JMP far ptr LOOP1
                         RETURN:      
 ENDM HANDLEKNIGHT2
 
@@ -2037,9 +2037,9 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
 INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
 CMP BX,1
-JZ ITSVALID1
+Jz far ptr ITSVALID1
 MOV DL,0
-JMP CONTINUOUECHECK
+JMP far ptr CONTINUOUECHECK
 ITSVALID1:
 ;;;;;;;;;;;;;
 
@@ -2051,7 +2051,7 @@ INC CX
 ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
 MOV DL,0
 CMP BX,0
-JNZ CONTINUOUECHECK
+Jnz far ptr CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2061,7 +2061,7 @@ INC CX
 ;;;;;;;;;;;;;;
 ISWHITE AX,CX
 CMP BX,1
-JZ CONTINUOUECHECK
+Jz far ptr CONTINUOUECHECK
 MOV DL,1 ; RIGHT HAS FOE
 CONTINUOUECHECK:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
@@ -2074,9 +2074,9 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
 INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
 CMP BX,1
-JZ ITSVALID2
+Jz far ptr ITSVALID2
 MOV DH,0
-JMP CONTINUOUECHECK2
+JMP far ptr CONTINUOUECHECK2
 ITSVALID2:
 ;;;;;;;;;;;;;
 
@@ -2088,7 +2088,7 @@ DEC CX
 ISEMPTY AL,CL ;NOT EMPTY
 MOV DH,0
 CMP BX,0
-JNZ CONTINUOUECHECK2
+Jnz far ptr CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2098,12 +2098,12 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;
 ISWHITE AX,CX
 CMP BX,1
-JZ CONTINUOUECHECK2
+Jz far ptr CONTINUOUECHECK2
 MOV DH,1 ;LEFT HAS FOE
 CONTINUOUECHECK2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
 CMP DL,1
-JNZ RIGHTNOFOE
+Jnz far ptr RIGHTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2116,7 +2116,7 @@ MOV BYTE PTR cursorState[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
-JNZ LEFTNOFOE
+Jnz far ptr LEFTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2136,8 +2136,8 @@ DEC AX
 ;;;;;;;;;;;;;;;;;
 INSIDEGRID AX,CX
 CMP BX,1
-JZ ITSVALID3
-JMP CANTMOVE
+Jz far ptr ITSVALID3
+JMP far ptr CANTMOVE
 ITSVALID3:
 ;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;
@@ -2148,8 +2148,8 @@ DEC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE AX,CX
 CMP BX,1
-JNZ ITSVALID4
-JMP CANTMOVE
+Jnz far ptr ITSVALID4
+JMP far ptr CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
 
@@ -2159,9 +2159,9 @@ DEC AX
 ;;;;;;;;;;;;;;;;;
 ISEMPTY AL,CL
 CMP BX,1
-JZ CANMOVEFORWARD
+Jz far ptr CANMOVEFORWARD
 ;;ELSE
-JMP CANTMOVE
+JMP far ptr CANTMOVE
 CANMOVEFORWARD:
 MOV AX,WORD PTR X
 MOV CX,WORD PTR Y
@@ -2169,12 +2169,12 @@ GETARINDEX AX,CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
 CMP BX,56
 JC SEEIFGREATERTAHN47OREQUAL
-JMP ONEMOVEONLY
+JMP far ptr ONEMOVEONLY
 
 SEEIFGREATERTAHN47OREQUAL:
 CMP BX,48
 JNC TWOMOVES
-JMP ONEMOVEONLY
+JMP far ptr ONEMOVEONLY
 
 TWOMOVES:
 ;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
@@ -2184,8 +2184,8 @@ DEC AX
 DEC AX
 ISEMPTY AL,CL
 CMP BX,1
-JZ ITSVALID5
-JMP ONEMOVEONLY
+Jz far ptr ITSVALID5
+JMP far ptr ONEMOVEONLY
 ITSVALID5:
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
 MOV AX,WORD PTR X
@@ -2230,9 +2230,9 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
 INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
 CMP BX,1
-JZ ITSVALID1
+Jz far ptr ITSVALID1
 MOV DL,0
-JMP CONTINUOUECHECK
+JMP far ptr CONTINUOUECHECK
 ITSVALID1:
 ;;;;;;;;;;;;;
 
@@ -2244,7 +2244,7 @@ INC CX
 ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
 MOV DL,0
 CMP BX,0
-JNZ CONTINUOUECHECK
+Jnz far ptr CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2254,7 +2254,7 @@ INC CX
 ;;;;;;;;;;;;;;
 ISWHITE2 AX,CX
 CMP BX,0
-JZ CONTINUOUECHECK
+Jz far ptr CONTINUOUECHECK
 MOV DL,1 ; RIGHT HAS FOE
 CONTINUOUECHECK:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT LEFT
@@ -2267,9 +2267,9 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;INSIDE GRID
 INSIDEGRID AX,CX ;; 1 IF VALID AND 0 IF NOT
 CMP BX,1
-JZ ITSVALID2
+Jz far ptr ITSVALID2
 MOV DH,0
-JMP CONTINUOUECHECK2
+JMP far ptr CONTINUOUECHECK2
 ITSVALID2:
 ;;;;;;;;;;;;;
 
@@ -2281,7 +2281,7 @@ DEC CX
 ISEMPTY AL,CL ;NOT EMPTY
 MOV DH,0
 CMP BX,0
-JNZ CONTINUOUECHECK2
+Jnz far ptr CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2291,12 +2291,12 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;
 ISWHITE2 AX,CX
 CMP BX,0
-JZ CONTINUOUECHECK2
+Jz far ptr CONTINUOUECHECK2
 MOV DH,1 ;LEFT HAS FOE
 CONTINUOUECHECK2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
 CMP DL,1
-JNZ RIGHTNOFOE
+Jnz far ptr RIGHTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2309,7 +2309,7 @@ MOV BYTE PTR cursorState2[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
-JNZ LEFTNOFOE
+Jnz far ptr LEFTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2329,8 +2329,8 @@ INC AX
 ;;;;;;;;;;;;;;;;;
 INSIDEGRID AX,CX
 CMP BX,1
-JZ ITSVALID3
-JMP CANTMOVE
+Jz far ptr ITSVALID3
+JMP far ptr CANTMOVE
 ITSVALID3:
 ;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;
@@ -2341,8 +2341,8 @@ INC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE2 AX,CX
 CMP BX,0
-JNZ ITSVALID4
-JMP CANTMOVE
+Jnz far ptr ITSVALID4
+JMP far ptr CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
 
@@ -2352,9 +2352,9 @@ INC AX
 ;;;;;;;;;;;;;;;;;
 ISEMPTY AL,CL
 CMP BX,1
-JZ CANMOVEFORWARD
+Jz far ptr CANMOVEFORWARD
 ;;ELSE
-JMP CANTMOVE
+JMP far ptr CANTMOVE
 CANMOVEFORWARD:
 MOV AX,WORD PTR X
 MOV CX,WORD PTR Y
@@ -2362,12 +2362,12 @@ GETARINDEX AX,CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CHECK FIRST ROW;;;;;;;;;;;;;;;
 CMP BX,16
 JC SEEIFGREATERTAHN47OREQUAL
-JMP ONEMOVEONLY
+JMP far ptr ONEMOVEONLY
 
 SEEIFGREATERTAHN47OREQUAL:
 CMP BX,8
 JNC TWOMOVES
-JMP ONEMOVEONLY
+JMP far ptr ONEMOVEONLY
 
 TWOMOVES:
 ;;;;;;;;;;;;;;;;;SEE IF TWO IS EMPTY
@@ -2377,8 +2377,8 @@ INC AX
 INC AX
 ISEMPTY AL,CL
 CMP BX,1
-JZ ITSVALID5
-JMP ONEMOVEONLY
+Jz far ptr ITSVALID5
+JMP far ptr ONEMOVEONLY
 ITSVALID5:
 ;;;;;;;;;;;;;;;;;;;;;;FRONT TO THE PAW BY TWO
 MOV AX,WORD PTR X
@@ -2430,7 +2430,7 @@ MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE1
+Jz far ptr CANTMOVE1
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2438,8 +2438,8 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE1
-JMP CANMOVE1
+Jnz far ptr CHKIFWHITE1
+JMP far ptr CANMOVE1
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE1:
 MOV AX,X
@@ -2447,7 +2447,7 @@ MOV CX,Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE1
+Jz far ptr CANTMOVE1
 ;;;;;;;;;;;;;;;
 CANMOVE1:
 MOV AX,X
@@ -2464,7 +2464,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE2
+Jz far ptr CANTMOVE2
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2473,8 +2473,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE2
-JMP CANMOVE2
+Jnz far ptr CHKIFWHITE2
+JMP far ptr CANMOVE2
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE2:
 MOV AX,X
@@ -2483,7 +2483,7 @@ DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE2
+Jz far ptr CANTMOVE2
 ;;;;;;;;;;;;;;;
 CANMOVE2:
 MOV AX,X
@@ -2501,7 +2501,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE3
+Jz far ptr CANTMOVE3
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2510,8 +2510,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE3
-JMP CANMOVE3
+Jnz far ptr CHKIFWHITE3
+JMP far ptr CANMOVE3
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE3:
 MOV AX,X
@@ -2520,7 +2520,7 @@ DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
 DEC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE3
+Jz far ptr CANTMOVE3
 ;;;;;;;;;;;;;;;
 CANMOVE3:
 MOV AX,X
@@ -2537,7 +2537,7 @@ MOV CX,Y
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE4
+Jz far ptr CANTMOVE4
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2545,8 +2545,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE4
-JMP CANMOVE4
+Jnz far ptr CHKIFWHITE4
+JMP far ptr CANMOVE4
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE4:
 MOV AX,X
@@ -2554,7 +2554,7 @@ MOV CX,Y
 INC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE4
+Jz far ptr CANTMOVE4
 ;;;;;;;;;;;;;;;
 CANMOVE4:
 MOV AX,X
@@ -2573,7 +2573,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE5
+Jz far ptr CANTMOVE5
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2582,8 +2582,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE5
-JMP CANMOVE5
+Jnz far ptr CHKIFWHITE5
+JMP far ptr CANMOVE5
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE5:
 MOV AX,X
@@ -2592,7 +2592,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE5
+Jz far ptr CANTMOVE5
 ;;;;;;;;;;;;;;;
 CANMOVE5:
 MOV AX,X
@@ -2609,7 +2609,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE6
+Jz far ptr CANTMOVE6
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2617,8 +2617,8 @@ INC AX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE6
-JMP CANMOVE6
+Jnz far ptr CHKIFWHITE6
+JMP far ptr CANMOVE6
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE6:
 MOV AX,X
@@ -2626,7 +2626,7 @@ MOV CX,Y
 INC AX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE6
+Jz far ptr CANTMOVE6
 ;;;;;;;;;;;;;;;
 CANMOVE6:
 MOV AX,X
@@ -2643,7 +2643,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE7
+Jz far ptr CANTMOVE7
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2652,8 +2652,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE7
-JMP CANMOVE7
+Jnz far ptr CHKIFWHITE7
+JMP far ptr CANMOVE7
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE7:
 MOV AX,X
@@ -2662,7 +2662,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE7
+Jz far ptr CANTMOVE7
 ;;;;;;;;;;;;;;;
 CANMOVE7:
 MOV AX,X
@@ -2680,7 +2680,7 @@ MOV CX,Y
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE8
+Jz far ptr CANTMOVE8
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2688,8 +2688,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE8
-JMP CANMOVE8
+Jnz far ptr CHKIFWHITE8
+JMP far ptr CANMOVE8
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE8:
 MOV AX,X
@@ -2697,7 +2697,7 @@ MOV CX,Y
 DEC CX
 ISWHITE AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,1
-JZ CANTMOVE8
+Jz far ptr CANTMOVE8
 ;;;;;;;;;;;;;;;
 CANMOVE8:
 MOV AX,X
@@ -2740,7 +2740,7 @@ MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE1
+Jz far ptr CANTMOVE1
 ;;;;;;;;;;;;;
 MOV AX,WORD PTR X
 MOV CX,WORD PTR Y
@@ -2748,8 +2748,8 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE1
-JMP CANMOVE1
+Jnz far ptr CHKIFWHITE1
+JMP far ptr CANMOVE1
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE1:
 MOV AX,WORD PTR X
@@ -2757,7 +2757,7 @@ MOV CX,WORD PTR Y
 DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE1
+Jz far ptr CANTMOVE1
 ;;;;;;;;;;;;;;;
 CANMOVE1:
 MOV AX,X
@@ -2774,7 +2774,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE2
+Jz far ptr CANTMOVE2
 ;;;;;;;;;;;;;
 MOV AX,WORD PTR X
 MOV CX,WORD PTR Y
@@ -2783,8 +2783,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE2
-JMP CANMOVE2
+Jnz far ptr CHKIFWHITE2
+JMP far ptr CANMOVE2
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE2:
 MOV AX,WORD PTR X
@@ -2793,7 +2793,7 @@ DEC AX;;;;;;;;;;;;;;;FRONTRIGHT STEP
 INC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE2
+Jz far ptr CANTMOVE2
 ;;;;;;;;;;;;;;;
 CANMOVE2:
 MOV AX,WORD PTR X
@@ -2811,7 +2811,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE3
+Jz far ptr CANTMOVE3
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2820,8 +2820,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE3
-JMP CANMOVE3
+Jnz far ptr CHKIFWHITE3
+JMP far ptr CANMOVE3
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE3:
 MOV AX,X
@@ -2830,7 +2830,7 @@ DEC AX;;;;;;;;;;;;;;;FRONTLEFT STEP
 DEC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE3
+Jz far ptr CANTMOVE3
 ;;;;;;;;;;;;;;;
 CANMOVE3:
 MOV AX,X
@@ -2847,7 +2847,7 @@ MOV CX,Y
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE4
+Jz far ptr CANTMOVE4
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2855,8 +2855,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE4
-JMP CANMOVE4
+Jnz far ptr CHKIFWHITE4
+JMP far ptr CANMOVE4
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE4:
 MOV AX,X
@@ -2864,7 +2864,7 @@ MOV CX,Y
 INC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE4
+Jz far ptr CANTMOVE4
 ;;;;;;;;;;;;;;;
 CANMOVE4:
 MOV AX,X
@@ -2883,7 +2883,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE5
+Jz far ptr CANTMOVE5
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2892,8 +2892,8 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE5
-JMP CANMOVE5
+Jnz far ptr CHKIFWHITE5
+JMP far ptr CANMOVE5
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE5:
 MOV AX,X
@@ -2902,7 +2902,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 INC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE5
+Jz far ptr CANTMOVE5
 ;;;;;;;;;;;;;;;
 CANMOVE5:
 MOV AX,X
@@ -2919,7 +2919,7 @@ MOV CX,Y
 INC AX;;;;;;;;;;;;;;;FRONT STEP
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE6
+Jz far ptr CANTMOVE6
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2927,8 +2927,8 @@ INC AX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE6
-JMP CANMOVE6
+Jnz far ptr CHKIFWHITE6
+JMP far ptr CANMOVE6
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE6:
 MOV AX,X
@@ -2936,7 +2936,7 @@ MOV CX,Y
 INC AX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE6
+Jz far ptr CANTMOVE6
 ;;;;;;;;;;;;;;;
 CANMOVE6:
 MOV AX,X
@@ -2953,7 +2953,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE7
+Jz far ptr CANTMOVE7
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2962,8 +2962,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE7
-JMP CANMOVE7
+Jnz far ptr CHKIFWHITE7
+JMP far ptr CANMOVE7
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE7:
 MOV AX,X
@@ -2972,7 +2972,7 @@ INC AX;;;;;;;;;;;;;;;FRONT STEP
 DEC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE7
+Jz far ptr CANTMOVE7
 ;;;;;;;;;;;;;;;
 CANMOVE7:
 MOV AX,X
@@ -2990,7 +2990,7 @@ MOV CX,Y
 DEC CX
 INSIDEGRID AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE8
+Jz far ptr CANTMOVE8
 ;;;;;;;;;;;;;
 MOV AX,X
 MOV CX,Y
@@ -2998,8 +2998,8 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-JNZ CHKIFWHITE8
-JMP CANMOVE8
+Jnz far ptr CHKIFWHITE8
+JMP far ptr CANMOVE8
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE8:
 MOV AX,X
@@ -3007,7 +3007,7 @@ MOV CX,Y
 DEC CX
 ISWHITE2 AX,CX ; WHITE 1 IF NOT WHITE
 CMP BX,0
-JZ CANTMOVE8
+Jz far ptr CANTMOVE8
 ;;;;;;;;;;;;;;;
 CANMOVE8:
 MOV AX,X
@@ -3052,13 +3052,13 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   GETARINDEX endRowCursor,endColCursor
                   
                   CMP BYTE PTR cursorState[BX],0
-                  jne blabla
-                  jmp SKIP
+                  Jne far ptr blabla
+                  JMP far ptr SKIP
                 blabla:
 
                 cmp BYTE PTR gridState[bx],0
-                jne blabla2
-                  jmp blabla3
+                Jne far ptr blabla2
+                  JMP far ptr blabla3
                 blabla2:
               ;---------------------------
               Pusha
@@ -3070,7 +3070,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                 inc             al
                 mov            BYTE PTR  whiterow,al
                 cmp al,8d
-                JNE er
+                Jne far ptr er
                 mov al,0d
                 mov ah,1h
                 mov            BYTE PTR  whiterow,al
@@ -3123,6 +3123,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   FIRSTQHANDLE2M
                   
                   checkqhandle
+                  checkqhandle2
                   CHECKMATE
                   
 ENDM SECONDQHANDLE
@@ -3151,13 +3152,13 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                   GETARINDEX endRowCursor2,endColCursor2
 
                   CMP cursorState2[BX],0
-                  jne blabla
-                  jmp SKIP
+                  Jne far ptr blabla
+                  JMP far ptr SKIP
                 blabla:
 
                 cmp gridState[bx],0
-                jne blabla2
-                  jmp blabla3
+                Jne far ptr blabla2
+                  JMP far ptr blabla3
                 blabla2:
               ;---------------------------
               Pusha
@@ -3169,7 +3170,7 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                 inc             al
                 mov             blackrow,al
                 cmp al,8d
-                JNE er
+                Jne far ptr er
                 mov al,0d
                 mov ah,11D
                 mov             blackrow,al
@@ -3220,7 +3221,8 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
 
                   FIRSTQHANDLEM
 
-                  checkqhandle2        
+                  checkqhandle2   
+                  ; checkqhandle     
                   CHECKMATE       
 ENDM SECONDQHANDLE2
 
@@ -3242,8 +3244,8 @@ CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks tha
                   pusha
                   GETARINDEXBYBYTE      dummyData1,dummyData2
                   cmp                  BYTE PTR  cursorState[bx],0
-                  JNE                   TMP
-                  JMP                   Nbreak6
+                  Jne far ptr                   TMP
+                  JMP far ptr                   Nbreak6
     TMP:          
                   MOV                  BYTE PTR  cursorState[bx],0
                   popa
@@ -3258,13 +3260,13 @@ CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks tha
                   popa
                   inc                   al
                   cmp                   al,8
-                  JE                   TMP2
-                  JMP                   Nloop10
+                  Je far ptr                   TMP2
+                  JMP far ptr                   Nloop10
     TMP2:         
                   inc                   ah
                   cmp                   ah,8
-                  JE                   TMP3
-                  JMP                   Nloop9
+                  Je far ptr                   TMP3
+                  JMP far ptr                   Nloop9
     TMP3:
 
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
@@ -3291,8 +3293,8 @@ CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks th
                   pusha
                   GETARINDEXBYBYTE      dummyData1,dummyData2
                   cmp                  BYTE PTR  cursorState2[bx],0
-                  JNE                   TMP
-                  JMP                   Nbreak6
+                  Jne far ptr                   TMP
+                  JMP far ptr                   Nbreak6
     TMP:          
                   MOV                  BYTE PTR  cursorState2[bx],0
                   popa
@@ -3307,13 +3309,13 @@ CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks th
                   popa
                   inc                   al
                   cmp                   al,8
-                  JE                   TMP2
-                  JMP                   Nloop10
+                  Je far ptr                   TMP2
+                  JMP far ptr                   Nloop10
     TMP2:         
                   inc                   ah
                   cmp                   ah,8
-                  JE                   TMP3
-                  JMP                   Nloop9
+                  Je far ptr                   TMP3
+                  JMP far ptr                   Nloop9
     TMP3:
                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                   DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
@@ -3332,9 +3334,9 @@ MOV BX, 64
 LOOPAGAIN1:
 DEC BX
 CMP gridState[BX],5 ; BLACK KING
-JZ CONTINUOUEGAME1
+Jz far ptr CONTINUOUEGAME1
 CMP BX,0
-JNZ LOOPAGAIN1
+Jnz far ptr LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
@@ -3344,17 +3346,17 @@ MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
   mov ah,0
   int 16h
   cmp ah,3Eh;f4
-  jnz not4f
-JMP faraway
+  Jnz far ptr not4f
+JMP far ptr faraway
 CONTINUOUEGAME1:
 
 MOV BX, 64
 LOOPAGAIN2:
 DEC BX
 CMP gridState[BX],12 ; WHITE KING
-JZ CONTINUOUEGAME2
+Jz far ptr CONTINUOUEGAME2
 CMP BX,0
-JNZ LOOPAGAIN2
+Jnz far ptr LOOPAGAIN2
 MOV AL,2
 MOV WINNER,AL
   movecursor 37,30
@@ -3363,8 +3365,8 @@ MOV WINNER,AL
   mov ah,0
   int 16h
   cmp ah,3Eh;f4
-  jnz not4f2
-JMP faraway
+  Jnz far ptr not4f2
+JMP far ptr faraway
 CONTINUOUEGAME2:
 
 ENDM CHECKMATE
@@ -3433,34 +3435,34 @@ cursorLoop:
 
                   mov         ah,01
                   int         16h
-                  JNZ temp24
-                  jmp          curs
+                  Jnz far ptr temp24
+                  JMP far ptr          curs
                 temp24:
                   mov         ah,0
                   int         16h
 
                   ;if f4 is pressed return to main screen  
                   cmp ah,3Eh
-                  jnz dontexit
-                  jmp faraway  
+                  Jnz far ptr dontexit
+                  JMP far ptr faraway  
                   dontexit: 
 
                   cmp ah,10h
-                  jnz             tmplabel10
-                  jmp qpressed
+                  Jnz far ptr             tmplabel10
+                  JMP far ptr qpressed
 tmplabel10:
 
  cmp ah,1ch
-                  jnz             tmplabel102
-                  jmp qpressed2
+                  Jnz far ptr             tmplabel102
+                  JMP far ptr qpressed2
 tmplabel102:
                 ; handle chat f6 click
                   cmp             ah,40h
-                  jnz             temp23
+                  Jnz far ptr             temp23
                   cmp f6,0
-                  je set
+                  Je far ptr set
                   mov f6,0
-                  jmp temp23
+                  JMP far ptr temp23
                   set:
                   mov f6,1
                 temp23:
@@ -3472,55 +3474,55 @@ tmplabel102:
                  ; mov firstIndex,bx
 
                   cmp             ah,11h
-                  jnz             label6
-                  jmp             up
+                  Jnz far ptr             label6
+                  JMP far ptr             up
     label6:
 
                   cmp             ah,1eh
-                  jnz             label7
-                  jmp             left
+                  Jnz far ptr             label7
+                  JMP far ptr             left
     label7:
 
                   cmp             ah,20h
-                  jnz             label8
-                  jmp             right
+                  Jnz far ptr             label8
+                  JMP far ptr             right
     label8:
 
                   cmp             ah,1fh
-                  jnz             label9
-                  jmp             down
+                  Jnz far ptr             label9
+                  JMP far ptr             down
     label9:
 
        cmp             ah,48h
-                  jnz             label62
-                  jmp             up2
+                  Jnz far ptr             label62
+                  JMP far ptr             up2
     label62:
 
                   cmp             ah,4bh
-                  jnz             label72
-                  jmp             left2
+                  Jnz far ptr             label72
+                  JMP far ptr             left2
     label72:
 
                   cmp             ah,4dh
-                  jnz             label82
-                  jmp             right2
+                  Jnz far ptr             label82
+                  JMP far ptr             right2
     label82:
 
                   cmp             ah,50h
-                  jnz             label92
-                  jmp             down2
+                  Jnz far ptr             label92
+                  JMP far ptr             down2
     label92:
 
            
 
-                  jmp             cursorLoop                  
+                  JMP far ptr             cursorLoop                  
 
     left:
                   mov             dx,curColCursor
                   cmp             dx,0D
-                  jnz             temp20
+                  Jnz far ptr             temp20
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     temp20:
  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3537,14 +3539,14 @@ tmplabel102:
 
                   mov bx,firstIndex
                   cmp cursorState[bx],0
-                  je skip1
+                  Je far ptr skip1
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip1:
 
                   cmp cursorState2[bx],0
-                  je skip1e
+                  Je far ptr skip1e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3555,17 +3557,17 @@ tmplabel102:
                   mov             curColCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,11h
-                  jz              label5
+                  Jz far ptr              label5
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     label5:
 
  left2:
                   mov             dx,curColCursor2
                   cmp             dx,0D
-                  jnz             temp202
+                  Jnz far ptr             temp202
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     temp202:
  pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
@@ -3579,14 +3581,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  je skip12
+                  Je far ptr skip12
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip12:
 
                   cmp cursorState[bx],0
-                  je skip12e
+                  Je far ptr skip12e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3597,16 +3599,16 @@ tmplabel102:
                   mov             curColCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4bh
-                  jz              label52
+                  Jz far ptr              label52
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     label52:
 
     right:
                   mov             dx,curColCursor
                   cmp             dx,7d
-                  jnz             temp22
-                  jmp             cursorLoop
+                  Jnz far ptr             temp22
+                  JMP far ptr             cursorLoop
     temp22:
   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3621,14 +3623,14 @@ tmplabel102:
                   mov bx,firstIndex
 
                   cmp cursorState[bx],0
-                  je skip2
+                  Je far ptr skip2
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip2:
 
                   cmp cursorState2[bx],0
-                  je skip2e
+                  Je far ptr skip2e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3638,15 +3640,15 @@ tmplabel102:
                   mov             curColCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,20h
-                  jz              label4
-                  jmp             cursorLoop
+                  Jz far ptr              label4
+                  JMP far ptr             cursorLoop
     label4:
 
     right2:
                   mov             dx,curColCursor2
                   cmp             dx,7d
-                  jnz             temp222
-                  jmp             cursorLoop
+                  Jnz far ptr             temp222
+                  JMP far ptr             cursorLoop
     temp222:
   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
@@ -3660,14 +3662,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  je skip22
+                  Je far ptr skip22
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip22:
 
                   cmp cursorState[bx],0
-                  je skip22e
+                  Je far ptr skip22e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3677,15 +3679,15 @@ tmplabel102:
                   mov             curColCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,4dh
-                  jz              label42
-                  jmp             cursorLoop
+                  Jz far ptr              label42
+                  JMP far ptr             cursorLoop
     label42:
 
     up:
                   mov             dx,curRowCursor
                   cmp             dx,0D
-                  jnz             label10
-                  jmp             cursorLoop
+                  Jnz far ptr             label10
+                  JMP far ptr             cursorLoop
     label10:
 
   pusha
@@ -3701,14 +3703,14 @@ tmplabel102:
                   mov bx,firstIndex
 
                   cmp cursorState[bx],0
-                  je skip3
+                  Je far ptr skip3
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip3:
 
                   cmp cursorState2[bx],0
-                  je skip3e
+                  Je far ptr skip3e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3718,16 +3720,16 @@ tmplabel102:
                   mov             curRowCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,11h
-                  jz              label2
+                  Jz far ptr              label2
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     label2:
 
     up2:
                   mov             dx,curRowCursor2
                   cmp             dx,0D
-                  jnz             label102
-                  jmp             cursorLoop
+                  Jnz far ptr             label102
+                  JMP far ptr             cursorLoop
     label102:
 
   pusha
@@ -3742,14 +3744,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  je skip32
+                  Je far ptr skip32
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip32:
 
                   cmp cursorState[bx],0
-                  je skip32e
+                  Je far ptr skip32e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3760,9 +3762,9 @@ tmplabel102:
                   mov             curRowCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,48h
-                  jz              label22
+                  Jz far ptr              label22
 
-                  jmp             cursorLoop
+                  JMP far ptr             cursorLoop
     label22:
 
 
@@ -3771,8 +3773,8 @@ tmplabel102:
     down:
                   mov             dx,curRowCursor
                   cmp             dx,7D
-                  jnz             label11
-                  jmp             cursorLoop
+                  Jnz far ptr             label11
+                  JMP far ptr             cursorLoop
     label11:
                   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3786,14 +3788,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex
                   cmp cursorState[bx],0
-                  je skip4
+                  Je far ptr skip4
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
                   skip4:
 
                   cmp cursorState2[bx],0
-                  je skip4e
+                  Je far ptr skip4e
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   popa
@@ -3803,15 +3805,15 @@ tmplabel102:
                   mov             curRowCursor,dx
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,1fh
-                  jz              label1
-                  jmp             cursorLoop
+                  Jz far ptr              label1
+                  JMP far ptr             cursorLoop
     label1:
 
     down2:
                   mov             dx,curRowCursor2
                   cmp             dx,7D
-                  jnz             label112
-                  jmp             cursorLoop
+                  Jnz far ptr             label112
+                  JMP far ptr             cursorLoop
     label112:
                   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
@@ -3825,14 +3827,14 @@ tmplabel102:
                   popa
                   mov bx,firstIndex2
                   cmp cursorState2[bx],0
-                  je skip42
+                  Je far ptr skip42
                   pusha
                   DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   skip42:
 
                   cmp cursorState[bx],0
-                  je skip42e
+                  Je far ptr skip42e
                   pusha
                   DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
@@ -3842,38 +3844,38 @@ tmplabel102:
                   mov             curRowCursor2,dx
                   DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   cmp             ah,50h
-                  jz              label12
-                  jmp             cursorLoop
+                  Jz far ptr              label12
+                  JMP far ptr             cursorLoop
     label12:
 
 
     qpressed:
     mov bl,stateOfQ
     cmp bl,0
-    jnz tmplabel20
-    jmp firsrQ
+    Jnz far ptr tmplabel20
+    JMP far ptr firsrQ
     tmplabel20:
 
     SECONDQHANDLE
-    jmp   cursorLoop   
+    JMP far ptr   cursorLoop   
 
     firsrQ:
     FIRSTQHANDLE
-                 jmp             cursorLoop   
+                 JMP far ptr             cursorLoop   
 ;--------------------------------------------------
     qpressed2:
     mov bl,stateOfQ2
     cmp bl,0
-    jnz tmplabel202
-    jmp firsrQ2
+    Jnz far ptr tmplabel202
+    JMP far ptr firsrQ2
     tmplabel202:
 
     SECONDQHANDLE2
-    jmp   cursorLoop   
+    JMP far ptr   cursorLoop   
 
     firsrQ2:
     FIRSTQHANDLE2
-                 jmp             cursorLoop   
+                 JMP far ptr             cursorLoop   
 ;--------------------------------------------------
 
 
@@ -3897,7 +3899,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState[bx],0
- je BREAK7
+ Je far ptr BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -3907,9 +3909,9 @@ popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],5D
-JE BREAK8
+Je far ptr BREAK8
 BREAK7:
-JMP BREAK6
+JMP far ptr BREAK6
 BREAK8:
          pusha
         movecursor 2d,31d
@@ -3919,13 +3921,13 @@ break6:
 popa
 inc al
 cmp al,8
-je beforeloop10
-jmp loop10
+Je far ptr beforeloop10
+JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-je beforeloop9
-jmp loop9
+Je far ptr beforeloop9
+JMP far ptr loop9
 beforeloop9:
 
 
@@ -3949,7 +3951,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState2[bx],0
- je BREAK7
+ Je far ptr BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -3959,9 +3961,9 @@ popa
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],12D
-JE BREAK8
+Je far ptr BREAK8
 BREAK7:
-JMP break6
+JMP far ptr break6
 BREAK8:
          pusha
         movecursor 80d,31d
@@ -3971,13 +3973,13 @@ break6:
 popa
 inc al
 cmp al,8
-je beforeloop10
-jmp loop10
+Je far ptr beforeloop10
+JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-je beforeloop9
-jmp loop9
+Je far ptr beforeloop9
+JMP far ptr loop9
 beforeloop9:
 
 
@@ -4001,7 +4003,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState[bx],0
- je BREAK7
+ Je far ptr BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -4009,9 +4011,9 @@ loop10:
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],5D
-JE BREAK8
+Je far ptr BREAK8
 BREAK7:
-JMP BREAK6
+JMP far ptr BREAK6
 BREAK8:
          pusha
         movecursor 2d,31d
@@ -4021,13 +4023,13 @@ break6:
 popa
 inc al
 cmp al,8
-je beforeloop10
-jmp loop10
+Je far ptr beforeloop10
+JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-je beforeloop9
-jmp loop9
+Je far ptr beforeloop9
+JMP far ptr loop9
 beforeloop9:
 
 ENDM check_AVAILABLE_PLACES
@@ -4050,7 +4052,7 @@ loop10:
  pusha
  GETARINDEXBYBYTE dummyData1,dummyData2
  cmp BYTE PTR cursorState2[bx],0
- je BREAK7
+ Je far ptr BREAK7
  popa
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
@@ -4058,9 +4060,9 @@ loop10:
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],12D
-JE BREAK8
+Je far ptr BREAK8
 BREAK7:
-JMP break6
+JMP far ptr break6
 BREAK8:
          pusha
         movecursor 80d,31d
@@ -4070,13 +4072,13 @@ break6:
 popa
 inc al
 cmp al,8
-je beforeloop10
-jmp loop10
+Je far ptr beforeloop10
+JMP far ptr loop10
 beforeloop10:
 inc ah
 cmp ah,8
-je beforeloop9
-jmp loop9
+Je far ptr beforeloop9
+JMP far ptr loop9
 beforeloop9:
 
 ENDM check_AVAILABLE_PLACES2
@@ -4286,7 +4288,7 @@ ENDM INITIALIZEGRID
 ; ADD SI,BX
 ; MOV CH,BYTE PTR [SI]
 ; CMP CH , 0 
-; jnz notEmpty 
+; Jnz far ptr notEmpty 
 
 ; MOV BX, 0ffh;;to get farway from the array index 0
 ; notEmpty: 
@@ -4299,10 +4301,10 @@ LOCAL empty
 pusha
 GETARINDEXBYBYTE x,y
 cmp  gridState[bx],0
-je empty
+Je far ptr empty
 popa
 mov bx,0
-jmp break5
+JMP far ptr break5
 empty:
 popa
 mov bx,1
@@ -4321,11 +4323,11 @@ validateName MACRO entermsg,name,strFailed ;This Macro is Responsible for valida
     movecursor  17H,06H
     cin         name
     ;movecursor  17H,0AH
-    JMP fistcheck
+    JMP far ptr fistcheck
 ;---------fist check with enter message-----------;
     repeatt:
 
-    CALL CLS
+    CALL far ptr CLS
 
     movecursor  17H,05H
     ShowMessage strFailed
@@ -4337,17 +4339,17 @@ validateName MACRO entermsg,name,strFailed ;This Macro is Responsible for valida
     mov bx,offset name + 2
     mov al,[bx]
     mov bl,122;;== z 
-    cmp bl,al;;if greater than z jmp
+    cmp bl,al;;if greater than z JMP far ptr
     jc repeatt
     cmp al,65;;== A
-    jc repeatt;;if less than A jmp
+    jc repeatt;;if less than A JMP far ptr
     mov bl,90;;== Z 
-    cmp bl,al;;if greater than Z jmp
+    cmp bl,al;;if greater than Z JMP far ptr
     jc biggerthana
-    jmp outOfTheValidation
+    JMP far ptr outOfTheValidation
     biggerthana:
     cmp al,97;;== a
-    jc repeatt;;if less than a jmp
+    jc repeatt;;if less than a JMP far ptr
     outOfTheValidation:
 ENDM validateName
 
@@ -4370,21 +4372,21 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
     mov ah,0
     int 16h 
     cmp ah,3bh;f1 scan code
-    jz skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    jmp check_for_f2
+    Jz far ptr skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    JMP far ptr check_for_f2
     skipf2chk:
     ;open chat
     OPENCHAT player1Name+2,player2Name+2
     check_for_f2:
     cmp ah,3ch;f2 scane code
-    jnz check_for_esc
+    Jnz far ptr check_for_esc
     ;open game
-    jmp play
+    JMP far ptr play
 
     check_for_esc:
     cmp al,01Bh;esc ascii
-    jz skipescchk
-    jmp check_for_anotherkey;;;;;;;;;;;;;;;;;;
+    Jz far ptr skipescchk
+    JMP far ptr check_for_anotherkey;;;;;;;;;;;;;;;;;;
     skipescchk:
     ;exist game
     MOV AH, 4CH
@@ -4405,21 +4407,21 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   int 21h
   INC BL
   CMP BL,70
-  JNZ LOOPXXXX
+  Jnz far ptr LOOPXXXX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   movecursorWithPageNumber 30,20,0
 
   CMP WINNER,1
-  JNZ WHITEDIDNTWIN
+  Jnz far ptr WHITEDIDNTWIN
   MOV AL,0
   MOV WINNER,AL
   ShowMessage WINNERISWHITE
 
-  JMP BLACKIDNTWIN
+  JMP far ptr BLACKIDNTWIN
   WHITEDIDNTWIN:
 
   CMP WINNER,2
-  JNZ BLACKIDNTWIN
+  Jnz far ptr BLACKIDNTWIN
   MOV AL,0
   MOV WINNER,AL
   ShowMessage WINNERISBLACK
@@ -4495,7 +4497,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                 
                   mov         ah,01
                   int         16h
-                  jz          AGAIN
+                  Jz far ptr          AGAIN
 
                   mov         ah,0
                   int         16h
@@ -4520,11 +4522,11 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
                   mov         bl,ah
                   cmp         bl,3dh            ; F3 key
-                  je          deadmid
+                  Je far ptr          deadmid
 
                   mov         bl,al
                   cmp         bl,13
-                  jne         afterenter
+                  Jne far ptr         afterenter
 
                   pop         dx
                   inc         dl
@@ -4532,7 +4534,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   PUSH        dx
 
                   cmp         dx,0009H          ;CURSOR CHECK
-                  jne         afterenter
+                  Jne far ptr         afterenter
 
                   mov         ax,0601h
                   mov         bh,07
@@ -4551,17 +4553,17 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
                   In          al , dx           ;Read Line Status
                   AND         al , 00100000b
-                  JZ          AGAIN             ;jump untill it is empty
+                  Jz far ptr          AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
                   mov         dx , 3F8H         ; Transmit data register
                   mov         al,bl
                   out         dx , al
-                  jmp         AGAIN
+                  JMP far ptr         AGAIN
            
   
     deadmid:      
-                  jmp         dead
+                  JMP far ptr         dead
 
                 
     AGAIN:     
@@ -4571,7 +4573,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
           
                   in          al , dx
                   AND         al , 00000001b
-                  JZ          CHK               ;jump untill it recive data
+                  Jz far ptr          CHK               ;jump untill it recive data
 
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
@@ -4589,7 +4591,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   push        cx
 
                   cmp         al,13
-                  jne         afterenter2
+                  Jne far ptr         afterenter2
 
                   pop         cx
                   pop         dx
@@ -4604,7 +4606,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   push        cx
 
                   cmp         dx,0017H          ;CURSOR CHECK
-                  jne         afterenter2
+                  Jne far ptr         afterenter2
                 
 
                   PUSH        BX
@@ -4630,7 +4632,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   
     CHK:          
 
-                  jmp         mainloop
+                  JMP far ptr         mainloop
     dead:  
                   mov  al, 00h   ; select display page 0
                   mov  ah, 05h   ; function 05h: select active display page
@@ -4704,7 +4706,7 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     MOV AH,0H
 
     CMP AX,0
-    JE EMPTY2
+    Je far ptr EMPTY2
     
     ; DEC AX 
     ; MOV BX,360D
@@ -4715,61 +4717,61 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     ; ADD SI,AX
 
     ; MOV BX,SI
-    ; JMP RETURN 
+    ; JMP far ptr RETURN 
     
     CMP AX,1D
-    JE B1
+    Je far ptr B1
 
    CMP AX,2D
-   JE B2
+   Je far ptr B2
    CMP AX,3D
-   JE B3
+   Je far ptr B3
    CMP AX,4D
-   JE B4
+   Je far ptr B4
    CMP AX,5D
-   JE B5
+   Je far ptr B5
    CMP AX,6D
-   JE B6
+   Je far ptr B6
    CMP AX,7D
-   JE B7
+   Je far ptr B7
    CMP AX,8D
-   JE B8
+   Je far ptr B8
    CMP AX,9D
-   JE B9
+   Je far ptr B9
    CMP AX,10D
-   JE B10
+   Je far ptr B10
    CMP AX,11D
-   JE B11
+   Je far ptr B11
    CMP AX,12D
-   JE B12
+   Je far ptr B12
 
-   EMPTY2: JMP EMPTY
+   EMPTY2: JMP far ptr EMPTY
        
 
     B1: LEA BX,brockdata
-    JMP RETURN
+    JMP far ptr RETURN
         B2: LEA BX,bknightdata       
-    JMP RETURN
+    JMP far ptr RETURN
         B3: LEA BX,bbishopdata       
-    JMP RETURN
+    JMP far ptr RETURN
         B4: LEA BX,bqueendata        
-    JMP RETURN
+    JMP far ptr RETURN
         B5: LEA BX,bkingdata         
-    JMP RETURN
+    JMP far ptr RETURN
         B6: LEA BX,bpawndata         
-    JMP RETURN
+    JMP far ptr RETURN
         B7: LEA BX,wpawndata         
-    JMP RETURN
+    JMP far ptr RETURN
         B8: LEA BX,wrockdata         
-    JMP RETURN
+    JMP far ptr RETURN
         B9: LEA BX,wknightdata       
-    JMP RETURN
+    JMP far ptr RETURN
         B10: LEA BX,wbishopdata       
-    JMP RETURN
+    JMP far ptr RETURN
         B11: LEA BX,wqueendata        
-    JMP RETURN
+    JMP far ptr RETURN
         B12: LEA BX,wkingdata         
-    JMP RETURN
+    JMP far ptr RETURN
 
     EMPTY:
     MOV BX,0
@@ -4792,13 +4794,13 @@ GETARINDEX AX,CX
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
 CMP CH,6 
-JG WHITE
+Jg far ptr WHITE
 CMP CH , 7
-JL BLACK 
+Jl far ptr BLACK 
 
 WHITE:
 MOV BX,1 
-JMP RETURN
+JMP far ptr RETURN
 BLACK: 
 MOV BX, 0
 RETURN: 
@@ -4820,13 +4822,13 @@ GETARINDEX AX,CX
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
 CMP CH,6 
-JG WHITE
+Jg far ptr WHITE
 CMP CH , 0 
-JG BLACK 
+Jg far ptr BLACK 
 
 WHITE:
 MOV BX,1 
-JMP RETURN
+JMP far ptr RETURN
 BLACK: 
 MOV BX, 0
 RETURN: 
@@ -4849,13 +4851,13 @@ GETARINDEX AX,CX
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
 CMP CH,6 
-JG WHITE
+Jg far ptr WHITE
 CMP CH , 7 
-JL BLACK 
+Jl far ptr BLACK 
 
 WHITE:
 MOV BX,1 
-JMP RETURN
+JMP far ptr RETURN
 BLACK: 
 MOV BX, 0
 RETURN: 
@@ -4878,13 +4880,13 @@ GETARINDEX AX,CX
 ADD SI,BX
 MOV CH,BYTE PTR [SI]
 CMP CH,6 
-JG WHITE
+Jg far ptr WHITE
 CMP CH , 0 
-JG BLACK 
+Jg far ptr BLACK 
 
 WHITE:
 MOV BX,1 
-JMP RETURN
+JMP far ptr RETURN
 BLACK: 
 MOV BX, 0
 RETURN: 
@@ -4901,18 +4903,18 @@ MOV AL , X
 MOV AH ,Y
 
 CMP AL , 7 
-JG NOTVALID
+Jg far ptr NOTVALID
 CMP AL , 0 
-JL NOTVALID
+Jl far ptr NOTVALID
 CMP AH , 7 
-JG NOTVALID
+Jg far ptr NOTVALID
 CMP AH , 0 
-JL NOTVALID
+Jl far ptr NOTVALID
 
 
 VALID: 
 MOV BX,1 
-JMP RETURN
+JMP far ptr RETURN
 NOTVALID:
 MOV BX, 0
 RETURN: 
@@ -4989,24 +4991,24 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
     mainloop:     
                   
                 cmp f6,1
-                je enter
-                jmp AGAIN
+                Je far ptr enter
+                JMP far ptr AGAIN
                 enter:
                   mov         ah,01
                   int         16h
-                  jnz bla
-                  jmp          AGAIN
+                  Jnz far ptr bla
+                  JMP far ptr          AGAIN
                 bla:
 
                   mov         ah,0
                   int         16h
                   
                   cmp             ah,40h
-                  jnz             temp88
+                  Jnz far ptr             temp88
                   cmp f6,0
-                  je set2
+                  Je far ptr set2
                   mov f6,0
-                  jmp temp88
+                  JMP far ptr temp88
                   set2:
                   mov f6,1
                   temp88:
@@ -5030,11 +5032,11 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   mov         bl,ah
                   cmp         bl,40H            ; F6 key
-                  je          deadmid
+                  Je far ptr          deadmid
 
                   mov         bl,al
                   cmp         bl,13
-                  jne         afterenter
+                  Jne far ptr         afterenter
 
                   pop         dx
                   inc         dl
@@ -5042,7 +5044,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   PUSH        dx
 
                   cmp         dx,0021H          ;CURSOR CHECK
-                  jne         afterenter
+                  Jne far ptr         afterenter
 
                   pop         dx                ;clear line
                   push        dx
@@ -5067,17 +5069,17 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   In          al , dx           ;Read Line Status
                   AND         al , 00100000b
-                  JZ          AGAIN             ;jump untill it is empty
+                  Jz far ptr          AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
                   mov         dx , 3F8H         ; Transmit data register
                   mov         al,bl
                   out         dx , al
-                  jmp         AGAIN
+                  JMP far ptr         AGAIN
            
     ;Receiving a value
     deadmid:      
-                  jmp         dead
+                  JMP far ptr         dead
                   
     AGAIN:        
     ;Check that Data Ready
@@ -5085,7 +5087,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
           
                   in          al , dx
                   AND         al , 00000001b
-                  JZ          CHK               ;jump if no recive data
+                  Jz far ptr          CHK               ;jump if no recive data
 
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
@@ -5103,7 +5105,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   push        cx
 
                   cmp         al,13
-                  jne         afterenter2
+                  Jne far ptr         afterenter2
 
                   pop         cx
                   pop         dx
@@ -5120,7 +5122,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   push        cx
 
                   cmp         dx,0024H          ;CURSOR CHECK
-                  jne         afterenter2
+                  Jne far ptr         afterenter2
                 
 
                   PUSH        BX
@@ -5152,7 +5154,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   
     CHK:          
                 
-                ;   jmp         mainloop
+                ;   JMP far ptr         mainloop
     dead:  
                   mov  al, 00h   ; select display page 0
                   mov  ah, 05h   ; function 05h: select active display page
@@ -5215,7 +5217,7 @@ PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the scr
                   ShowMessage SEC
 
                   CMP         SEC[1],'$'
-                  JNE         NSP
+                  Jne far ptr         NSP
                   
                   ShowMessage SPACE
     NSP:          
@@ -5224,11 +5226,15 @@ PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the scr
 
 ENDM PRINTCURRTIMER
 
-.MODEL SMALL
+.MODEL LARGE
 .286
-.STACK 64
-;-----------
-.Data
+; .STACK 64
+stack segment para stack
+        db 128 dup ( ' ' )
+stack ends
+
+data segment para
+
   nameq             db  'Please enter your name:','$'
   erroname          db  'Please write a valid name :','$'
   clear             db  '                                                                                                    ','$'
@@ -5413,119 +5419,122 @@ ENDM PRINTCURRTIMER
   
   CHECKSTRING       DB  'WARNING!!! :CHECK','$'
   ;---------------------------------------------------------------------------------------------------
- 
+data ends
 
+code segment
+          ASSUME         CS:code, DS:data, SS:stack
 
-.CODE
 MAIN PROC FAR
+
   ;INITIALIZING
-                call           GETDATA
-                CALL           CLS
+          call           far ptr    GETDATA
+          call           far ptr    GETSTACK
+          CALL           far ptr   CLS
   ;OPENING AND READING AND CLOSING BIN FILES
-                OpenFile       bbishopfilename, bbishopfilehandle
-                ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                CloseFile      bbishopfilehandle
+          OpenFile       bbishopfilename, bbishopfilehandle
+          ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+          CloseFile      bbishopfilehandle
 
-                OpenFile       bkingfilename, bkingfilehandle
-                ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                CloseFile      bkingfilehandle
+          OpenFile       bkingfilename, bkingfilehandle
+          ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+          CloseFile      bkingfilehandle
 
-                OpenFile       bknightfilename, bknightfilehandle
-                ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                CloseFile      bknightfilehandle
+          OpenFile       bknightfilename, bknightfilehandle
+          ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+          CloseFile      bknightfilehandle
 
-                OpenFile       bpawnfilename, bpawnfilehandle
-                ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                CloseFile      bpawnfilehandle
+          OpenFile       bpawnfilename, bpawnfilehandle
+          ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+          CloseFile      bpawnfilehandle
 
-                OpenFile       bqueenfilename, bqueenfilehandle
-                ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                CloseFile      bqueenfilehandle
+          OpenFile       bqueenfilename, bqueenfilehandle
+          ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+          CloseFile      bqueenfilehandle
 
-                OpenFile       brockfilename, brockfilehandle
-                ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-                CloseFile      brockfilehandle
+          OpenFile       brockfilename, brockfilehandle
+          ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
+          CloseFile      brockfilehandle
 
   ;--white piecies----
-                OpenFile       wbishopfilename, wbishopfilehandle
-                ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                CloseFile      wbishopfilehandle
+          OpenFile       wbishopfilename, wbishopfilehandle
+          ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+          CloseFile      wbishopfilehandle
 
-                OpenFile       wkingfilename, wkingfilehandle
-                ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                CloseFile      wkingfilehandle
+          OpenFile       wkingfilename, wkingfilehandle
+          ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+          CloseFile      wkingfilehandle
 
-                OpenFile       wknightfilename, wknightfilehandle
-                ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                CloseFile      wknightfilehandle
+          OpenFile       wknightfilename, wknightfilehandle
+          ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+          CloseFile      wknightfilehandle
 
-                OpenFile       wpawnfilename, wpawnfilehandle
-                ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                CloseFile      wpawnfilehandle
+          OpenFile       wpawnfilename, wpawnfilehandle
+          ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+          CloseFile      wpawnfilehandle
 
-                OpenFile       wqueenfilename, wqueenfilehandle
-                ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                CloseFile      wqueenfilehandle
+          OpenFile       wqueenfilename, wqueenfilehandle
+          ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+          CloseFile      wqueenfilehandle
 
-                OpenFile       wrockfilename, wrockfilehandle
-                ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-                CloseFile      wrockfilehandle
+          OpenFile       wrockfilename, wrockfilehandle
+          ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+          CloseFile      wrockfilehandle
 
   ;--border-----
-                OpenFile       borderfilename, borderfilehandle
-                ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-                CloseFile      borderfilehandle
+          OpenFile       borderfilename, borderfilehandle
+          ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
+          CloseFile      borderfilehandle
 
-                OpenFile       border2filename, border2filehandle
-                ReadData       border2filehandle ,border2width,border2height,border2data
-                CloseFile      border2filehandle
+          OpenFile       border2filename, border2filehandle
+          ReadData       border2filehandle ,border2width,border2height,border2data
+          CloseFile      border2filehandle
 
-                OpenFile       selectfilename, selectfilehandle
-                ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-                CloseFile      selectfilehandle
+          OpenFile       selectfilename, selectfilehandle
+          ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
+          CloseFile      selectfilehandle
 
-                OpenFile       select2filename, select2filehandle
-                ReadData       select2filehandle ,select2width,select2height,select2data
-                CloseFile      select2filehandle
+          OpenFile       select2filename, select2filehandle
+          ReadData       select2filehandle ,select2width,select2height,select2data
+          CloseFile      select2filehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName   nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
-                movecursor     17H,0AH
-                ShowMessage    proceed
-                call           waitkey
+          validateName   nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+          movecursor     17H,0AH
+          ShowMessage    proceed
+          call           far ptr    waitkey
   ;CHOICE MENU
-  faraway:      
+  faraway:
 
-                call           CLS
-                movecursor     17H,03H
-                ShowMessage    op1
-                movecursor     17H,08H
-                ShowMessage    op2
-                movecursor     17H,0DH
-                ShowMessage    op3
-                STATUSLINE
-                MAINMAIN       thename,thename
+          call           far ptr     CLS
+          movecursor     17H,03H
+          ShowMessage    op1
+          movecursor     17H,08H
+          ShowMessage    op2
+          movecursor     17H,0DH
+          ShowMessage    op3
+          STATUSLINE
+          MAINMAIN       thename,thename
   ;GAME SCREEN
-  play:         
-                CALL           EnterGraphics
-                mov            curColCursor,00h
-                mov            curRowCursor,07h
-                mov            curColCursor2,00h
-                mov            curRowCursor2,00h
-                mov            whiterow,0D
-                mov            whitecol,0D
-                mov            blackrow,0D
-                mov            blackcol,10D
-                INITIALIZEGRID 42H,06H                                                                   ;0FH,08H
-                DrawGrid       150D,0D,colorState[1],colorState[0]
-                DrawPiecies    150D,0D
+  play:   
+          CALL           far ptr      EnterGraphics
+          mov            curColCursor,00h
+          mov            curRowCursor,07h
+          mov            curColCursor2,00h
+          mov            curRowCursor2,00h
+          mov            whiterow,0D
+          mov            whitecol,0D
+          mov            blackrow,0D
+          mov            blackcol,10D
+          INITIALIZEGRID 42H,06H                                                                   ;0FH,08H
+          DrawGrid       150D,0D,colorState[1],colorState[0]
+          DrawPiecies    150D,0D
 
-                DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+          DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+          DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
 
   ;----------------------
   ; getDrawPosition 30d,0d,whiterow,whitecol
@@ -5544,52 +5553,62 @@ MAIN PROC FAR
   ; inc             al
   ; mov             blackcol,al
   ;---------------------
-                INITIALIZETIME
+          INITIALIZETIME
+          JMP            far ptr            helpme
+code ends
+
+code2 SEGMENT
+                ASSUME    CS:code2
+  helpme:       
   curs:         
                 CURSORMOV
 
-                JMP            curs
+                JMP       far ptr       curs
 
                 EXT
 MAIN ENDP
+
   ;----------------------------------------------------------------------------------------------------------------
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                             ;GET DATA
-                MOV            AX,@DATA
-                MOV            DS,AX
-                ret
+GETDATA PROC  FAR                             ;GET DATA
+                MOV       AX,data
+                MOV       DS,AX
+                retf
 GETDATA ENDP
 
-CLS PROC                                                                                                 ;CLEAR SCREEN
-                MOV            AX,0003H                                                                  ;;ah == 0 set to graph mod the al = 3 return to text mode
-                INT            10H
-                ret
+GETSTACK PROC  FAR                            ;GET DATA
+                MOV       AX,stack
+                MOV       SS,AX
+                retf
+GETSTACK ENDP
+
+CLS PROC  FAR                                 ;CLEAR SCREEN
+                MOV       AX,0003H
+                INT       10H
+                retf
 CLS ENDP
 
-EnterText PROC                                                                                           ;ENTER TEXT MODE
-                MOV            AX,3H
-                INT            10H
-                ret
+EnterText PROC          FAR                   ;ENTER TEXT MODE
+                MOV       AX,3H
+                INT       10H
+                retf
 EnterText ENDP
 
-EnterGraphics PROC                                                                                       ;ENTER GRAPHICS MODE
-                MOV            AX,4F02H
-                MOV            BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
-                INT            10H
-                ret
+EnterGraphics PROC   FAR                      ;ENTER GRAPHICS MODE
+                MOV       AX,4F02H
+                MOV       BX,103H             ;(800x600) pixel ;grid =480*480; char=60*60
+                INT       10H
+                retf
 EnterGraphics ENDP
 
-waitkey PROC                                                                                             ;wait for key
-                MOV            AH , 0
-                INT            16h
-                ret
+waitkey PROC  FAR                             ;wait for key
+                MOV       AH , 0
+                INT       16h
+                retf
 waitkey ENDP
-
-
-
-
+code2 ends
 END MAIN
 
 ;http://www.wagemakers.be/english/doc/vga
