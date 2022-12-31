@@ -3371,6 +3371,31 @@ CONTINUOUEGAME2:
 
 ENDM CHECKMATE
 
+connect MACRO
+                  mov         dx,3fbh           ; Line Control Register
+                  mov         al,10000000b      ;Set Divisor Latch Access Bit
+                  out         dx,al
+
+
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+                  mov         dx,3f8h
+                  mov         al,0ch
+                  out         dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+                  mov         dx,3f9h
+                  mov         al,00h
+                  out         dx,al
+
+
+    ;Set port configuration
+                  mov         dx,3fbh
+                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+                  out         dx,al
+  ENDM connect
+
 CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move the cursor or press Q or ENTER or other thing
   LOCAL tmplabel10
   LOCAL label6
@@ -3428,7 +3453,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   LOCAL skip42e
   LOCAL skip42e
 
-                  
+                  connect   
 cursorLoop:
 
                   PRINTCURRTIMER
@@ -4953,30 +4978,6 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   movecursorWithPageNumber  00,22H,1D
                   ShowMessage player2Name
-
-                  mov         dx,3fbh           ; Line Control Register
-                  mov         al,10000000b      ;Set Divisor Latch Access Bit
-                  out         dx,al
-
-
-    ;000c => 9600 baud rate
-    ;Set LSB byte of the Baud Rate Divisor Latch
-                  mov         dx,3f8h
-                  mov         al,0ch
-                  out         dx,al
-
-
-    ;Set MSB byte of the Baud Rate Divisor Latch register.
-                  mov         dx,3f9h
-                  mov         al,00h
-                  out         dx,al
-
-
-    ;Set port configuration
-                  mov         dx,3fbh
-                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
-                  out         dx,al
-
 
                   mov         dh,00H
                   mov         dl,23H
