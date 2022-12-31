@@ -3424,15 +3424,18 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   LOCAL skip4e
   LOCAL skip42e
   LOCAL skip42e
+  local chat
+  local label102
+  local receive
 
-                  
+                  connect
 cursorLoop:
                   PRINTCURRTIMER
 
                   mov         ah,01
                   int         16h
                   JNZ temp24
-                  jmp          curs
+                  jmp          receive                 ;need to be changed to jump to recieve
                 temp24:
                   mov         ah,0
                   int         16h
@@ -3443,82 +3446,44 @@ cursorLoop:
                   jmp faraway  
                   dontexit: 
 
-                  cmp ah,10h
-                  jnz             tmplabel10
-                  jmp qpressed
-tmplabel10:
-
- cmp ah,1ch
+                  cmp ah,1ch ;enter key
                   jnz             tmplabel102
-                  jmp qpressed2
-tmplabel102:
-                ; handle chat f6 click
-                  cmp             ah,40h
-                  jnz             temp23
-                  cmp f6,0
-                  je set
-                  mov f6,0
-                  jmp temp23
-                  set:
-                  mov f6,1
-                temp23:
-                ;end handle chat f6 click
+                  jmp qpressed
+                  tmplabel102:
 
-                ;   pusha
-                ;   GETARINDEXBYBYTE curRowCursor,startColCursor
-                ;   popa
-                 ; mov firstIndex,bx
-
-                  cmp             ah,11h
-                  jnz             label6
-                  jmp             up
-    label6:
-
-                  cmp             ah,1eh
-                  jnz             label7
-                  jmp             left
-    label7:
-
-                  cmp             ah,20h
-                  jnz             label8
-                  jmp             right
-    label8:
-
-                  cmp             ah,1fh
-                  jnz             label9
-                  jmp             down
-    label9:
-
-       cmp             ah,48h
+       cmp             ah,48h                              ;up
                   jnz             label62
-                  jmp             up2
+                  jmp             up
     label62:
 
-                  cmp             ah,4bh
+                  cmp             ah,4bh                              ;left
                   jnz             label72
-                  jmp             left2
+                  jmp             left
     label72:
 
-                  cmp             ah,4dh
+                  cmp             ah,4dh                              ;right
                   jnz             label82
-                  jmp             right2
+                  jmp             right
     label82:
 
-                  cmp             ah,50h
+                  cmp             ah,50h                              ;down
                   jnz             label92
-                  jmp             down2
+                  jmp             down
     label92:
 
-           
+    cmp             ah,127d                              ;chat
+                  JG             label102
+                  jmp             chat
+    label102:      
 
-                  jmp             cursorLoop                  
+                  jmp             receive                  
 
     left:
                   mov             dx,curColCursor
                   cmp             dx,0D
                   jnz             temp20
 
-                  jmp             cursorLoop
+                  jmp             receive
     temp20:
  pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3555,56 +3520,14 @@ tmplabel102:
                   cmp             ah,11h
                   jz              label5
 
-                  jmp             cursorLoop
+                  jmp             receive
     label5:
-
- left2:
-                  mov             dx,curColCursor2
-                  cmp             dx,0D
-                  jnz             temp202
-
-                  jmp             cursorLoop
-    temp202:
- pusha
-                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  popa
- pusha
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor2,curColCursor2
-                  mov firstIndex2,bx
-                  popa
-                  mov bx,firstIndex2
-                  cmp cursorState2[bx],0
-                  je skip12
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip12:
-
-                  cmp cursorState[bx],0
-                  je skip12e
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip12e:
-                  
-                  sub             dx,1D
-
-                  mov             curColCursor2,dx
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  cmp             ah,4bh
-                  jz              label52
-
-                  jmp             cursorLoop
-    label52:
 
     right:
                   mov             dx,curColCursor
                   cmp             dx,7d
                   jnz             temp22
-                  jmp             cursorLoop
+                  jmp             receive
     temp22:
   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3637,53 +3560,14 @@ tmplabel102:
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,20h
                   jz              label4
-                  jmp             cursorLoop
+                  jmp             receive
     label4:
-
-    right2:
-                  mov             dx,curColCursor2
-                  cmp             dx,7d
-                  jnz             temp222
-                  jmp             cursorLoop
-    temp222:
-  pusha
-                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  popa
- pusha
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor2,curColCursor2
-                  mov firstIndex2,bx
-                  popa
-                  mov bx,firstIndex2
-                  cmp cursorState2[bx],0
-                  je skip22
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip22:
-
-                  cmp cursorState[bx],0
-                  je skip22e
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip22e:
-
-                  add             dx,1
-                  mov             curColCursor2,dx
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  cmp             ah,4dh
-                  jz              label42
-                  jmp             cursorLoop
-    label42:
 
     up:
                   mov             dx,curRowCursor
                   cmp             dx,0D
                   jnz             label10
-                  jmp             cursorLoop
+                  jmp             receive
     label10:
 
   pusha
@@ -3718,59 +3602,14 @@ tmplabel102:
                   cmp             ah,11h
                   jz              label2
 
-                  jmp             cursorLoop
+                  jmp             receive
     label2:
-
-    up2:
-                  mov             dx,curRowCursor2
-                  cmp             dx,0D
-                  jnz             label102
-                  jmp             cursorLoop
-    label102:
-
-  pusha
-                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  popa
- pusha
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor2,curColCursor2
-                  mov firstIndex2,bx
-                  popa
-                  mov bx,firstIndex2
-                  cmp cursorState2[bx],0
-                  je skip32
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip32:
-
-                  cmp cursorState[bx],0
-                  je skip32e
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip32e:
-
-                  sub             dx,1D
-
-                  mov             curRowCursor2,dx
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  cmp             ah,48h
-                  jz              label22
-
-                  jmp             cursorLoop
-    label22:
-
-
-
 
     down:
                   mov             dx,curRowCursor
                   cmp             dx,7D
                   jnz             label11
-                  jmp             cursorLoop
+                  jmp             receive
     label11:
                   pusha
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
@@ -3802,48 +3641,8 @@ tmplabel102:
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
                   cmp             ah,1fh
                   jz              label1
-                  jmp             cursorLoop
+                  jmp             receive
     label1:
-
-    down2:
-                  mov             dx,curRowCursor2
-                  cmp             dx,7D
-                  jnz             label112
-                  jmp             cursorLoop
-    label112:
-                  pusha
-                  UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  popa
- pusha
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor2,curColCursor2
-                  mov firstIndex2,bx
-                  popa
-                  mov bx,firstIndex2
-                  cmp cursorState2[bx],0
-                  je skip42
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip42:
-
-                  cmp cursorState[bx],0
-                  je skip42e
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  skip42e:
-
-                  add             dx,1
-                  mov             curRowCursor2,dx
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  cmp             ah,50h
-                  jz              label12
-                  jmp             cursorLoop
-    label12:
-
 
     qpressed:
     mov bl,stateOfQ
@@ -3853,27 +3652,20 @@ tmplabel102:
     tmplabel20:
 
     SECONDQHANDLE
-    jmp   cursorLoop   
+    jmp   receive   
 
     firsrQ:
     FIRSTQHANDLE
-                 jmp             cursorLoop   
+                 jmp             receive   
 ;--------------------------------------------------
-    qpressed2:
-    mov bl,stateOfQ2
-    cmp bl,0
-    jnz tmplabel202
-    jmp firsrQ2
-    tmplabel202:
-
-    SECONDQHANDLE2
-    jmp   cursorLoop   
-
-    firsrQ2:
-    FIRSTQHANDLE2
-                 jmp             cursorLoop   
+    chat:
+    ;TODO make chat
+    jmp             receive   
 ;--------------------------------------------------
-
+receive:
+;TODO make recieve
+;--------------------------------------------------
+jmp cursorLoop
 
 ENDM CURSORMOV
 
@@ -5219,6 +5011,26 @@ PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the scr
                   MOV         MIN[1],'$'
 
 ENDM PRINTCURRTIMER
+
+connect MACRO
+  ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+                  mov         dx,3f8h
+                  mov         al,0ch
+                  out         dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+                  mov         dx,3f9h
+                  mov         al,00h
+                  out         dx,al
+
+
+    ;Set port configuration
+                  mov         dx,3fbh
+                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+                  out         dx,al
+  ENDM connect
 
 .MODEL SMALL
 .286
