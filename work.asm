@@ -3056,11 +3056,6 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
             local sendright
             local sendwrong
 
-                  pusha
-                  movecursor 2d,31d
-                  ShowMessage clear
-                  popa
-
                   GETARINDEX startRowCursor,startColCursor
 
                   MOV cl,BYTE PTR cellColorState
@@ -3184,10 +3179,6 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
             local blabla2
             local blabla3
             local er
-      pusha
-        movecursor 60d,31d
-        ShowMessage clear
-        popa
 
                   GETARINDEX startRowCursor2,startColCursor2
 
@@ -3481,6 +3472,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   local receive
 
                   connect
+                  INITIALIZEGAMECHAT thename,thename
     cursorLoop:
                   PRINTCURRTIMER
                   CALL FAR PTR FREEZEPROC
@@ -3498,7 +3490,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   jmp faraway  
                   dontexit: 
 
-                  cmp ah,1ch ;enter key
+                  cmp ah,4FH ;enter key
                   jnz             tmplabel102
                   jmp qpressed
                   tmplabel102:
@@ -3712,6 +3704,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
 ;--------------------------------------------------
     chat:
     ;TODO make chat send
+        sendyou
     jmp             receive   
 ;--------------------------------------------------
 receive:
@@ -3745,20 +3738,47 @@ handlereceive MACRO
                   mov         dx , 03F8H
                   in          al , dx
                   MOV              AH,0
-                  ; mov bl , al
-                  ; and bl,10000000b
-                  ; jnz temp3
-                  ; jmp handleq
-                  ; temp3:
-                  ; ;print char TODO                  ;char recived then print it
-                  ; jmp quit
+
                   
-                  ;      pusha
-                  ; mov al,received1
-                  ; TOSTRING nameq
-                  ; movecursor 2d,31d
-                  ; ShowMessage nameq
-                  ; popa
+                  mov bl , al
+                  and bl,10000000b
+                  jnz temp3
+                  jmp handleq
+                  temp3:
+                  ;print char TODO                  ;char recived then print it
+                        pusha
+                        movecursorWithPageNumber  p2cx,p2cy,1D    
+                        popa
+
+                        and al,01111111B
+                        mov char,al
+                        mov         ah,2       
+                        mov dl,char
+                        int         21h
+
+                        mov al,p2cx
+                        inc al
+                        mov p2cx,al
+
+                        mov         bl,char
+                        cmp         bl,13
+                        jne         afterenter
+
+                        mov al,p2cy
+                        inc al
+                        mov p2cy,al
+
+                        cmp         p2cy,24H          ;CURSOR CHECK
+                        jne         afterenter
+
+                        MOV         p2cy,23H
+                        mov         p2cx,0H
+                        pusha
+                        movecursorWithPageNumber  p2cx,p2cy,1
+                        popa
+                        ShowMessage clear                 
+                        afterenter:  
+                  jmp quit
                   
                   handleq:
                   cmp received1, 127d
@@ -3806,6 +3826,81 @@ handlereceive MACRO
                   mov received1,al                  ;q1 recievied then store it
                   quit:
 ENDM handlereceive
+
+INITIALIZEGAMECHAT MACRO player1Name,player2Name
+                  mov  al, 01h   ; select display page 1
+                  mov  ah, 05h   ; function 05h: select active display page
+                  int  10h
+
+                  movecursorWithPageNumber  00,21H,1D
+                  ShowMessage line
+
+                  movecursorWithPageNumber  00,1FH,1D
+                  ShowMessage player1Name+2
+
+                  movecursorWithPageNumber  00,22H,1D
+                  ShowMessage player2Name+2
+
+                  mov         p2cx,00H
+                  mov         p2cy,23H
+                  mov         p1cx,00H
+                  mov         p1cy,20H
+
+                  movecursorWithPageNumber  00H,20H,1D
+ENDM INITIALIZEGAMECHAT
+
+sendyou MACRO
+  local iwillsend
+    local afterenter
+
+    mov char,al
+
+        ;Check that Transmitter Holding Register is Empty
+    iwillsend:
+                  mov         dx , 3FDH         ; Line Status Register
+
+                  In          al , dx           ;Read Line Status
+                  AND         al , 00100000b
+                  JZ          iwillsend             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov cl,char
+                  or  cl,10000000b
+                  mov         al,cl
+                  out         dx , al
+
+                  pusha
+                  movecursorWithPageNumber  p1cx,p1cy,1D    
+                  popa
+
+                  mov         ah,2       
+                  mov dl,char
+                  int         21h
+
+                  mov al,p1cx
+                  inc al
+                  mov p1cx,al
+
+                  mov         bl,char
+                  cmp         bl,13
+                  jne         afterenter
+
+                  mov al,p1cy
+                  inc al
+                  mov p1cy,al
+
+                  cmp         p1cy,21H          ;CURSOR CHECK
+                  jne         afterenter
+
+                  MOV         p1cy,20H
+                  mov         p1cx,0H
+                  pusha
+                  movecursorWithPageNumber  p1cx,p1cy,1
+                  popa
+                  ShowMessage clear                 
+                  afterenter:   
+ENDM sendyou
 
 DRAW_AVAILABLE_PLACES MACRO ;This Macro is Responsible for draw marks on the cells that the selected white piece can move to 
 LOCAL loop9
@@ -4195,8 +4290,10 @@ mov gridState[55],7 ;white pawn
 mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
 mov gridState[58],10 ;white bishop
+;if player 0 11 -> 12 else 12->11
 mov gridState[59],11 ;white queen
 mov gridState[60],12 ;white king
+
 mov gridState[61],10 ;white bishop
 mov gridState[62],9  ;white knight
 mov gridState[63],8  ;white rook
@@ -4845,12 +4942,6 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   mov  ah, 05h   ; function 05h: select active display page
                   int  10h
 
-                ;   mov         ax,0620h ;clear page
-                ;   mov         bh,07
-                ;   mov         cx,0000H
-                ;   mov         dx,304FH
-                ;   int         10h
-
                   movecursorWithPageNumber  00,21H,1D
                   ShowMessage line
 
@@ -4859,30 +4950,6 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   movecursorWithPageNumber  00,22H,1D
                   ShowMessage player2Name
-
-                  mov         dx,3fbh           ; Line Control Register
-                  mov         al,10000000b      ;Set Divisor Latch Access Bit
-                  out         dx,al
-
-
-    ;000c => 9600 baud rate
-    ;Set LSB byte of the Baud Rate Divisor Latch
-                  mov         dx,3f8h
-                  mov         al,0ch
-                  out         dx,al
-
-
-    ;Set MSB byte of the Baud Rate Divisor Latch register.
-                  mov         dx,3f9h
-                  mov         al,00h
-                  out         dx,al
-
-
-    ;Set port configuration
-                  mov         dx,3fbh
-                  mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
-                  out         dx,al
-
 
                   mov         dh,00H
                   mov         dl,23H
@@ -5104,7 +5171,7 @@ ENDM INITIALIZETIME
 
 PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the screen
     LOCAL NSP 
-                  movecursor  0,0
+                  movecursorWithPageNumber 0,0,1
                   GETTIME
                   MOV         AX,BX
                   MOV         BX,WORD PTR STARTTIME
@@ -5153,8 +5220,6 @@ connect MACRO
                   mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
                   out         dx,al
     
-
-
                   notyet:
                   mov         dx , 3FDH         ; Line Status Register
                   in          al , dx
@@ -5365,6 +5430,13 @@ connect MACRO
   received2         db  127d
   
   CHECKSTRING       DB  'WARNING!!! :CHECK','$'
+
+  p1cx              db  00H
+  p1cy              db  20H
+  p2cx              db  00H
+  p2cy              db  23H
+
+  char              db  ?
   ;---------------------------------------------------------------------------------------------------
  
 
@@ -5450,7 +5522,7 @@ MAIN PROC FAR
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName     nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+                validateName     nameq,thename,erroname                                                 ;Veryyyyyyyyyyyyyyyy STABLE
                 movecursor       17H,0AH
                 ShowMessage      proceed
                 call             waitkey
@@ -5477,12 +5549,12 @@ MAIN PROC FAR
                 mov              whitecol,0D
                 mov              blackrow,0D
                 mov              blackcol,10D
-                INITIALIZEGRID   42H,06H                                                                   ;0FH,08H
+                INITIALIZEGRID   42H,06H                                                                ;0FH,08H
                 DrawGrid         150D,0D,colorState[1],colorState[0]
                 DrawPiecies      150D,0D
 
                 DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                DRAWWITHSOURCE   border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+  ; DRAWWITHSOURCE   border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
 
   ;----------------------
   ; getDrawPosition 30d,0d,whiterow,whitecol
@@ -5513,38 +5585,38 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                               ;GET DATA
+GETDATA PROC                                                                                            ;GET DATA
                 MOV              AX,@DATA
                 MOV              DS,AX
                 ret
 GETDATA ENDP
 
-CLS PROC                                                                                                   ;CLEAR SCREEN
-                MOV              AX,0003H                                                                  ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC                                                                                                ;CLEAR SCREEN
+                MOV              AX,0003H                                                               ;;ah == 0 set to graph mod the al = 3 return to text mode
                 INT              10H
                 ret
 CLS ENDP
 
-EnterText PROC                                                                                             ;ENTER TEXT MODE
+EnterText PROC                                                                                          ;ENTER TEXT MODE
                 MOV              AX,3H
                 INT              10H
                 ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                         ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                                      ;ENTER GRAPHICS MODE
                 MOV              AX,4F02H
-                MOV              BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
+                MOV              BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
                 INT              10H
                 ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                               ;wait for key
+waitkey PROC                                                                                            ;wait for key
                 MOV              AH , 0
                 INT              16h
                 ret
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                                      ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                                   ;CHECKING THE FREEZE OF 3 SECONDS
        
                 mov              al,0
                 mov              ah,0
