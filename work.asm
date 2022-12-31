@@ -148,19 +148,19 @@ DRAWWITHSOURCE MACRO imgdata,imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       MOV  AL,BYTE PTR [BX]
                       MOV AH,0ch
                       cmp al,0FFH
-                      Je far ptr skp
+                      Je  skp
                       INT 10H
                       skp:
                       INC BX
                       INC CX
                       INC SI
                       CMP SI,WORD PTR imgwidth
-                      Jne far ptr innerloop
+                      Jne  innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
                       CMP DI,WORD PTR imgheight
-                      Jne far ptr  drawLoop
+                      Jne   drawLoop
                 ENDM        DRAWWITHSOURCE
 
 OpenFile MACRO  imgfilename, imgfilehandle                                ;OPEN FILE
@@ -204,12 +204,12 @@ DRAWCELL MACRO X,Y,Z       ;DRAW colored CELL WITH COLOR Z
             INC CX
             INC SI
             CMP SI,60D
-            Jne far ptr innerloop
+            Jne innerloop
             SUB CX,SI
             INC DX
             INC DI
             CMP DI,60D
-            Jne far ptr  drawLoop
+            Jne  drawLoop
 ENDM        DRAWCELL
 
 DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x,y with color a dark and b light
@@ -246,7 +246,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP
+        Jne   BIGGERLOOP
 
             MOV AX,X
             MOV BX,Y 
@@ -272,7 +272,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP2
+        Jne   BIGGERLOOP2
 
             MOV AX,X
             MOV BX,Y 
@@ -298,7 +298,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP3
+        Jne   BIGGERLOOP3
 
             MOV AX,X
             MOV BX,Y 
@@ -324,7 +324,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP4        
+        Jne   BIGGERLOOP4        
 
             MOV AX,X
             MOV BX,Y 
@@ -350,7 +350,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP5
+        Jne   BIGGERLOOP5
 
             MOV AX,X
             MOV BX,Y 
@@ -376,7 +376,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP6
+        Jne   BIGGERLOOP6
 
             MOV AX,X
             MOV BX,Y 
@@ -402,7 +402,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP7
+        Jne   BIGGERLOOP7
 
             MOV AX,X
             MOV BX,Y 
@@ -428,7 +428,7 @@ DrawGrid MACRO X,Y,B,A                                           ;DRAW grid at x
             ADD AX,120D
             INC CX
             CMP CX,4D
-        Jne far ptr  BIGGERLOOP8 
+        Jne   BIGGERLOOP8 
 ENDM DrawGrid
 
 FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player press his first Q to select a piece want to move
@@ -471,16 +471,16 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
-                    Jne far ptr temp100
-                    JMP far ptr break80
+                    Jne  temp100
+                    JMP  break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
-                  Jne far ptr temp150
-                  JMP far ptr break80
+                  Jne  temp150
+                  JMP  break80
                   temp150:
                   popa
 
@@ -497,8 +497,8 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   dec BX
                   dec BX
                   CMP word ptr timeState[si],BX
-                  Jle far ptr temp151
-                  JMP far ptr break80
+                  Jle  temp151
+                  JMP  break80
                   temp151:
                   mov word ptr timeState[si],0D
                   popa
@@ -523,48 +523,48 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                 ;------------------------
                   GETARINDEX curRowCursor,curColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  Jne far ptr PAWNTEMP
-                  JMP far ptr PAWN
+                  Jne  PAWNTEMP
+                  JMP  PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  Jne far ptr ROOKTEMP
-                  JMP far ptr ROOK
+                  Jne  ROOKTEMP
+                  JMP  ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  Jne far ptr KNIGHTTEMP
-                  JMP far ptr KNIGHT
+                  Jne  KNIGHTTEMP
+                  JMP  KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  Jne far ptr BISHOPTEMP
-                  JMP far ptr BISHOP
+                  Jne  BISHOPTEMP
+                  JMP  BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  Jne far ptr QUEENTEMP
-                  JMP far ptr QUEEN
+                  Jne  QUEENTEMP
+                  JMP  QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  Jne far ptr KINGTEMP
-                  JMP far ptr KING
+                  Jne  KINGTEMP
+                  JMP  KING
                   KINGTEMP:
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 PAWN:
                   HANDLEPAWN curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KNIGHT:
                   HANDLEKNIGHT curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 QUEEN:
                   HANDLEQUEEN curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KING:
                   HANDLEKING curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES
@@ -600,8 +600,8 @@ FIRSTQHANDLEM MACRO
     local skpp
 
                 cmp stateOfQ,0
-                Jne far ptr skpp
-                JMP far ptr break80
+                Jne  skpp
+                JMP  break80
                 skpp:
 
                 CLEAR_AVAILABLE_PLACES
@@ -611,16 +611,16 @@ FIRSTQHANDLEM MACRO
                   pusha
                   ISEMPTY startRowCursor,startColCursor
                     cmp bx,1
-                    Jne far ptr temp100
-                    JMP far ptr break80
+                    Jne  temp100
+                    JMP  break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE startRowCursor,startColCursor
                   cmp bx,0
-                  Jne far ptr temp150
-                  JMP far ptr break80
+                  Jne  temp150
+                  JMP  break80
                   temp150:
                   popa
                  
@@ -637,48 +637,48 @@ FIRSTQHANDLEM MACRO
                 ;------------------------
                   GETARINDEX startRowCursor,startColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  Jne far ptr PAWNTEMP
-                  JMP far ptr PAWN
+                  Jne  PAWNTEMP
+                  JMP  PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  Jne far ptr ROOKTEMP
-                  JMP far ptr ROOK
+                  Jne  ROOKTEMP
+                  JMP  ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  Jne far ptr KNIGHTTEMP
-                  JMP far ptr KNIGHT
+                  Jne  KNIGHTTEMP
+                  JMP  KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  Jne far ptr BISHOPTEMP
-                  JMP far ptr BISHOP
+                  Jne  BISHOPTEMP
+                  JMP  BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  Jne far ptr QUEENTEMP
-                  JMP far ptr QUEEN
+                  Jne  QUEENTEMP
+                  JMP  QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  Jne far ptr KINGTEMP
-                  JMP far ptr KING
+                  Jne  KINGTEMP
+                  JMP  KING
                   KINGTEMP:
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 PAWN:
                   HANDLEPAWN startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 ROOK:
                   HANDLEROOK startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KNIGHT:
                   HANDLEKNIGHT startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 BISHOP:
                   HANDLEBISHOP startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 QUEEN:
                   HANDLEQUEEN startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KING:
                   HANDLEKING startRowCursor,startColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES
@@ -715,16 +715,16 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   pusha
                   ISEMPTY curRowCursor2,curColCursor2
                     cmp bx,1
-                    Jne far ptr temp100
-                    JMP far ptr break80
+                    Jne  temp100
+                    JMP  break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor2,curColCursor2
                   cmp bx,1
-                  Jne far ptr temp150
-                  JMP far ptr break80
+                  Jne  temp150
+                  JMP  break80
                   temp150:
                   popa
 
@@ -741,8 +741,8 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   dec BX
                   dec BX
                   CMP word ptr timeState[si],BX
-                  Jle far ptr temp151
-                  JMP far ptr break80
+                  Jle  temp151
+                  JMP  break80
                   temp151:
                   mov word ptr timeState[si],0D
                   popa
@@ -767,48 +767,48 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                 ;------------------------
                   GETARINDEX curRowCursor2,curColCursor2
                   CMP BYTE PTR gridState[BX],6d
-                  Jne far ptr PAWNTEMP
-                  JMP far ptr PAWN
+                  Jne  PAWNTEMP
+                  JMP  PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],1d
-                  Jne far ptr ROOKTEMP
-                  JMP far ptr ROOK
+                  Jne  ROOKTEMP
+                  JMP  ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],2d
-                  Jne far ptr KNIGHTTEMP
-                  JMP far ptr KNIGHT
+                  Jne  KNIGHTTEMP
+                  JMP  KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],3d
-                  Jne far ptr BISHOPTEMP
-                  JMP far ptr BISHOP
+                  Jne  BISHOPTEMP
+                  JMP  BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],4d
-                  Jne far ptr QUEENTEMP
-                  JMP far ptr QUEEN
+                  Jne  QUEENTEMP
+                  JMP  QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],5d
-                  Jne far ptr KINGTEMP
-                  JMP far ptr KING
+                  Jne  KINGTEMP
+                  JMP  KING
                   KINGTEMP:
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 PAWN:
                   HANDLEPAWN2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KNIGHT:
                   HANDLEKNIGHT2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 BISHOP:
                   HANDLEBISHOP2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 QUEEN:
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KING:
                   HANDLEKING2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 NOACTION:
                 PUSHA
                 DRAW_AVAILABLE_PLACES2
@@ -845,16 +845,16 @@ checkqhandle MACRO
                   pusha
                   ISEMPTY curRowCursor,curColCursor
                     cmp bx,1
-                    Jne far ptr temp100
-                    JMP far ptr break80
+                    Jne  temp100
+                    JMP  break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor,curColCursor
                   cmp bx,0
-                  Jne far ptr temp150
-                  JMP far ptr break80
+                  Jne  temp150
+                  JMP  break80
                   temp150:
                   popa
                  
@@ -866,48 +866,48 @@ checkqhandle MACRO
                 ;------------------------
                   GETARINDEX curRowCursor,curColCursor
                   CMP BYTE PTR gridState[BX],7d
-                  Jne far ptr PAWNTEMP
-                  JMP far ptr PAWN
+                  Jne  PAWNTEMP
+                  JMP  PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],8d
-                  Jne far ptr ROOKTEMP
-                  JMP far ptr ROOK
+                  Jne  ROOKTEMP
+                  JMP  ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],9d
-                  Jne far ptr KNIGHTTEMP
-                  JMP far ptr KNIGHT
+                  Jne  KNIGHTTEMP
+                  JMP  KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],10d
-                  Jne far ptr BISHOPTEMP
-                  JMP far ptr BISHOP
+                  Jne  BISHOPTEMP
+                  JMP  BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],11d
-                  Jne far ptr QUEENTEMP
-                  JMP far ptr QUEEN
+                  Jne  QUEENTEMP
+                  JMP  QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],12d
-                  Jne far ptr KINGTEMP
-                  JMP far ptr KING
+                  Jne  KINGTEMP
+                  JMP  KING
                   KINGTEMP:
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 PAWN:
                   HANDLEPAWN curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 ROOK:
                   HANDLEROOK curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KNIGHT:
                   HANDLEKNIGHT curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 BISHOP:
                   HANDLEBISHOP curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 QUEEN:
                   HANDLEQUEEN curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KING:
                   HANDLEKING curRowCursor,curColCursor
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 NOACTION:
                 check_AVAILABLE_PLACES
                 CLEAR_AVAILABLE_PLACES
@@ -943,68 +943,68 @@ checkqhandle2 MACRO
                   pusha
                   ISEMPTY curRowCursor2,curColCursor2
                     cmp bx,1
-                    Jne far ptr temp100
+                    Jne  temp100
                     popa
-                    JMP far ptr break80
+                    JMP  break80
                     temp100:
                     popa
 
                   pusha
                   ISWHITEBYTE curRowCursor2,curColCursor2
                   cmp bx,1
-                  Jne far ptr temp150
+                  Jne  temp150
                   popa
-                  JMP far ptr break80
+                  JMP  break80
                   temp150:
                   popa
              
                 ;------------------------
                   GETARINDEX curRowCursor2,curColCursor2
                   CMP BYTE PTR gridState[BX],6d
-                  Jne far ptr PAWNTEMP
-                  JMP far ptr PAWN
+                  Jne  PAWNTEMP
+                  JMP  PAWN
                   PAWNTEMP:
                   CMP BYTE PTR gridState[BX],1d
-                  Jne far ptr ROOKTEMP
-                  JMP far ptr ROOK
+                  Jne  ROOKTEMP
+                  JMP  ROOK
                   ROOKTEMP:
                   CMP BYTE PTR gridState[BX],2d
-                  Jne far ptr KNIGHTTEMP
-                  JMP far ptr KNIGHT
+                  Jne  KNIGHTTEMP
+                  JMP  KNIGHT
                   KNIGHTTEMP:
                   CMP BYTE PTR gridState[BX],3d
-                  Jne far ptr BISHOPTEMP
-                  JMP far ptr BISHOP
+                  Jne  BISHOPTEMP
+                  JMP  BISHOP
                   BISHOPTEMP:
                   CMP BYTE PTR gridState[BX],4d
-                  Jne far ptr QUEENTEMP
-                  JMP far ptr QUEEN
+                  Jne  QUEENTEMP
+                  JMP  QUEEN
                   QUEENTEMP:
                   CMP BYTE PTR gridState[BX],5d
-                  Jne far ptr KINGTEMP
-                  JMP far ptr KING
+                  Jne  KINGTEMP
+                  JMP  KING
                   KINGTEMP:
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
 
 
                 PAWN:
                   HANDLEPAWN2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 ROOK:
                   HANDLEROOK2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KNIGHT:
                   HANDLEKNIGHT2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 BISHOP:
                   HANDLEBISHOP2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 QUEEN:
                   HANDLEQUEEN2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 KING:
                   HANDLEKING2 curRowCursor2,curColCursor2
-                  JMP far ptr NOACTION
+                  JMP  NOACTION
                 NOACTION:
                 ;---------------------------------------------------
                 check_AVAILABLE_PLACES2
@@ -4796,7 +4796,7 @@ MOV CH,BYTE PTR [SI]
 CMP CH,6 
 Jg far ptr WHITE
 CMP CH , 7
-Jl far ptr BLACK 
+jl BLACK 
 
 WHITE:
 MOV BX,1 
@@ -4853,7 +4853,7 @@ MOV CH,BYTE PTR [SI]
 CMP CH,6 
 Jg far ptr WHITE
 CMP CH , 7 
-Jl far ptr BLACK 
+jl BLACK 
 
 WHITE:
 MOV BX,1 
@@ -4905,11 +4905,11 @@ MOV AH ,Y
 CMP AL , 7 
 Jg far ptr NOTVALID
 CMP AL , 0 
-Jl far ptr NOTVALID
+jl NOTVALID
 CMP AH , 7 
 Jg far ptr NOTVALID
 CMP AH , 0 
-Jl far ptr NOTVALID
+jl NOTVALID
 
 
 VALID: 
