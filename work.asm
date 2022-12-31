@@ -5472,6 +5472,17 @@ FREEZEPROC PROC   FAR                      ;ENTER GRAPHICS MODE
 FREEZEPROC ENDP
 
 
+
+CONVERT1D_2D PROC   FAR                      ;ENTER GRAPHICS MODE
+       
+        MOV AH,0 
+        MOV CL , 8D 
+        DIV CL 
+
+                retf
+CONVERT1D_2D ENDP
+
+
 END MAIN
 
 ;http://www.wagemakers.be/english/doc/vga
