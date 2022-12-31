@@ -3718,8 +3718,6 @@ jmp cursorLoop
 
 ENDM CURSORMOV
 
-
-
 handlereceive MACRO
   local quit
   local handleq
@@ -3737,14 +3735,14 @@ handlereceive MACRO
                   in          al , dx
                   AND         al , 00000001b
                   jnz temp4
-                  Jmp          quit               ;jump untill it recive data
+                  Jmp          quit               ;jump if no recive data
                   temp4:
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
                   in          al , dx
 
                   and al,10000000b
-                  jnztemp3
+                  jnz temp3
                   jmp handleq
                   temp3:
                   ;print char TODO                  ;char recived then print it
@@ -3760,18 +3758,26 @@ handlereceive MACRO
                   temp1:
                   mov received2,al                    ;2 q recievied take action
 
-                  mov al,64D                    ; convert (64 - recieved 1) to x and y
+                  mov al,63D                    ; convert (64 - recieved 1) to x and y
                   sub al,received1
-                  call far ptr CONVERT1D_2D
+                  
+                  MOV              AH,0
+                  MOV              CL , 8D
+                  DIV              CL
+                  mov curRowCursor2,al              ; mov them to current index 2
+                  mov curColCursor2,ah
                   mov startRowCursor2,al              ; mov them to start index 2
                   mov startColCursor2,ah
                   FIRSTQHANDLE2                       ; call firstqhandle2
 
-                  mov al,64D                          ; convert (64 - recieved 2) to x and y
+                  mov al,63D                          ; convert (64 - recieved 2) to x and y
                   sub al,received2
-                  call far ptr CONVERT1D_2D
-                  mov endRowCursor2,al                ; mov them to end index 2
-                  mov endColCursor2,ah
+                  
+                  MOV              AH,0
+                  MOV              CL , 8D
+                  DIV              CL
+                  mov curRowCursor2,al                ; mov them to current index 2
+                  mov curColCursor2,ah
                   SECONDQHANDLE2                      ; call sencondqhandle2
                   mov received1,127D                  ; reset received1 and received2 to 127D
                   mov received2,127D
@@ -5571,21 +5577,6 @@ FREEZEPROC PROC   FAR                                                           
   BREAK80:      
                 retf
 FREEZEPROC ENDP
-
-CONVERT1D_2D PROC   FAR                                                                                    ;1D -> 2D
-       
-                MOV              AH,0
-                MOV              CL , 8D
-                DIV              CL
-
-CONVERT1D_2D PROC   FAR                                                                                    ;TAKING 0-->63 IN AX RETURNING ROW IN AL , COL IN AH
-       
-                MOV              AH,0
-                MOV              CL , 8D
-                DIV              CL
-
-                retf
-CONVERT1D_2D ENDP
 
 
 END MAIN
