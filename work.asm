@@ -5405,7 +5405,7 @@ waitkey PROC                                                                    
                 ret
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                      ;ENTER GRAPHICS MODE
+FREEZEPROC PROC   FAR                      ;CHECKING THE FREEZE OF 3 SECONDS 
        
                   mov                   al,0
                   mov                   ah,0
@@ -5473,7 +5473,7 @@ FREEZEPROC ENDP
 
 
 
-CONVERT1D_2D PROC   FAR                      ;ENTER GRAPHICS MODE
+CONVERT1D_2D PROC   FAR                      ;TAKING 0-->63 IN AX RETURNING ROW IN AL , COL IN AH 
        
         MOV AH,0 
         MOV CL , 8D 
