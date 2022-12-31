@@ -3477,7 +3477,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   local receive
 
                   connect
-cursorLoop:
+    cursorLoop:
                   PRINTCURRTIMER
                   CALL FAR PTR FREEZEPROC
                   mov         ah,01
@@ -3718,32 +3718,46 @@ jmp cursorLoop
 
 ENDM CURSORMOV
 
+
+
 handlereceive MACRO
   local quit
   local handleq
   local faultinsert
   local insertinq1
+  local temp1
+  local temp2
+  local temp3
+  local temp4
+
       ;Receiving a value       
                   ;Check that Data Ready
                   mov         dx , 3FDH         ; Line Status Register
           
                   in          al , dx
                   AND         al , 00000001b
-                  JZ          quit               ;jump untill it recive data
-
+                  jnz temp4
+                  Jmp          quit               ;jump untill it recive data
+                  temp4:
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
                   in          al , dx
 
                   and al,10000000b
-                  jz handleq
+                  jnztemp3
+                  jmp handleq
+                  temp3:
                   ;print char TODO                  ;char recived then print it
                   jmp quit
                   handleq:
                   cmp received1, 127d
-                  je insertinq1
+                  jne temp2
+                  jmp insertinq1
+                  temp2:
                   cmp al,127D
-                  je faultinsert
+                  jne temp1
+                  jmp faultinsert
+                  temp1:
                   mov received2,al                    ;2 q recievied take action
 
                   mov al,64D                    ; convert (64 - recieved 1) to x and y
@@ -5243,11 +5257,11 @@ connect MACRO
   border2filehandle DW  ?
   border2data       db  border2width*border2height dup(0)
 
-  freezewidth      equ 60D
-  freezeheight     equ 60D
-  freezefilename   db  'freeze.bin',0
-  freezefilehandle DW  ?
-  freezedata       db  freezewidth*freezeheight dup(0)
+  freezewidth       equ 60D
+  freezeheight      equ 60D
+  freezefilename    db  'freeze.bin',0
+  freezefilehandle  DW  ?
+  freezedata        db  freezewidth*freezeheight dup(0)
 
   gridState         db  64  dup(0)
   colorState        db  64  dup(0)
@@ -5320,117 +5334,117 @@ connect MACRO
 .CODE
 MAIN PROC FAR
   ;INITIALIZING
-                call           GETDATA
-                CALL           CLS
+                call             GETDATA
+                CALL             CLS
   ;OPENING AND READING AND CLOSING BIN FILES
-                OpenFile       bbishopfilename, bbishopfilehandle
-                ReadData       bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                CloseFile      bbishopfilehandle
+                OpenFile         bbishopfilename, bbishopfilehandle
+                ReadData         bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                CloseFile        bbishopfilehandle
 
-                OpenFile       bkingfilename, bkingfilehandle
-                ReadData       bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                CloseFile      bkingfilehandle
+                OpenFile         bkingfilename, bkingfilehandle
+                ReadData         bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                CloseFile        bkingfilehandle
 
-                OpenFile       bknightfilename, bknightfilehandle
-                ReadData       bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                CloseFile      bknightfilehandle
+                OpenFile         bknightfilename, bknightfilehandle
+                ReadData         bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                CloseFile        bknightfilehandle
 
-                OpenFile       bpawnfilename, bpawnfilehandle
-                ReadData       bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                CloseFile      bpawnfilehandle
+                OpenFile         bpawnfilename, bpawnfilehandle
+                ReadData         bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                CloseFile        bpawnfilehandle
 
-                OpenFile       bqueenfilename, bqueenfilehandle
-                ReadData       bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                CloseFile      bqueenfilehandle
+                OpenFile         bqueenfilename, bqueenfilehandle
+                ReadData         bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                CloseFile        bqueenfilehandle
 
-                OpenFile       brockfilename, brockfilehandle
-                ReadData       brockfilehandle ,brockwidth,brockheight,brockdata
-                CloseFile      brockfilehandle
+                OpenFile         brockfilename, brockfilehandle
+                ReadData         brockfilehandle ,brockwidth,brockheight,brockdata
+                CloseFile        brockfilehandle
 
   ;--white piecies----
-                OpenFile       wbishopfilename, wbishopfilehandle
-                ReadData       wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                CloseFile      wbishopfilehandle
+                OpenFile         wbishopfilename, wbishopfilehandle
+                ReadData         wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                CloseFile        wbishopfilehandle
 
-                OpenFile       wkingfilename, wkingfilehandle
-                ReadData       wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                CloseFile      wkingfilehandle
+                OpenFile         wkingfilename, wkingfilehandle
+                ReadData         wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                CloseFile        wkingfilehandle
 
-                OpenFile       wknightfilename, wknightfilehandle
-                ReadData       wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                CloseFile      wknightfilehandle
+                OpenFile         wknightfilename, wknightfilehandle
+                ReadData         wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                CloseFile        wknightfilehandle
 
-                OpenFile       wpawnfilename, wpawnfilehandle
-                ReadData       wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                CloseFile      wpawnfilehandle
+                OpenFile         wpawnfilename, wpawnfilehandle
+                ReadData         wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                CloseFile        wpawnfilehandle
 
-                OpenFile       wqueenfilename, wqueenfilehandle
-                ReadData       wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                CloseFile      wqueenfilehandle
+                OpenFile         wqueenfilename, wqueenfilehandle
+                ReadData         wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                CloseFile        wqueenfilehandle
 
-                OpenFile       wrockfilename, wrockfilehandle
-                ReadData       wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-                CloseFile      wrockfilehandle
+                OpenFile         wrockfilename, wrockfilehandle
+                ReadData         wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                CloseFile        wrockfilehandle
 
   ;--border-----
-                OpenFile       borderfilename, borderfilehandle
-                ReadData       borderfilehandle ,borderwidth,borderheight,borderdata
-                CloseFile      borderfilehandle
+                OpenFile         borderfilename, borderfilehandle
+                ReadData         borderfilehandle ,borderwidth,borderheight,borderdata
+                CloseFile        borderfilehandle
 
-                OpenFile       border2filename, border2filehandle
-                ReadData       border2filehandle ,border2width,border2height,border2data
-                CloseFile      border2filehandle
+                OpenFile         border2filename, border2filehandle
+                ReadData         border2filehandle ,border2width,border2height,border2data
+                CloseFile        border2filehandle
 
-                OpenFile       selectfilename, selectfilehandle
-                ReadData       selectfilehandle ,selectwidth,selectheight,selectdata
-                CloseFile      selectfilehandle
+                OpenFile         selectfilename, selectfilehandle
+                ReadData         selectfilehandle ,selectwidth,selectheight,selectdata
+                CloseFile        selectfilehandle
 
-                OpenFile       select2filename, select2filehandle
-                ReadData       select2filehandle ,select2width,select2height,select2data
-                CloseFile      select2filehandle
+                OpenFile         select2filename, select2filehandle
+                ReadData         select2filehandle ,select2width,select2height,select2data
+                CloseFile        select2filehandle
 
-                OpenFile       freezefilename, freezefilehandle
-                ReadData       freezefilehandle ,freezewidth,freezeheight,freezedata
-                CloseFile      freezefilehandle
+                OpenFile         freezefilename, freezefilehandle
+                ReadData         freezefilehandle ,freezewidth,freezeheight,freezedata
+                CloseFile        freezefilehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName   nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
-                movecursor     17H,0AH
-                ShowMessage    proceed
-                call           waitkey
+                validateName     nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+                movecursor       17H,0AH
+                ShowMessage      proceed
+                call             waitkey
   ;CHOICE MENU
   faraway:      
 
-                call           CLS
-                movecursor     17H,03H
-                ShowMessage    op1
-                movecursor     17H,08H
-                ShowMessage    op2
-                movecursor     17H,0DH
-                ShowMessage    op3
+                call             CLS
+                movecursor       17H,03H
+                ShowMessage      op1
+                movecursor       17H,08H
+                ShowMessage      op2
+                movecursor       17H,0DH
+                ShowMessage      op3
                 STATUSLINE
-                MAINMAIN       thename,thename
+                MAINMAIN         thename,thename
   ;GAME SCREEN
   play:         
-                CALL           EnterGraphics
-                mov            curColCursor,00h
-                mov            curRowCursor,07h
-                mov            curColCursor2,00h
-                mov            curRowCursor2,00h
-                mov            whiterow,0D
-                mov            whitecol,0D
-                mov            blackrow,0D
-                mov            blackcol,10D
-                INITIALIZEGRID 42H,06H                                                                   ;0FH,08H
-                DrawGrid       150D,0D,colorState[1],colorState[0]
-                DrawPiecies    150D,0D
+                CALL             EnterGraphics
+                mov              curColCursor,00h
+                mov              curRowCursor,07h
+                mov              curColCursor2,00h
+                mov              curRowCursor2,00h
+                mov              whiterow,0D
+                mov              whitecol,0D
+                mov              blackrow,0D
+                mov              blackcol,10D
+                INITIALIZEGRID   42H,06H                                                                   ;0FH,08H
+                DrawGrid         150D,0D,colorState[1],colorState[0]
+                DrawPiecies      150D,0D
 
-                DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+                DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                DRAWWITHSOURCE   border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
 
   ;----------------------
   ; getDrawPosition 30d,0d,whiterow,whitecol
@@ -5453,7 +5467,7 @@ MAIN PROC FAR
   curs:         
                 CURSORMOV
 
-                JMP            curs
+                JMP              curs
 
                 EXT
 MAIN ENDP
@@ -5461,110 +5475,108 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                             ;GET DATA
-                MOV            AX,@DATA
-                MOV            DS,AX
+GETDATA PROC                                                                                               ;GET DATA
+                MOV              AX,@DATA
+                MOV              DS,AX
                 ret
 GETDATA ENDP
 
-CLS PROC                                                                                                 ;CLEAR SCREEN
-                MOV            AX,0003H                                                                  ;;ah == 0 set to graph mod the al = 3 return to text mode
-                INT            10H
+CLS PROC                                                                                                   ;CLEAR SCREEN
+                MOV              AX,0003H                                                                  ;;ah == 0 set to graph mod the al = 3 return to text mode
+                INT              10H
                 ret
 CLS ENDP
 
-EnterText PROC                                                                                           ;ENTER TEXT MODE
-                MOV            AX,3H
-                INT            10H
+EnterText PROC                                                                                             ;ENTER TEXT MODE
+                MOV              AX,3H
+                INT              10H
                 ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                       ;ENTER GRAPHICS MODE
-                MOV            AX,4F02H
-                MOV            BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
-                INT            10H
+EnterGraphics PROC                                                                                         ;ENTER GRAPHICS MODE
+                MOV              AX,4F02H
+                MOV              BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
+                INT              10H
                 ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                             ;wait for key
-                MOV            AH , 0
-                INT            16h
+waitkey PROC                                                                                               ;wait for key
+                MOV              AH , 0
+                INT              16h
                 ret
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                      ;ENTER GRAPHICS MODE
+FREEZEPROC PROC   FAR                                                                                      ;ENTER GRAPHICS MODE
        
-                  mov                   al,0
-                  mov                   ah,0
-    Nloop9:       
-                  mov                   AL,0
-    Nloop10:      
-                  mov                  BYTE PTR  dummyData1,al
-                  mov                  BYTE PTR  dummyData2,ah
-                  pusha
-                  GETARINDEXBYBYTE      dummyData1,dummyData2
+                mov              al,0
+                mov              ah,0
+  Nloop9:       
+                mov              AL,0
+  Nloop10:      
+                mov              BYTE PTR  dummyData1,al
+                mov              BYTE PTR  dummyData2,ah
+                pusha
+                GETARINDEXBYBYTE dummyData1,dummyData2
                 
-                  ; Code for checking the freeze  ----------------------------------------------------------
-                  mov SI,BX
+  ; Code for checking the freeze  ----------------------------------------------------------
+                mov              SI,BX
                  
-                  GETTIME
-                  mov ax,si
-                  mov cl,2D
-                  mul cl
-                  mov si,ax
-                  CMP word ptr timeState[si],0
-                  JE LEAVEIT
-                  dec BX
-                  dec BX
-                  dec BX
-                  CMP word ptr timeState[si],BX
+                GETTIME
+                mov              ax,si
+                mov              cl,2D
+                mul              cl
+                mov              si,ax
+                CMP              word ptr timeState[si],0
+                JE               LEAVEIT
+                dec              BX
+                dec              BX
+                dec              BX
+                CMP              word ptr timeState[si],BX
                  
-                  Jle  temp151
-                  ; U STILL IN FREEZE DUDE 
-                  pusha
-                  DRAWWITHSOURCE freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
-                  popa
-                  LEAVEIT:
-                  JMP  nbreak6
-                  temp151:
-                  mov word ptr timeState[si],0D
-                  popa
-                  ; Converting byte to word coz dummydata 1 , 2 are bytes
+                Jle              temp151
+  ; U STILL IN FREEZE DUDE
+                pusha
+                DRAWWITHSOURCE   freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
+                popa
+  LEAVEIT:      
+                JMP              nbreak6
+  temp151:      
+                mov              word ptr timeState[si],0D
+                popa
+  ; Converting byte to word coz dummydata 1 , 2 are bytes
           
-                  MOV                  BYTE PTR  dummyData3,0D
-                  MOV                  BYTE PTR  dummyData4,0D
-                  ADD                  BYTE PTR  dummyData3,al
-                  ADD                  BYTE PTR  dummyData4,ah
+                MOV              BYTE PTR  dummyData3,0D
+                MOV              BYTE PTR  dummyData4,0D
+                ADD              BYTE PTR  dummyData3,al
+                ADD              BYTE PTR  dummyData4,ah
 
-                  PUSHA
-                  PUSHA
-                  UPDATECELL   dummyData3,dummyData4,150D,0D
-                  POPA
+                PUSHA
+                PUSHA
+                UPDATECELL       dummyData3,dummyData4,150D,0D
+                POPA
                  
-              ; ---------------------------------------------------------------------------------------------
-    Nbreak6:      
-                  popa
-                  inc                   al
-                  cmp                   al,8
-                  je                   TMP2
-                  JMP far ptr                   Nloop10
-    TMP2:         
-                  inc                   ah
-                  cmp                   ah,8
-                  je                   TMP3
-                  JMP far ptr          Nloop9
-    TMP3: 
-                BREAK80:
+  ; ---------------------------------------------------------------------------------------------
+  Nbreak6:      
+                popa
+                inc              al
+                cmp              al,8
+                je               TMP2
+                JMP              far ptr                   Nloop10
+  TMP2:         
+                inc              ah
+                cmp              ah,8
+                je               TMP3
+                JMP              far ptr          Nloop9
+  TMP3:         
+  BREAK80:      
                 retf
 FREEZEPROC ENDP
 
-
-
-CONVERT1D_2D PROC   FAR                      ;ENTER GRAPHICS MODE
+CONVERT1D_2D PROC   FAR                                                                                    ;1D -> 2D
        
-        MOV AH,0 
-        MOV CL , 8D 
-        DIV CL 
+                MOV              AH,0
+                MOV              CL , 8D
+                DIV              CL
 
                 retf
 CONVERT1D_2D ENDP
