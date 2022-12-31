@@ -3431,7 +3431,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   connect
 cursorLoop:
                   PRINTCURRTIMER
-
+                  CALL FAR PTR FREEZEPROC
                   mov         ah,01
                   int         16h
                   JNZ temp24
@@ -5159,6 +5159,12 @@ connect MACRO
   border2filehandle DW  ?
   border2data       db  border2width*border2height dup(0)
 
+  freezewidth      equ 60D
+  freezeheight     equ 60D
+  freezefilename   db  'freeze.bin',0
+  freezefilehandle DW  ?
+  freezedata       db  freezewidth*freezeheight dup(0)
+
   gridState         db  64  dup(0)
   colorState        db  64  dup(0)
   cursorState       db  64  dup(0)                                                                                                  ; 0 for not cursor 1 for cursor
@@ -5295,6 +5301,10 @@ MAIN PROC FAR
                 OpenFile       select2filename, select2filehandle
                 ReadData       select2filehandle ,select2width,select2height,select2data
                 CloseFile      select2filehandle
+
+                OpenFile       freezefilename, freezefilehandle
+                ReadData       freezefilehandle ,freezewidth,freezeheight,freezedata
+                CloseFile      freezefilehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
@@ -5395,7 +5405,71 @@ waitkey PROC                                                                    
                 ret
 waitkey ENDP
 
+FREEZEPROC PROC   FAR                      ;ENTER GRAPHICS MODE
+       
+                  mov                   al,0
+                  mov                   ah,0
+    Nloop9:       
+                  mov                   AL,0
+    Nloop10:      
+                  mov                  BYTE PTR  dummyData1,al
+                  mov                  BYTE PTR  dummyData2,ah
+                  pusha
+                  GETARINDEXBYBYTE      dummyData1,dummyData2
+                
+                  ; Code for checking the freeze  ----------------------------------------------------------
+                  mov SI,BX
+                 
+                  GETTIME
+                  mov ax,si
+                  mov cl,2D
+                  mul cl
+                  mov si,ax
+                  CMP word ptr timeState[si],0
+                  JE LEAVEIT
+                  dec BX
+                  dec BX
+                  dec BX
+                  CMP word ptr timeState[si],BX
+                 
+                  Jle  temp151
+                  ; U STILL IN FREEZE DUDE 
+                  pusha
+                  DRAWWITHSOURCE freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
+                  popa
+                  LEAVEIT:
+                  JMP  nbreak6
+                  temp151:
+                  mov word ptr timeState[si],0D
+                  popa
+                  ; Converting byte to word coz dummydata 1 , 2 are bytes
+          
+                  MOV                  BYTE PTR  dummyData3,0D
+                  MOV                  BYTE PTR  dummyData4,0D
+                  ADD                  BYTE PTR  dummyData3,al
+                  ADD                  BYTE PTR  dummyData4,ah
 
+                  PUSHA
+                  PUSHA
+                  UPDATECELL   dummyData3,dummyData4,150D,0D
+                  POPA
+                 
+              ; ---------------------------------------------------------------------------------------------
+    Nbreak6:      
+                  popa
+                  inc                   al
+                  cmp                   al,8
+                  je                   TMP2
+                  JMP far ptr                   Nloop10
+    TMP2:         
+                  inc                   ah
+                  cmp                   ah,8
+                  je                   TMP3
+                  JMP far ptr          Nloop9
+    TMP3: 
+                BREAK80:
+                retf
+FREEZEPROC ENDP
 
 
 END MAIN
