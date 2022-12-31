@@ -3758,10 +3758,18 @@ handlereceive MACRO
                   temp1:
                   mov received2,al                    ;2 q recievied take action
 
-                  mov al,63D                    ; convert (64 - recieved 1) to x and y
+                  mov al,63D                    ; convert (63 - recieved 1) to x and y
                   sub al,received1
                   
                   MOV              AH,0
+
+                  pusha
+                  mov ax,received1
+                  TOSTRING nameq
+                  movecursor 2d,31d
+                  ShowMessage nameq
+                  popa
+
                   MOV              CL , 8D
                   DIV              CL
                   mov curRowCursor2,al              ; mov them to current index 2
@@ -3770,7 +3778,7 @@ handlereceive MACRO
                   mov startColCursor2,ah
                   FIRSTQHANDLE2                       ; call firstqhandle2
 
-                  mov al,63D                          ; convert (64 - recieved 2) to x and y
+                  mov al,63D                          ; convert (63 - recieved 2) to x and y
                   sub al,received2
                   
                   MOV              AH,0
