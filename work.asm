@@ -582,9 +582,11 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                   JZ          AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
+                  MOV AH,0
                   GETARINDEXBYBYTE startRowCursor,startColCursor ; out in bx
                   mov         dx , 3F8H         ; Transmit data register
                   mov         al,bl               ;send start cursor
+   
                   out         dx , al
                 ;------------------------------
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3150,9 +3152,11 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                                 out         dx , al
                                 jmp sendwrong
                                 sendright:
+                        
                                 mov         dx , 3F8H         ; Transmit data register
                                 mov         al,bl               ;send right
                                 out         dx , al
+                                  
                                 sendwrong:
                               ;------------------------------
 
@@ -3740,14 +3744,22 @@ handlereceive MACRO
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
                   in          al , dx
-
-                  mov bl,al
-                  and al,10000000b
-                  jnz temp3
-                  jmp handleq
-                  temp3:
-                  ;print char TODO                  ;char recived then print it
-                  jmp quit
+                  MOV              AH,0
+                  ; mov bl , al
+                  ; and bl,10000000b
+                  ; jnz temp3
+                  ; jmp handleq
+                  ; temp3:
+                  ; ;print char TODO                  ;char recived then print it
+                  ; jmp quit
+                  
+                       pusha
+                  mov al,received1
+                  TOSTRING nameq
+                  movecursor 2d,31d
+                  ShowMessage nameq
+                  popa
+                  
                   handleq:
                   cmp received1, 127d
                   jne temp2
@@ -3763,6 +3775,14 @@ handlereceive MACRO
                   sub al,received1
                   
                   MOV              AH,0
+
+                  pusha
+                  mov ax,received1
+                  TOSTRING nameq
+                  movecursor 2d,31d
+                  ShowMessage nameq
+                  popa
+
                   MOV              CL , 8D
                   DIV              CL
                   mov curRowCursor2,al              ; mov them to current index 2
@@ -5127,6 +5147,8 @@ PRINTCURRTIMER MACRO ;This Macro is Responsible for printing the time on the scr
 ENDM PRINTCURRTIMER
 
 connect MACRO
+  local notyet
+  local temp4
   ;000c => 9600 baud rate
     ;Set LSB byte of the Baud Rate Divisor Latch
                   mov         dx,3f8h
@@ -5144,6 +5166,18 @@ connect MACRO
                   mov         dx,3fbh
                   mov         al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
                   out         dx,al
+    
+
+
+                  notyet:
+                  mov         dx , 3FDH         ; Line Status Register
+                  in          al , dx
+                  AND         al , 00000001b
+                  jnz temp4
+                  Jmp          notyet               ;jump if no recive data
+                  temp4:
+                  mov         dx , 03F8H
+                  in          al , dx
   ENDM connect
 
 .MODEL SMALL
@@ -5157,6 +5191,8 @@ connect MACRO
   line              db  '---------------------------------------------------','$'
   WINNERISBLACK     db  'winner is black','$'
   WINNERISWHITE     db  'winner is white','$'
+
+  VAR               DB  '             ','$'
 
   brockdata         db  60D*60D dup(0)
   bknightdata       db  60D*60D dup(0)
