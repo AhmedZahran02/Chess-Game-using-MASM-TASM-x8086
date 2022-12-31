@@ -4400,13 +4400,251 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
 
 ENDM MAINMAIN
 
+MAINMAINSERIAL MACRO player1Name,player2Name ;This Macro is Responsible for moving between screens when player press f2 or esc
+    LOCAL check_for_anotherkey
+    LOCAL check_for_f2
+    LOCAL check_for_esc
+    LOCAL LEAVERECIVING
+    LOCAL NOTF1
+
+    mov dx,3fbh           ; Line Control Register
+    mov al,10000000b      ;Set Divisor Latch Access Bit
+    out dx,al
+
+
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+    mov dx,3f8h
+    mov al,0ch
+    out dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+    mov dx,3f9h
+    mov al,00h
+    out dx,al
+
+
+    ;Set port configuration
+    mov dx,3fbh
+    mov al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+    out dx,al
+
+
+    
+    check_for_anotherkey:
+
+
+;;;;;;;;;;;;;;;;;;;; GET KEY
+    mov ah,1
+    int 16h
+    jz  SEEIFRECIVING ;IF YES
+    mov ah,0
+    int 16h ;STORE THE PRESSED KEY AT key-AH:scancode , AL:ASCII)
+;;;;;;;;;;;;;;;;;;;; GET KEY
+
+    cmp al,01Bh;esc ascii
+    jz skipescchk
+    JMP far ptr skippxx;;;;;;;;;;;;;;;;;;
+    skipescchk:
+    ;exist game
+    MOV AH, 4CH
+    MOV AL, 01 ;your return code.
+    INT 21H
+    skippxx:
+    ;Sending KEY VALUE a value
+
+    ;Check that Transmitter Holding Register is Empty
+    mov dx , 3FDH         ; Line Status Register
+
+    In  al , dx           ;Read Line Status 
+    AND al , 00100000b
+    jz SEEIFRECIVING             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+    mov dx , 3F8H         ; Transmit data register
+    mov al,AH   ; al,VALUE
+    out dx , al
+    ;JMP far ptr         check_for_anotherkey
+
+SEEIFRECIVING:
+
+
+
+    cmp ah,3bh;f1 scan code
+    jz skipf2chk;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    JMP far ptr check_for_f2
+    skipf2chk:
+    ;open chat
+
+    mov al,INVITE
+    cmp al, 3
+    jz addthree1
+    mov INVITE , 3
+    mov senttf1 ,1
+    mov recivedf1,0
+    JMP far ptr  movthree1
+    addthree1:
+    mov al ,recivedf1
+    cmp al,1
+    jnz movthree1
+    add INVITE , 3
+    movthree1:
+
+    ;OPENCHAT player1Name+2,player2Name+2
+    check_for_f2:
+
+
+    cmp ah,3ch;f2 scane code
+    jnz check_for_esc
+    ;open game
+
+    mov al,INVITE
+    cmp al, 2
+    jz addtwo1
+    mov INVITE , 2
+    mov senttf2,1
+    mov recivedf2,0
+    JMP far ptr  movtwo1
+    addtwo1:
+    mov al,recivedf2
+    cmp al,1
+    jnz movtwo1
+    add INVITE , 2
+    movtwo1:
+
+    ;JMP far ptr play
+
+    check_for_esc:
+
+    mov al,INVITE
+    cmp al,6
+    jz chattt
+    jmp seeifplay
+    chattt:
+    OPENCHAT player1Name+2,player2Name+2
+    seeifplay:
+
+    cmp al,4
+    jz playyy
+    jmp seeifout
+    playyy:
+    JMP far ptr play
+    seeifout:
+
+          ;Receiving a value     
+    ;Check that Data Ready
+    mov dx , 3FDH         ; Line Status Register
+          
+    in  al , dx
+    AND al , 00000001b
+    jnz llllll
+    jmp far ptr LEAVERECIVING               ;jump IF NOT  it recive data
+    llllll:
+    ;If Ready read the VALUE in Receive data register
+    mov dx , 03F8H
+    in  al , dx
+    mov AH , al
+
+    ; SEE WHAT HAVE YOU RECIVED
+
+    ;IF F1 PRINT INVATATION
+    cmp ah,3bh;f1 scan code
+    jz llx;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    JMP far ptr  NOTF1
+    llx:
+
+    mov al,INVITE
+    cmp al, 3
+    jz addthree
+    mov INVITE , 3
+    mov recivedf1,1
+    mov senttf1,0
+    JMP far ptr  movthree
+    addthree:
+    mov al,senttf1
+    cmp al,1
+    jnz movthree
+    add INVITE , 3
+    movthree:
+
+    ;;;;;;;;;print message
+    mov ah, 9
+    mov dx, offset F1_INVITATION
+    int 21h
+;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
+    mov ah, 6               
+    mov al, 1               ; number of lines to scroll
+    mov bh, 07               ; attribute
+    mov ch, 18               ; row top
+    mov cl, 0               ; col left
+    mov dh, 25              ; row bottom
+    mov dl, 80              ; col right
+    int 10h
+;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
+    movecursorWithPageNumber 20,20,0
+    MOV AH,0 
+    NOTF1:
+
+
+    ;IF F2 PRINT GASER WANTS TO PLAY
+    cmp ah,3ch;f2 scan code
+    jz lllxx;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    jmp far ptr NOTF2
+    lllxx:
+
+    mov al,INVITE
+    cmp al, 2
+    jz addtwo
+    mov INVITE , 2
+    mov recivedf2 ,1
+    mov senttf2,0
+    JMP far ptr  movtwo
+    addtwo:
+    mov al, senttf2
+    cmp al, 1
+    jnz movtwo
+    add INVITE , 2
+    movtwo:
+
+    ;;;;;;;;;print message
+    mov ah, 9
+    mov dx, offset F2_INVITATION
+    int 21h
+;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
+    mov ah, 6               
+    mov al, 1               ; number of lines to scroll
+    mov bh, 07               ; attribute
+    mov ch, 18               ; row top
+    mov cl, 0               ; col left
+    mov dh, 25              ; row bottom
+    mov dl, 80              ; col right
+    int 10h
+;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
+    movecursorWithPageNumber 20,20,0
+    MOV AH,0 
+    NOTF2:
+    LEAVERECIVING:
+
+JMP far ptr         check_for_anotherkey
+
+ENDM MAINMAINSERIAL
+
+RESETMAINFLAGS MACRO F1,F2,F3,F4,F5
+MOV F1,0
+MOV F3,0
+MOV F4,0
+MOV F5,0
+MOV F6,0
+ENDM RESETMAINFLAGS
+
 STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to players
   LOCAL LOOPXXXX
   LOCAL WHITEDIDNTWIN
   MOV BL,10
   ;;;;;;;;;;;;;;;;; --------- lined
   LOOPXXXX:
-  movecursorWithPageNumber BL,18,0
+  movecursorWithPageNumber BL,17,0
   mov ah,2
   MOV DL,'-' 
   int 21h
@@ -4414,7 +4652,7 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   CMP BL,70
   JNZ LOOPXXXX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  movecursorWithPageNumber 30,20,0
+  movecursorWithPageNumber 20,20,0
 
   CMP WINNER,1
   JNZ WHITEDIDNTWIN
@@ -5271,6 +5509,13 @@ connect MACRO
   op1               db  'To start chatting press F1','$'
   op2               db  'To start the game press F2','$'
   op3               db  'To end the program press ESC','$'
+  F1_INVITATION     DB  'SENT YOU A CHAT INVITATION PRESS F1 TO PROCCED','$'
+  F2_INVITATION     DB  'SENT YOU A GAME INVITATION PRESS F2 TO PROCCED','$'
+  INVITE            DB  0
+  senttf1             DB  0
+  recivedf1           DB  0
+  senttf2             DB  0
+  recivedf2           DB  0
   ;------------black pieces---------------
   bbishopwidth      equ 60D
   bbishopheight     equ 60D
@@ -5529,15 +5774,18 @@ MAIN PROC FAR
   ;CHOICE MENU
   faraway:      
 
-                call             CLS
-                movecursor       17H,03H
-                ShowMessage      op1
-                movecursor       17H,08H
-                ShowMessage      op2
-                movecursor       17H,0DH
-                ShowMessage      op3
-                STATUSLINE
-                MAINMAIN         thename,thename
+          call           far ptr     CLS
+          movecursor     17H,03H
+          ShowMessage    op1
+          movecursor     17H,08H
+          ShowMessage    op2
+          movecursor     17H,0DH
+          ShowMessage    op3
+          STATUSLINE
+          ;MAINMAIN       thename,thename
+  
+          RESETMAINFLAGS INVITE,senttf1,recivedf1,senttf2,recivedf2
+          MAINMAINSERIAL thename,thename
   ;GAME SCREEN
   play:         
                 CALL             EnterGraphics
