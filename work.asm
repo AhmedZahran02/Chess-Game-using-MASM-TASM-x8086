@@ -108,7 +108,7 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                 POP DX
                 POP CX
                 CMP BX,0H
-                Je far ptr GOAWAY
+                Je  GOAWAY
         ; Drawing loop
                       mov di,0
         drawLoop:     
@@ -117,19 +117,19 @@ DRAW MACRO imgwidth,imgheight,X,Y,A,B      ;DRAW IMAGE
                       MOV  AL,BYTE PTR[BX]
                       MOV AH,0ch
                       cmp al,0FFH
-                      Je far ptr skp
+                      Je  skp
                       INT 10H
                       skp:
                       INC BX
                       INC CX
                       INC SI
                       CMP SI,WORD ptr imgwidth
-                      Jne far ptr innerloop
+                      Jne  innerloop
                       SUB CX,SI
                       INC DX
                       INC DI
                       CMP DI,WORD ptr imgheight
-                      Jne far ptr  drawLoop
+                      Jne   drawLoop
                       GOAWAY:
                 ENDM        DRAW
 
