@@ -4497,7 +4497,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                 
                   mov         ah,01
                   int         16h
-                  Jz far ptr          AGAIN
+                  jz          AGAIN
 
                   mov         ah,0
                   int         16h
@@ -4553,7 +4553,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
 
                   In          al , dx           ;Read Line Status
                   AND         al , 00100000b
-                  Jz far ptr          AGAIN             ;jump untill it is empty
+                  jz         AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
                   mov         dx , 3F8H         ; Transmit data register
@@ -4573,7 +4573,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
           
                   in          al , dx
                   AND         al , 00000001b
-                  Jz far ptr          CHK               ;jump untill it recive data
+                  jz          CHK               ;jump untill it recive data
 
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
@@ -5069,7 +5069,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
 
                   In          al , dx           ;Read Line Status
                   AND         al , 00100000b
-                  Jz far ptr          AGAIN             ;jump untill it is empty
+                  jz          AGAIN             ;jump untill it is empty
 
     ;If empty put the VALUE in Transmit data register
                   mov         dx , 3F8H         ; Transmit data register
@@ -5087,7 +5087,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
           
                   in          al , dx
                   AND         al , 00000001b
-                  Jz far ptr          CHK               ;jump if no recive data
+                  jz         CHK               ;jump if no recive data
 
     ;If Ready read the VALUE in Receive data register
                   mov         dx , 03F8H
