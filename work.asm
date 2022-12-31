@@ -1165,25 +1165,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp30
-JMP far ptr break12
+JMP  break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp40
-JMP far ptr break1
+JMP  break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov byte ptr cursorState[bx],1
-JMP far ptr First_Loop
+JMP  First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp26
-JMP far ptr break12
+JMP  break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1203,25 +1203,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp31
-JMP far ptr break22
+JMP  break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp32
-JMP far ptr break2
+JMP  break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Second_Loop
+JMP  Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp27
-JMP far ptr break22
+JMP  break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1241,25 +1241,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp33
-JMP far ptr break32
+JMP  break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp34
-JMP far ptr break3
+JMP  break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Third_Loop
+JMP  Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp28
-JMP far ptr break32
+JMP  break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1279,25 +1279,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp35
-JMP far ptr break42
+JMP  break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp36
-JMP far ptr break4
+JMP  break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Fourth_Loop
+JMP  Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp29
-JMP far ptr break42
+JMP  break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1347,25 +1347,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp30
-JMP far ptr break12
+JMP  break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp40
-JMP far ptr break1
+JMP  break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-JMP far ptr First_Loop
+JMP  First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
 jne temp26
-JMP far ptr break12
+JMP  break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1385,25 +1385,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp31
-JMP far ptr break22
+JMP  break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp32
-JMP far ptr break2
+JMP  break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-JMP far ptr Second_Loop
+JMP  Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
 jne temp27
-JMP far ptr break22
+JMP  break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1423,25 +1423,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp33
-JMP far ptr break32
+JMP  break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp34
-JMP far ptr break3
+JMP  break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-JMP far ptr Third_Loop
+JMP  Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
 jne temp28
-JMP far ptr break32
+JMP  break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1461,25 +1461,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp35
-JMP far ptr break42
+JMP  break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp36
-JMP far ptr break4
+JMP  break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState2[bx],1
-JMP far ptr Fourth_Loop
+JMP  Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,0
 jne temp29
-JMP far ptr break42
+JMP  break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1530,25 +1530,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp30
-JMP far ptr break12
+JMP  break12
 temp30:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp40
-JMP far ptr break1
+JMP  break1
 temp40:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr First_Loop
+JMP  First_Loop
 break1:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp26
-JMP far ptr break12
+JMP  break12
 temp26:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1569,25 +1569,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp31
-JMP far ptr break22
+JMP  break22
 temp31:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp32
-JMP far ptr break2
+JMP  break2
 temp32:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Second_Loop
+JMP  Second_Loop
 break2:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp27
-JMP far ptr break22
+JMP  break22
 temp27:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1608,25 +1608,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp33
-JMP far ptr break32
+JMP  break32
 temp33:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp34
-JMP far ptr break3
+JMP  break3
 temp34:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Third_Loop
+JMP  Third_Loop
 break3:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp28
-JMP far ptr break32
+JMP  break32
 temp28:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -1647,25 +1647,25 @@ INSIDEGRID dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp35
-JMP far ptr break42
+JMP  break42
 temp35:
 push ax
 ISEMPTY dummyData1,dummyData2
 pop ax 
 cmp bx,0
 jne temp36
-JMP far ptr break4
+JMP  break4
 temp36:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
 pop ax
 mov cursorState[bx],1
-JMP far ptr Fourth_Loop
+JMP  Fourth_Loop
 break4:
 ISWHITEBYTE dummyData1,dummyData2
 cmp bx,1
 jne temp29
-JMP far ptr break42
+JMP  break42
 temp29:
 push ax
 GETARINDEXBYBYTE  dummyData1,dummyData2
@@ -3911,7 +3911,7 @@ PUSHA
 CMP BYTE PTR gridState[BX],5D
 je BREAK8
 BREAK7:
-JMP far ptr BREAK6
+JMP  BREAK6
 BREAK8:
          pusha
         movecursor 2d,31d
@@ -3922,12 +3922,12 @@ popa
 inc al
 cmp al,8
 je beforeloop10
-JMP far ptr loop10
+JMP  loop10
 beforeloop10:
 inc ah
 cmp ah,8
 je beforeloop9
-JMP far ptr loop9
+JMP  loop9
 beforeloop9:
 
 
