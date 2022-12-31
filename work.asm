@@ -462,7 +462,7 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                 ;   PAWNAVALIABLEMOVES curRowCursor,curColCursor
                 ;   ;KnightMovements curRowCursor,curColCursor
                 ;   cmp bl,0FFH
-                ;   Jnz far ptr getoutt
+                ;   jnz getoutt
                 ;   JMP far ptr outterr
                 ;   getoutt:
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2051,7 +2051,7 @@ INC CX
 ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
 MOV DL,0
 CMP BX,0
-Jnz far ptr CONTINUOUECHECK
+jnz CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2088,7 +2088,7 @@ DEC CX
 ISEMPTY AL,CL ;NOT EMPTY
 MOV DH,0
 CMP BX,0
-Jnz far ptr CONTINUOUECHECK2
+jnz CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2103,7 +2103,7 @@ MOV DH,1 ;LEFT HAS FOE
 CONTINUOUECHECK2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
 CMP DL,1
-Jnz far ptr RIGHTNOFOE
+jnz RIGHTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2116,7 +2116,7 @@ MOV BYTE PTR cursorState[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
-Jnz far ptr LEFTNOFOE
+jnz LEFTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2148,7 +2148,7 @@ DEC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE AX,CX
 CMP BX,1
-Jnz far ptr ITSVALID4
+jnz ITSVALID4
 JMP far ptr CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
@@ -2244,7 +2244,7 @@ INC CX
 ISEMPTY AL,CL ;NOT EMPTY 1 IF NOT EMPETY
 MOV DL,0
 CMP BX,0
-Jnz far ptr CONTINUOUECHECK
+jnz CONTINUOUECHECK
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2281,7 +2281,7 @@ DEC CX
 ISEMPTY AL,CL ;NOT EMPTY
 MOV DH,0
 CMP BX,0
-Jnz far ptr CONTINUOUECHECK2
+jnz CONTINUOUECHECK2
 ;;;;;;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2296,7 +2296,7 @@ MOV DH,1 ;LEFT HAS FOE
 CONTINUOUECHECK2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RIGHT SIDE
 CMP DL,1
-Jnz far ptr RIGHTNOFOE
+jnz RIGHTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2309,7 +2309,7 @@ MOV BYTE PTR cursorState2[BX],1
 RIGHTNOFOE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LEFT SIDE
 CMP DH,1
-Jnz far ptr LEFTNOFOE
+jnz LEFTNOFOE
 ;;;;;;;;;;;;;
 
 MOV AX,WORD PTR X
@@ -2341,7 +2341,7 @@ INC AX
 ;;;;;;;;;;;;;;;;;
 ISWHITE2 AX,CX
 CMP BX,0
-Jnz far ptr ITSVALID4
+jnz ITSVALID4
 JMP far ptr CANTMOVE
 ITSVALID4:
 ;;;;;;;;;;;;;;;;;
@@ -2438,7 +2438,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE1
+jnz CHKIFWHITE1
 JMP far ptr CANMOVE1
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE1:
@@ -2473,7 +2473,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE2
+jnz CHKIFWHITE2
 JMP far ptr CANMOVE2
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE2:
@@ -2510,7 +2510,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE3
+jnz CHKIFWHITE3
 JMP far ptr CANMOVE3
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE3:
@@ -2545,7 +2545,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE4
+jnz CHKIFWHITE4
 JMP far ptr CANMOVE4
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE4:
@@ -2582,7 +2582,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE5
+jnz CHKIFWHITE5
 JMP far ptr CANMOVE5
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE5:
@@ -2617,7 +2617,7 @@ INC AX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE6
+jnz CHKIFWHITE6
 JMP far ptr CANMOVE6
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE6:
@@ -2652,7 +2652,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE7
+jnz CHKIFWHITE7
 JMP far ptr CANMOVE7
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE7:
@@ -2688,7 +2688,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE8
+jnz CHKIFWHITE8
 JMP far ptr CANMOVE8
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE8:
@@ -2748,7 +2748,7 @@ DEC AX;;;;;;;;;;;;;;;FRONT STEP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE1
+jnz CHKIFWHITE1
 JMP far ptr CANMOVE1
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE1:
@@ -2783,7 +2783,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE2
+jnz CHKIFWHITE2
 JMP far ptr CANMOVE2
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE2:
@@ -2820,7 +2820,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE3
+jnz CHKIFWHITE3
 JMP far ptr CANMOVE3
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE3:
@@ -2855,7 +2855,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE4
+jnz CHKIFWHITE4
 JMP far ptr CANMOVE4
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE4:
@@ -2892,7 +2892,7 @@ INC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT 
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE5
+jnz CHKIFWHITE5
 JMP far ptr CANMOVE5
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE5:
@@ -2927,7 +2927,7 @@ INC AX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT RIGHT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE6
+jnz CHKIFWHITE6
 JMP far ptr CANMOVE6
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE6:
@@ -2962,7 +2962,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE7
+jnz CHKIFWHITE7
 JMP far ptr CANMOVE7
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE7:
@@ -2998,7 +2998,7 @@ DEC CX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TO EAT FRONT LEFT
 ISEMPTY AL,CL ; EMPTY 1 IF NOT EMPETY 0
 CMP BX,1
-Jnz far ptr CHKIFWHITE8
+jnz CHKIFWHITE8
 JMP far ptr CANMOVE8
 ;;;;;;;;;;;;;;;;
 CHKIFWHITE8:
@@ -3336,7 +3336,7 @@ DEC BX
 CMP gridState[BX],5 ; BLACK KING
 Jz far ptr CONTINUOUEGAME1
 CMP BX,0
-Jnz far ptr LOOPAGAIN1
+jnz LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
@@ -3346,7 +3346,7 @@ MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
   mov ah,0
   int 16h
   cmp ah,3Eh;f4
-  Jnz far ptr not4f
+  jnz not4f
 JMP far ptr faraway
 CONTINUOUEGAME1:
 
@@ -3356,7 +3356,7 @@ DEC BX
 CMP gridState[BX],12 ; WHITE KING
 Jz far ptr CONTINUOUEGAME2
 CMP BX,0
-Jnz far ptr LOOPAGAIN2
+jnz LOOPAGAIN2
 MOV AL,2
 MOV WINNER,AL
   movecursor 37,30
@@ -3365,7 +3365,7 @@ MOV WINNER,AL
   mov ah,0
   int 16h
   cmp ah,3Eh;f4
-  Jnz far ptr not4f2
+  jnz not4f2
 JMP far ptr faraway
 CONTINUOUEGAME2:
 
@@ -3435,7 +3435,7 @@ cursorLoop:
 
                   mov         ah,01
                   int         16h
-                  Jnz far ptr temp24
+                  jnz temp24
                   JMP far ptr          curs
                 temp24:
                   mov         ah,0
@@ -3443,22 +3443,22 @@ cursorLoop:
 
                   ;if f4 is pressed return to main screen  
                   cmp ah,3Eh
-                  Jnz far ptr dontexit
+                  jnz dontexit
                   JMP far ptr faraway  
                   dontexit: 
 
                   cmp ah,10h
-                  Jnz far ptr             tmplabel10
+                  jnz             tmplabel10
                   JMP far ptr qpressed
 tmplabel10:
 
  cmp ah,1ch
-                  Jnz far ptr             tmplabel102
+                  jnz             tmplabel102
                   JMP far ptr qpressed2
 tmplabel102:
                 ; handle chat f6 click
                   cmp             ah,40h
-                  Jnz far ptr             temp23
+                  jnz             temp23
                   cmp f6,0
                   je set
                   mov f6,0
@@ -3474,42 +3474,42 @@ tmplabel102:
                  ; mov firstIndex,bx
 
                   cmp             ah,11h
-                  Jnz far ptr             label6
+                  jnz             label6
                   JMP far ptr             up
     label6:
 
                   cmp             ah,1eh
-                  Jnz far ptr             label7
+                  jnz             label7
                   JMP far ptr             left
     label7:
 
                   cmp             ah,20h
-                  Jnz far ptr             label8
+                  jnz             label8
                   JMP far ptr             right
     label8:
 
                   cmp             ah,1fh
-                  Jnz far ptr             label9
+                  jnz             label9
                   JMP far ptr             down
     label9:
 
        cmp             ah,48h
-                  Jnz far ptr             label62
+                  jnz             label62
                   JMP far ptr             up2
     label62:
 
                   cmp             ah,4bh
-                  Jnz far ptr             label72
+                  jnz             label72
                   JMP far ptr             left2
     label72:
 
                   cmp             ah,4dh
-                  Jnz far ptr             label82
+                  jnz             label82
                   JMP far ptr             right2
     label82:
 
                   cmp             ah,50h
-                  Jnz far ptr             label92
+                  jnz             label92
                   JMP far ptr             down2
     label92:
 
@@ -3520,7 +3520,7 @@ tmplabel102:
     left:
                   mov             dx,curColCursor
                   cmp             dx,0D
-                  Jnz far ptr             temp20
+                  jnz             temp20
 
                   JMP far ptr             cursorLoop
     temp20:
@@ -3565,7 +3565,7 @@ tmplabel102:
  left2:
                   mov             dx,curColCursor2
                   cmp             dx,0D
-                  Jnz far ptr             temp202
+                  jnz             temp202
 
                   JMP far ptr             cursorLoop
     temp202:
@@ -3607,7 +3607,7 @@ tmplabel102:
     right:
                   mov             dx,curColCursor
                   cmp             dx,7d
-                  Jnz far ptr             temp22
+                  jnz             temp22
                   JMP far ptr             cursorLoop
     temp22:
   pusha
@@ -3647,7 +3647,7 @@ tmplabel102:
     right2:
                   mov             dx,curColCursor2
                   cmp             dx,7d
-                  Jnz far ptr             temp222
+                  jnz             temp222
                   JMP far ptr             cursorLoop
     temp222:
   pusha
@@ -3686,7 +3686,7 @@ tmplabel102:
     up:
                   mov             dx,curRowCursor
                   cmp             dx,0D
-                  Jnz far ptr             label10
+                  jnz             label10
                   JMP far ptr             cursorLoop
     label10:
 
@@ -3728,7 +3728,7 @@ tmplabel102:
     up2:
                   mov             dx,curRowCursor2
                   cmp             dx,0D
-                  Jnz far ptr             label102
+                  jnz             label102
                   JMP far ptr             cursorLoop
     label102:
 
@@ -3773,7 +3773,7 @@ tmplabel102:
     down:
                   mov             dx,curRowCursor
                   cmp             dx,7D
-                  Jnz far ptr             label11
+                  jnz             label11
                   JMP far ptr             cursorLoop
     label11:
                   pusha
@@ -3812,7 +3812,7 @@ tmplabel102:
     down2:
                   mov             dx,curRowCursor2
                   cmp             dx,7D
-                  Jnz far ptr             label112
+                  jnz             label112
                   JMP far ptr             cursorLoop
     label112:
                   pusha
@@ -3852,7 +3852,7 @@ tmplabel102:
     qpressed:
     mov bl,stateOfQ
     cmp bl,0
-    Jnz far ptr tmplabel20
+    jnz tmplabel20
     JMP far ptr firsrQ
     tmplabel20:
 
@@ -3866,7 +3866,7 @@ tmplabel102:
     qpressed2:
     mov bl,stateOfQ2
     cmp bl,0
-    Jnz far ptr tmplabel202
+    jnz tmplabel202
     JMP far ptr firsrQ2
     tmplabel202:
 
@@ -4288,7 +4288,7 @@ ENDM INITIALIZEGRID
 ; ADD SI,BX
 ; MOV CH,BYTE PTR [SI]
 ; CMP CH , 0 
-; Jnz far ptr notEmpty 
+; jnz notEmpty 
 
 ; MOV BX, 0ffh;;to get farway from the array index 0
 ; notEmpty: 
@@ -4379,7 +4379,7 @@ MAINMAIN MACRO player1Name,player2Name ;This Macro is Responsible for moving bet
     OPENCHAT player1Name+2,player2Name+2
     check_for_f2:
     cmp ah,3ch;f2 scane code
-    Jnz far ptr check_for_esc
+    jnz check_for_esc
     ;open game
     JMP far ptr play
 
@@ -4407,12 +4407,12 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   int 21h
   INC BL
   CMP BL,70
-  Jnz far ptr LOOPXXXX
+  jnz LOOPXXXX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   movecursorWithPageNumber 30,20,0
 
   CMP WINNER,1
-  Jnz far ptr WHITEDIDNTWIN
+  jnz WHITEDIDNTWIN
   MOV AL,0
   MOV WINNER,AL
   ShowMessage WINNERISWHITE
@@ -4421,7 +4421,7 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   WHITEDIDNTWIN:
 
   CMP WINNER,2
-  Jnz far ptr BLACKIDNTWIN
+  jnz BLACKIDNTWIN
   MOV AL,0
   MOV WINNER,AL
   ShowMessage WINNERISBLACK
@@ -4996,7 +4996,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                 enter:
                   mov         ah,01
                   int         16h
-                  Jnz far ptr bla
+                  jnz bla
                   JMP far ptr          AGAIN
                 bla:
 
@@ -5004,7 +5004,7 @@ ENTERGAMECHAT MACRO player1Name,player2Name ;This Macro is Responsible for enter
                   int         16h
                   
                   cmp             ah,40h
-                  Jnz far ptr             temp88
+                  jnz             temp88
                   cmp f6,0
                   je set2
                   mov f6,0
