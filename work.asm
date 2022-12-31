@@ -3741,6 +3741,7 @@ handlereceive MACRO
                   mov         dx , 03F8H
                   in          al , dx
 
+                  mov bl,al
                   and al,10000000b
                   jnz temp3
                   jmp handleq
@@ -3762,14 +3763,6 @@ handlereceive MACRO
                   sub al,received1
                   
                   MOV              AH,0
-
-                  pusha
-                  mov ax,received1
-                  TOSTRING nameq
-                  movecursor 2d,31d
-                  ShowMessage nameq
-                  popa
-
                   MOV              CL , 8D
                   DIV              CL
                   mov curRowCursor2,al              ; mov them to current index 2
@@ -3796,6 +3789,15 @@ handlereceive MACRO
                   jmp quit
                   insertinq1:
                   mov received1,al                  ;q1 recievied then store it
+
+                  mov ah,0
+                  pusha
+                  mov ax,received1
+                  TOSTRING nameq
+                  movecursor 2d,31d
+                  ShowMessage nameq
+                  popa
+
                   quit:
 ENDM handlereceive
 
