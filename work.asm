@@ -4884,7 +4884,7 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   jne          skip111
 
                   mov         dx , 3F8H         ; Transmit data register
-                  mov         al,bl
+                  mov         al,ah
                   out         dx , al
                   jmp deadmid
                   skip111:
@@ -4912,8 +4912,8 @@ OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling G
                   mov         dx , 03F8H
                   in          al , dx
                   
-                  mov         bl,al
-                  cmp         bl,3dh            ; F3 key
+
+                  cmp         al,3dh            ; F3 key
                   jne          skip1111
                   JMP far ptr  dead
                   skip1111:
