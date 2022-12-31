@@ -450,6 +450,7 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
     local temp151
     local temp150
     local temp100
+    local AGAIN
                   ;if the cell is empty get out
                 ;   cmp bl,6
                 ;   jz isapawn
@@ -569,6 +570,22 @@ FIRSTQHANDLE MACRO ;This Macro is Responsible for handling when first player pre
                 PUSHA
                 DRAW_AVAILABLE_PLACES
                 POPA
+
+                ;Sending a value
+
+    ;Check that Transmitter Holding Register is Empty
+    AGAIN:
+                  mov         dx , 3FDH         ; Line Status Register
+
+                  In          al , dx           ;Read Line Status
+                  AND         al , 00100000b
+                  JZ          AGAIN             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+                  GETARINDEXBYBYTE startRowCursor,startColCursor ; out in bx
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov         al,bl               ;send start cursor
+                  out         dx , al
                 ;------------------------------
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   outterr:
@@ -3034,10 +3051,13 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
             local blabla2
             local blabla3
             local er
-            pusha
-        movecursor 2d,31d
-        ShowMessage clear
-        popa
+            local sendright
+            local sendwrong
+
+                  pusha
+                  movecursor 2d,31d
+                  ShowMessage clear
+                  popa
 
                   GETARINDEX startRowCursor,startColCursor
 
@@ -3101,6 +3121,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                 ;count down end
 
                   POPA
+
                 SKIP:
                   pusha
                   UPDATECELL     startRowCursor,startColCursor,150D,0D
@@ -3109,6 +3130,31 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   pusha
                   UPDATECELL     endRowCursor,endColCursor,150D,0D
                   popa
+
+                  ;Sending a value
+
+                  ;Check that Transmitter Holding Register is Empty
+                  AGAIN:
+                                mov         dx , 3FDH         ; Line Status Register
+
+                                In          al , dx           ;Read Line Status
+                                AND         al , 00100000b
+                                JZ          AGAIN             ;jump untill it is empty
+
+                  ;If empty put the VALUE in Transmit data register
+                                GETARINDEX endRowCursor,endColCursor
+                                CMP BYTE PTR cursorState[BX],0
+                                jne sendright
+                                mov         dx , 3F8H         ; Transmit data register
+                                mov         al,127D               ;send wrong
+                                out         dx , al
+                                jmp sendwrong
+                                sendright:
+                                mov         dx , 3F8H         ; Transmit data register
+                                mov         al,bl               ;send right
+                                out         dx , al
+                                sendwrong:
+                              ;------------------------------
 
                   PUSHA
                   CLEAR_AVAILABLE_PLACES
@@ -3124,6 +3170,8 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                   
                   checkqhandle
                   CHECKMATE
+
+
 ENDM SECONDQHANDLE
 
 SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player press his second ENTER to move a selected piece to another cell
@@ -3659,15 +3707,69 @@ cursorLoop:
                  jmp             receive   
 ;--------------------------------------------------
     chat:
-    ;TODO make chat
+    ;TODO make chat send
     jmp             receive   
 ;--------------------------------------------------
 receive:
-;TODO make recieve
+;TODO make recieve chat and game
+handlereceive
 ;--------------------------------------------------
 jmp cursorLoop
 
 ENDM CURSORMOV
+
+handlereceive MACRO
+  local quit
+  local handleq
+  local faultinsert
+  local insertinq1
+      ;Receiving a value       
+                  ;Check that Data Ready
+                  mov         dx , 3FDH         ; Line Status Register
+          
+                  in          al , dx
+                  AND         al , 00000001b
+                  JZ          quit               ;jump untill it recive data
+
+    ;If Ready read the VALUE in Receive data register
+                  mov         dx , 03F8H
+                  in          al , dx
+
+                  and al,10000000b
+                  jz handleq
+                  ;print char TODO                  ;char recived then print it
+                  jmp quit
+                  handleq:
+                  cmp received1, 127d
+                  je insertinq1
+                  cmp al,127D
+                  je faultinsert
+                  mov received2,al                    ;2 q recievied take action
+
+                  mov al,64D                    ; convert (64 - recieved 1) to x and y
+                  sub al,received1
+                  call far ptr CONVERT1D_2D
+                  mov startRowCursor2,al              ; mov them to start index 2
+                  mov startColCursor2,ah
+                  FIRSTQHANDLE2                       ; call firstqhandle2
+
+                  mov al,64D                          ; convert (64 - recieved 2) to x and y
+                  sub al,received2
+                  call far ptr CONVERT1D_2D
+                  mov endRowCursor2,al                ; mov them to end index 2
+                  mov endColCursor2,ah
+                  SECONDQHANDLE2                      ; call sencondqhandle2
+                  mov received1,127D                  ; reset received1 and received2 to 127D
+                  mov received2,127D
+
+                  faultinsert:
+                  mov received1,127d                  ;q2 recievied fault then reset
+                  mov received2,127d
+                  jmp quit
+                  insertinq1:
+                  mov received1,al                  ;q1 recievied then store it
+                  quit:
+ENDM handlereceive
 
 DRAW_AVAILABLE_PLACES MACRO ;This Macro is Responsible for draw marks on the cells that the selected white piece can move to 
 LOCAL loop9
@@ -4064,24 +4166,6 @@ mov gridState[62],9  ;white knight
 mov gridState[63],8  ;white rook
 
 ENDM INITIALIZEGRID
-
-; isEmpty MACRO X,Y 
-; LOCAL notEmpty 
-
-; MOV AX,X
-; MOV CX,Y
-
-; LEA SI,gridState 
-; GETARINDEX AX,CX 
-; ADD SI,BX
-; MOV CH,BYTE PTR [SI]
-; CMP CH , 0 
-; jnz notEmpty 
-
-; MOV BX, 0ffh;;to get farway from the array index 0
-; notEmpty: 
-
-; ENDM isEmpty
 
 ISEMPTY MACRO x,y ;This Macro is of return type boolean and Responsible for checking if the cell is empty cell or contains piece
 LOCAL break5
@@ -5218,6 +5302,9 @@ connect MACRO
 
   blackrow          db  0D
   blackcol          db  10D
+
+  received1         db  127d
+  received2         db  127d
   
   CHECKSTRING       DB  'WARNING!!! :CHECK','$'
   ;---------------------------------------------------------------------------------------------------
