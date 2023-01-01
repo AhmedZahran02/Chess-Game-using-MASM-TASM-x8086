@@ -3853,15 +3853,15 @@ loop10:
 
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
-CMP BYTE PTR gridState[BX],5D
-JE BREAK8
+; CMP BYTE PTR gridState[BX],5D
+; JE BREAK8
 BREAK7:
 JMP BREAK6
 BREAK8:
-         pusha
-        movecursor 2d,31d
-        ShowMessage CHECKSTRING
-        popa
+        ;  pusha
+        ; movecursor 2d,31d
+        ; ShowMessage CHECKSTRING
+        ; popa
 break6:
 popa
 inc al
@@ -4060,12 +4060,12 @@ mov gridState[2],3 ;black bishop
 
 cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
 jne black2
-mov gridState[3],4 ;white queen
-mov gridState[4],5 ;white king
+mov gridState[3],4 ;black queen
+mov gridState[4],5 ;black king
 jmp white2
 black2:
-mov gridState[3],5 ;white king
-mov gridState[4],4 ;white queen
+mov gridState[3],5 ;black king
+mov gridState[4],4 ;black queen
 white2:
 
 mov gridState[5],3 ;black bishop
@@ -4410,9 +4410,9 @@ SEEIFRECIVING:
     movthree:
 
     ;;;;;;;;;print message
-    mov ah, 9
-    mov dx, offset F1_INVITATION
-    int 21h
+    ShowMessage player2Name+2
+    movecursor  25,20
+    ShowMessage F1_INVITATION
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
     mov ah, 6               
     mov al, 1               ; number of lines to scroll
@@ -4423,7 +4423,7 @@ SEEIFRECIVING:
     mov dl, 80              ; col right
     int 10h
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
-    movecursorWithPageNumber 20,20,0
+    movecursorWithPageNumber 10,20,0
     MOV AH,0 
     NOTF1:
 
@@ -4449,9 +4449,9 @@ SEEIFRECIVING:
     movtwo:
 
     ;;;;;;;;;print message
-    mov ah, 9
-    mov dx, offset F2_INVITATION
-    int 21h
+    ShowMessage player2Name+2
+    movecursor  25,20
+    ShowMessage F2_INVITATION
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
     mov ah, 6               
     mov al, 1               ; number of lines to scroll
@@ -4462,7 +4462,7 @@ SEEIFRECIVING:
     mov dl, 80              ; col right
     int 10h
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
-    movecursorWithPageNumber 20,20,0
+    movecursorWithPageNumber 10,20,0
     MOV AH,0 
     NOTF2:
     LEAVERECIVING:
@@ -4493,7 +4493,7 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   CMP BL,70
   JNZ LOOPXXXX
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  movecursorWithPageNumber 20,20,0
+  movecursorWithPageNumber 10,20,0
 
   CMP WINNER,1
   JNZ WHITEDIDNTWIN
@@ -5508,6 +5508,7 @@ connect MACRO
   op3               db  'To end the program press ESC','$'
   F1_INVITATION     DB  'SENT YOU A CHAT INVITATION PRESS F1 TO PROCCED','$'
   F2_INVITATION     DB  'SENT YOU A GAME INVITATION PRESS F2 TO PROCCED','$'
+  INVITATIONTAB     DB  '   ','$'
   NAMEFLAG          DB  0
   INVITE            DB  0
   senttf1           DB  0
@@ -6017,15 +6018,15 @@ DRAW_AVAILABLE_PLACES PROC far
                           popa
                           PUSHA
                           GETARINDEXBYBYTE         dummyData1,dummyData2
-                          CMP                      BYTE PTR gridState[BX],5D
-                          JE                       BREAK8dd
+  ; CMP                      BYTE PTR gridState[BX],5D
+  ; JE                       BREAK8dd
   BREAK7dd:               
                           JMP                      BREAK6dd
-  BREAK8dd:               
-                          pusha
-                          movecursorWithPageNumber 2d,31d,1D
-                          ShowMessage              CHECKSTRING
-                          popa
+  ; BREAK8dd:
+  ;                         pusha
+  ;                         movecursorWithPageNumber 2d,31d,1D
+  ;                         ShowMessage              CHECKSTRING
+  ;                         popa
   break6dd:               
                           popa
                           inc                      al
