@@ -4714,6 +4714,68 @@ STATUSLINE MACRO ;This Macro is Responsible for the status bar that appears to p
   BLACKIDNTWIN:
 ENDM STATUSLINE
 
+RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
+
+
+    mov dx,3fbh           ; Line Control Register
+    mov al,10000000b      ;Set Divisor Latch Access Bit
+    out dx,al
+
+
+    ;000c => 9600 baud rate
+    ;Set LSB byte of the Baud Rate Divisor Latch
+    mov dx,3f8h
+    mov al,0ch
+    out dx,al
+
+
+    ;Set MSB byte of the Baud Rate Divisor Latch register.
+    mov dx,3f9h
+    mov al,00h
+    out dx,al
+
+
+    ;Set port configuration
+    mov dx,3fbh
+    mov al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
+    out dx,al
+
+; inc ah
+; lea si, PLAYERNAME1
+; lea di, PLAYERNAME2
+; loopxxx:
+;     ;Check that Transmitter Holding Register is Empty
+;     mov dx , 3FDH         ; Line Status Register
+;     In  al , dx           ;Read Line Status 
+;     AND al , 00100000b
+;     jnz VERYLATE2            ;jump untill it is empty
+;     jmp far ptr loopxxx
+;     VERYLATE2:
+;     ;If empty put the VALUE in Transmit data register
+;     mov dx , 3F8H         ; Transmit data register
+;     mov al,[bx]   ; al,VALUE
+;     out dx , al
+
+
+;     ;Check that Data Ready
+;     mov dx , 3FDH         ; Line Status Register
+;     in  al , dx
+;     AND al , 00000001b
+;     jnz VERYLATE1
+;     jmp far ptr loopxx   ;jump IF NOT  it recive data
+;     VERYLATE1:
+;     ;If Ready read the VALUE in Receive data register
+;     mov dx , 03F8H
+;     in  al , dx
+;     mov [bx],al
+
+
+
+
+
+
+ENDM RECIVENAME
+
 OPENCHAT MACRO player1Name,player2Name ;This Macro is Responsible for handling Game Chat
             LOCAL dead
             LOCAL mainloop
