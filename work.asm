@@ -4410,7 +4410,7 @@ SEEIFRECIVING:
     movthree:
 
     ;;;;;;;;;print message
-    ShowMessage player2Name + 2
+    ShowMessage player2Name+2
     movecursor  25,20
     ShowMessage F1_INVITATION
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
