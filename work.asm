@@ -4060,12 +4060,12 @@ mov gridState[2],3 ;black bishop
 
 cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
 jne black2
-mov gridState[3],4 ;white queen
-mov gridState[4],5 ;white king
+mov gridState[3],4 ;black queen
+mov gridState[4],5 ;black king
 jmp white2
 black2:
-mov gridState[3],5 ;white king
-mov gridState[4],4 ;white queen
+mov gridState[3],5 ;black king
+mov gridState[4],4 ;black queen
 white2:
 
 mov gridState[5],3 ;black bishop
