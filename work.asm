@@ -1827,7 +1827,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         
                         skp:
                           POPA
-                          mov cursorState2[bx],0
+                          ;mov cursorState2[bx],0
 
                         NOTVALID:
                           CMP CX,0
@@ -2890,12 +2890,12 @@ loop10:
 mov BYTE PTR dummyData1,al
 mov BYTE PTR dummyData2,ah
 pusha
-ISWHITEBYTE2 dummyData1,dummyData2
+ISWHITEBYTE22 dummyData1,dummyData2
 cmp bx,1
 jne temp1
 jmp break80
 temp1:
-GETARINDEXBYBYTE dummyData1,dummyData2
+                  GETARINDEXBYBYTE dummyData1,dummyData2
                   CMP BYTE PTR gridState[BX],6d
                   JNE PAWNTEMP
                   JMP PAWN
