@@ -2890,12 +2890,12 @@ loop10:
 mov BYTE PTR dummyData1,al
 mov BYTE PTR dummyData2,ah
 pusha
-ISWHITE2 dummyData1,dummyData2
+ISWHITEBYTE2 dummyData1,dummyData2
 cmp bx,1
 jne temp1
 jmp break80
 temp1:
-GETARINDEX dummyData1,dummyData2
+GETARINDEXBYBYTE dummyData1,dummyData2
                   CMP BYTE PTR gridState[BX],6d
                   JNE PAWNTEMP
                   JMP PAWN
@@ -2963,7 +2963,7 @@ loop102:
  mov BYTE PTR dummyData1,al
  mov BYTE PTR dummyData2,ah
  pusha
-GETARINDEX dummyData1,dummyData2
+GETARINDEXBYBYTE dummyData1,dummyData2
 CMP BYTE PTR gridState[BX],12D
 jne temp2
 jmp break909
@@ -2984,7 +2984,7 @@ break909:
 popa
 break90:
 
-GETARINDEX dummyData1,dummyData2
+GETARINDEXBYBYTE dummyData1,dummyData2
 cmp cursorState2[bx],1
 jne printSpace
 movecursorWithPageNumber 80d,31d,1D
