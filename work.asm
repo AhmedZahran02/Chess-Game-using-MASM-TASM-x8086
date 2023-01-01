@@ -3472,6 +3472,10 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   local receive
 
                   connect
+                  INITIALIZEGRID   42H,06H                                                                ;0FH,08H
+                  DrawGrid         150D,0D,colorState[1],colorState[0]
+                  DrawPiecies      150D,0D
+                  DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                   INITIALIZEGAMECHAT thename,thename
     cursorLoop:
                   PRINTCURRTIMER
@@ -5666,7 +5670,7 @@ MAIN PROC FAR
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName     nameq,thename,erroname                                                 ;Veryyyyyyyyyyyyyyyy STABLE
+                validateName     nameq,thename,erroname                                             ;Veryyyyyyyyyyyyyyyy STABLE
                 movecursor       17H,0AH
                 ShowMessage      proceed
                 call             waitkey
@@ -5698,11 +5702,6 @@ MAIN PROC FAR
                 mov              whitecol,0D
                 mov              blackrow,0D
                 mov              blackcol,10D
-                INITIALIZEGRID   42H,06H                                                                ;0FH,08H
-                DrawGrid         150D,0D,colorState[1],colorState[0]
-                DrawPiecies      150D,0D
-
-                DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
   ; DRAWWITHSOURCE   border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
 
   ;----------------------
@@ -5734,38 +5733,38 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                            ;GET DATA
+GETDATA PROC                                                                                        ;GET DATA
                 MOV              AX,@DATA
                 MOV              DS,AX
                 ret
 GETDATA ENDP
 
-CLS PROC                                                                                                ;CLEAR SCREEN
-                MOV              AX,0003H                                                               ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC                                                                                            ;CLEAR SCREEN
+                MOV              AX,0003H                                                           ;;ah == 0 set to graph mod the al = 3 return to text mode
                 INT              10H
                 ret
 CLS ENDP
 
-EnterText PROC                                                                                          ;ENTER TEXT MODE
+EnterText PROC                                                                                      ;ENTER TEXT MODE
                 MOV              AX,3H
                 INT              10H
                 ret
 EnterText ENDP
 
-EnterGraphics PROC                                                                                      ;ENTER GRAPHICS MODE
+EnterGraphics PROC                                                                                  ;ENTER GRAPHICS MODE
                 MOV              AX,4F02H
-                MOV              BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
+                MOV              BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
                 INT              10H
                 ret
 EnterGraphics ENDP
 
-waitkey PROC                                                                                            ;wait for key
+waitkey PROC                                                                                        ;wait for key
                 MOV              AH , 0
                 INT              16h
                 ret
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                                   ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                               ;CHECKING THE FREEZE OF 3 SECONDS
        
                 mov              al,0
                 mov              ah,0
