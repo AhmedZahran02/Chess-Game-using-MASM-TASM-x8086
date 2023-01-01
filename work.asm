@@ -3853,15 +3853,15 @@ loop10:
 
 PUSHA
  GETARINDEXBYBYTE dummyData1,dummyData2
-CMP BYTE PTR gridState[BX],5D
-JE BREAK8
+; CMP BYTE PTR gridState[BX],5D
+; JE BREAK8
 BREAK7:
 JMP BREAK6
 BREAK8:
-         pusha
-        movecursor 2d,31d
-        ShowMessage CHECKSTRING
-        popa
+        ;  pusha
+        ; movecursor 2d,31d
+        ; ShowMessage CHECKSTRING
+        ; popa
 break6:
 popa
 inc al
@@ -6018,15 +6018,15 @@ DRAW_AVAILABLE_PLACES PROC far
                           popa
                           PUSHA
                           GETARINDEXBYBYTE         dummyData1,dummyData2
-                          CMP                      BYTE PTR gridState[BX],5D
-                          JE                       BREAK8dd
+                          ; CMP                      BYTE PTR gridState[BX],5D
+                          ; JE                       BREAK8dd
   BREAK7dd:               
                           JMP                      BREAK6dd
-  BREAK8dd:               
-                          pusha
-                          movecursorWithPageNumber 2d,31d,1D
-                          ShowMessage              CHECKSTRING
-                          popa
+  ; BREAK8dd:               
+  ;                         pusha
+  ;                         movecursorWithPageNumber 2d,31d,1D
+  ;                         ShowMessage              CHECKSTRING
+  ;                         popa
   break6dd:               
                           popa
                           inc                      al
