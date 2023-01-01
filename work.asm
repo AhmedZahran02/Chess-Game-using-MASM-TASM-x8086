@@ -5992,7 +5992,7 @@ CLEAR_AVAILABLE_PLACES2 PROC far
                           DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                           DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
                           call                     far ptr DRAW_AVAILABLE_PLACES
-
+                          retf
 CLEAR_AVAILABLE_PLACES2 ENDP
 
 DRAW_AVAILABLE_PLACES PROC far
@@ -6037,7 +6037,7 @@ DRAW_AVAILABLE_PLACES PROC far
                           je                       beforeloop9dd
                           jmp                      loop9dd
   beforeloop9dd:          
-
+                          retf
 DRAW_AVAILABLE_PLACES ENDP
 
 DRAW_AVAILABLE_PLACES2 PROC far
@@ -6083,7 +6083,7 @@ DRAW_AVAILABLE_PLACES2 PROC far
                           jmp                      loop9ee
   beforeloop9ee:          
 
-
+                          retf
 DRAW_AVAILABLE_PLACES2 ENDP
 
 
