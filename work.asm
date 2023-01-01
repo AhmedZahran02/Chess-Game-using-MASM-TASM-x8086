@@ -3379,7 +3379,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   DrawGrid         150D,0D,colorState[1],colorState[0]
                   DrawPiecies      150D,0D
                   DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  INITIALIZEGAMECHAT thename,thename
+                  INITIALIZEGAMECHAT thename,theOthername
     cursorLoop:
                   PRINTCURRTIMER
                   CALL FAR PTR FREEZEPROC
