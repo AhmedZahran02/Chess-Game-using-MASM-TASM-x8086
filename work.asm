@@ -623,7 +623,7 @@ FIRSTQHANDLEM MACRO
                 jmp break80
                 skpp:
 
-                CLEAR_AVAILABLE_PLACES
+                call far ptr CLEAR_AVAILABLE_PLACES
 
                   GETARINDEX curRowCursor,curColCursor
 
@@ -929,7 +929,7 @@ checkqhandle MACRO
                   JMP NOACTION
                 NOACTION:
                 check_AVAILABLE_PLACES
-                CLEAR_AVAILABLE_PLACES
+                call far ptr CLEAR_AVAILABLE_PLACES
                 ;------------------------------
                   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   outterr:
@@ -3156,7 +3156,7 @@ SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player pr
                               ;------------------------------
 
                   PUSHA
-                  CLEAR_AVAILABLE_PLACES
+                  call far ptr CLEAR_AVAILABLE_PLACES
                   POPA
 
                   DRAWWITHSOURCE       borderdata,borderwidth,borderheight,endRowCursor,endColCursor,150D,0D    ; col,row
@@ -3266,54 +3266,54 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                   CHECKMATE            
 ENDM SECONDQHANDLE2
 
-CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected white piece can move to 
-    LOCAL Nloop9
-    LOCAL Nloop10
-    LOCAL TMP
-    LOCAL TMP2
-    LOCAL TMP3
-    LOCAL Nbreak6
+; CLEAR_AVAILABLE_PLACES MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected white piece can move to 
+;     LOCAL Nloop9
+;     LOCAL Nloop10
+;     LOCAL TMP
+;     LOCAL TMP2
+;     LOCAL TMP3
+;     LOCAL Nbreak6
 
-                  mov                   al,0
-                  mov                   ah,0
-    Nloop9:       
-                  mov                   AL,0
-    Nloop10:      
-                  mov                  BYTE PTR  dummyData1,al
-                  mov                  BYTE PTR  dummyData2,ah
-                  pusha
-                  GETARINDEXBYBYTE      dummyData1,dummyData2
-                  cmp                  BYTE PTR  cursorState[bx],0
-                  JNE                   TMP
-                  JMP                   Nbreak6
-    TMP:          
-                  MOV                  BYTE PTR  cursorState[bx],0
-                  popa
-                  MOV                  BYTE PTR  dummyData3,0D
-                  MOV                  BYTE PTR  dummyData4,0D
-                  ADD                  BYTE PTR  dummyData3,al
-                  ADD                  BYTE PTR  dummyData4,ah
-                  pusha
-                  UPDATECELL            dummyData3,dummyData4,150D,0D
+;                   mov                   al,0
+;                   mov                   ah,0
+;     Nloop9:       
+;                   mov                   AL,0
+;     Nloop10:      
+;                   mov                  BYTE PTR  dummyData1,al
+;                   mov                  BYTE PTR  dummyData2,ah
+;                   pusha
+;                   GETARINDEXBYBYTE      dummyData1,dummyData2
+;                   cmp                  BYTE PTR  cursorState[bx],0
+;                   JNE                   TMP
+;                   JMP                   Nbreak6
+;     TMP:          
+;                   MOV                  BYTE PTR  cursorState[bx],0
+;                   popa
+;                   MOV                  BYTE PTR  dummyData3,0D
+;                   MOV                  BYTE PTR  dummyData4,0D
+;                   ADD                  BYTE PTR  dummyData3,al
+;                   ADD                  BYTE PTR  dummyData4,ah
+;                   pusha
+;                   UPDATECELL            dummyData3,dummyData4,150D,0D
                   
-    Nbreak6:      
-                  popa
-                  inc                   al
-                  cmp                   al,8
-                  JE                   TMP2
-                  JMP                   Nloop10
-    TMP2:         
-                  inc                   ah
-                  cmp                   ah,8
-                  JE                   TMP3
-                  JMP                   Nloop9
-    TMP3:
+;     Nbreak6:      
+;                   popa
+;                   inc                   al
+;                   cmp                   al,8
+;                   JE                   TMP2
+;                   JMP                   Nloop10
+;     TMP2:         
+;                   inc                   ah
+;                   cmp                   ah,8
+;                   JE                   TMP3
+;                   JMP                   Nloop9
+;     TMP3:
 
-                  DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
-                  DRAW_AVAILABLE_PLACES2
+;                   DRAWWITHSOURCE borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+;                   DRAWWITHSOURCE border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+;                   DRAW_AVAILABLE_PLACES2
 
-    ENDM CLEAR_AVAILABLE_PLACES
+;     ENDM CLEAR_AVAILABLE_PLACES
 
 CLEAR_AVAILABLE_PLACES2 MACRO ;This Macro is Responsible for remove the marks that we made on the cells that the selected black piece can move to 
     LOCAL Nloop9
@@ -5084,6 +5084,11 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     local temp19
     local temp20
     local temp21
+    local temp22
+    local temp23
+    local temp24
+    local temp25
+    
 
     ; GETS THE NUMBER IN GRID[X][Y]
     ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
@@ -5181,25 +5186,45 @@ black:
    jmp B2
    temp15:
    CMP AX,10D
-   je far ptr B3
+   jne temp16
+   jmp B3
+   temp16:
    CMP AX,11D
-   je far ptr B4
+   jne temp17
+   jmp B4
+   temp17:
    CMP AX,12D
-   je far ptr B5
+   jne temp18
+   jmp B5
+   temp18:
    CMP AX,7D
-   je far ptr B6
+   jne temp19
+   jmp B6
+   temp19:
    CMP AX,6D
-   je far ptr B7
+   jne temp20
+   jmp B7
+   temp20:
    CMP AX,1D
-   je far ptr B8
+   jne temp21
+   jmp B8
+   temp21:
    CMP AX,2D
-   je far ptr B9
+   jne temp22
+   jmp B9
+   temp22:
    CMP AX,3D
-   je far ptr B10
+   jne temp23
+   jmp B10
+   temp23:
    CMP AX,4D
-   je far ptr B11
+   jne temp24
+   jmp B11
+   temp24:
    CMP AX,5D
-   je far ptr B12
+   jne temp25
+   jmp B12
+   temp25:
 
    EMPTY2: JMP EMPTY
        
@@ -5694,226 +5719,269 @@ connect MACRO
 .CODE
 MAIN PROC FAR
   ;INITIALIZING
-                call             far ptr       GETDATA
-                CALL             far ptr      CLS
+                         call                   far ptr       GETDATA
+                         CALL                   far ptr      CLS
   ;OPENING AND READING AND CLOSING BIN FILES
-                OpenFile         bbishopfilename, bbishopfilehandle
-                ReadData         bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                CloseFile        bbishopfilehandle
+                         OpenFile               bbishopfilename, bbishopfilehandle
+                         ReadData               bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                         CloseFile              bbishopfilehandle
 
-                OpenFile         bkingfilename, bkingfilehandle
-                ReadData         bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                CloseFile        bkingfilehandle
+                         OpenFile               bkingfilename, bkingfilehandle
+                         ReadData               bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                         CloseFile              bkingfilehandle
 
-                OpenFile         bknightfilename, bknightfilehandle
-                ReadData         bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                CloseFile        bknightfilehandle
+                         OpenFile               bknightfilename, bknightfilehandle
+                         ReadData               bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                         CloseFile              bknightfilehandle
 
-                OpenFile         bpawnfilename, bpawnfilehandle
-                ReadData         bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                CloseFile        bpawnfilehandle
+                         OpenFile               bpawnfilename, bpawnfilehandle
+                         ReadData               bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                         CloseFile              bpawnfilehandle
 
-                OpenFile         bqueenfilename, bqueenfilehandle
-                ReadData         bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                CloseFile        bqueenfilehandle
+                         OpenFile               bqueenfilename, bqueenfilehandle
+                         ReadData               bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                         CloseFile              bqueenfilehandle
 
-                OpenFile         brockfilename, brockfilehandle
-                ReadData         brockfilehandle ,brockwidth,brockheight,brockdata
-                CloseFile        brockfilehandle
+                         OpenFile               brockfilename, brockfilehandle
+                         ReadData               brockfilehandle ,brockwidth,brockheight,brockdata
+                         CloseFile              brockfilehandle
 
   ;--white piecies----
-                OpenFile         wbishopfilename, wbishopfilehandle
-                ReadData         wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                CloseFile        wbishopfilehandle
+                         OpenFile               wbishopfilename, wbishopfilehandle
+                         ReadData               wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                         CloseFile              wbishopfilehandle
 
-                OpenFile         wkingfilename, wkingfilehandle
-                ReadData         wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                CloseFile        wkingfilehandle
+                         OpenFile               wkingfilename, wkingfilehandle
+                         ReadData               wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                         CloseFile              wkingfilehandle
 
-                OpenFile         wknightfilename, wknightfilehandle
-                ReadData         wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                CloseFile        wknightfilehandle
+                         OpenFile               wknightfilename, wknightfilehandle
+                         ReadData               wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                         CloseFile              wknightfilehandle
 
-                OpenFile         wpawnfilename, wpawnfilehandle
-                ReadData         wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                CloseFile        wpawnfilehandle
+                         OpenFile               wpawnfilename, wpawnfilehandle
+                         ReadData               wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                         CloseFile              wpawnfilehandle
 
-                OpenFile         wqueenfilename, wqueenfilehandle
-                ReadData         wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                CloseFile        wqueenfilehandle
+                         OpenFile               wqueenfilename, wqueenfilehandle
+                         ReadData               wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                         CloseFile              wqueenfilehandle
 
-                OpenFile         wrockfilename, wrockfilehandle
-                ReadData         wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-                CloseFile        wrockfilehandle
+                         OpenFile               wrockfilename, wrockfilehandle
+                         ReadData               wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                         CloseFile              wrockfilehandle
 
   ;--border-----
-                OpenFile         borderfilename, borderfilehandle
-                ReadData         borderfilehandle ,borderwidth,borderheight,borderdata
-                CloseFile        borderfilehandle
+                         OpenFile               borderfilename, borderfilehandle
+                         ReadData               borderfilehandle ,borderwidth,borderheight,borderdata
+                         CloseFile              borderfilehandle
 
-                OpenFile         border2filename, border2filehandle
-                ReadData         border2filehandle ,border2width,border2height,border2data
-                CloseFile        border2filehandle
+                         OpenFile               border2filename, border2filehandle
+                         ReadData               border2filehandle ,border2width,border2height,border2data
+                         CloseFile              border2filehandle
 
-                OpenFile         selectfilename, selectfilehandle
-                ReadData         selectfilehandle ,selectwidth,selectheight,selectdata
-                CloseFile        selectfilehandle
+                         OpenFile               selectfilename, selectfilehandle
+                         ReadData               selectfilehandle ,selectwidth,selectheight,selectdata
+                         CloseFile              selectfilehandle
 
-                OpenFile         select2filename, select2filehandle
-                ReadData         select2filehandle ,select2width,select2height,select2data
-                CloseFile        select2filehandle
+                         OpenFile               select2filename, select2filehandle
+                         ReadData               select2filehandle ,select2width,select2height,select2data
+                         CloseFile              select2filehandle
 
-                OpenFile         freezefilename, freezefilehandle
-                ReadData         freezefilehandle ,freezewidth,freezeheight,freezedata
-                CloseFile        freezefilehandle
+                         OpenFile               freezefilename, freezefilehandle
+                         ReadData               freezefilehandle ,freezewidth,freezeheight,freezedata
+                         CloseFile              freezefilehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName     nameq,thename,erroname                                             ;Veryyyyyyyyyyyyyyyy STABLE
-                movecursor       17H,0AH
-                ShowMessage      proceed
-                call             far ptr       waitkey
-                RECIVENAME       thename,theOthername
+                         validateName           nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+                         movecursor             17H,0AH
+                         ShowMessage            proceed
+                         call                   far ptr       waitkey
+                         RECIVENAME             thename,theOthername
                 
   ;CHOICE MENU
-  faraway:      
+  faraway:               
 
-                call             far ptr     CLS
-                movecursor       17H,03H
-                ShowMessage      op1
-                movecursor       17H,08H
-                ShowMessage      op2
-                movecursor       17H,0DH
-                ShowMessage      op3
-                STATUSLINE
+                         call                   far ptr     CLS
+                         movecursor             17H,03H
+                         ShowMessage            op1
+                         movecursor             17H,08H
+                         ShowMessage            op2
+                         movecursor             17H,0DH
+                         ShowMessage            op3
+                         STATUSLINE
   ;MAINMAIN       thename,thename
   
-                RESETMAINFLAGS   INVITE,senttf1,recivedf1,senttf2,recivedf2
-                MAINMAINSERIAL   thename,theOthername
+                         RESETMAINFLAGS         INVITE,senttf1,recivedf1,senttf2,recivedf2
+                         MAINMAINSERIAL         thename,theOthername
   ;GAME SCREEN
-  play:         
-                CALL             far ptr       EnterGraphics
-                mov              curColCursor,00h
-                mov              curRowCursor,07h
-                mov              curColCursor2,00h
-                mov              curRowCursor2,00h
-                mov              whiterow,0D
-                mov              whitecol,0D
-                mov              blackrow,0D
-                mov              blackcol,10D
+  play:                  
+                         CALL                   far ptr       EnterGraphics
+                         mov                    curColCursor,00h
+                         mov                    curRowCursor,07h
+                         mov                    curColCursor2,00h
+                         mov                    curRowCursor2,00h
+                         mov                    whiterow,0D
+                         mov                    whitecol,0D
+                         mov                    blackrow,0D
+                         mov                    blackcol,10D
 
   ;---------------------
-                INITIALIZETIME
-  curs:         
-                CURSORMOV
+                         INITIALIZETIME
+  curs:                  
+                         CURSORMOV
 
-                JMP              curs
+                         JMP                    curs
 
-                EXT
+                         EXT
 MAIN ENDP
   ;----------------------------------------------------------------------------------------------------------------
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC    far                                                                                 ;GET DATA
-                MOV              AX,@DATA
-                MOV              DS,AX
-                retf
+GETDATA PROC    far                                                                                                       ;GET DATA
+                         MOV                    AX,@DATA
+                         MOV                    DS,AX
+                         retf
 GETDATA ENDP
 
 CLS PROC far
-                MOV              AX,0003H
-                INT              10H
-                retf
+                         MOV                    AX,0003H
+                         INT                    10H
+                         retf
 CLS ENDP
 
-EnterText PROC far                                                                                  ;ENTER TEXT MODE
-                MOV              AX,3H
-                INT              10H
-                retf
+EnterText PROC far                                                                                                        ;ENTER TEXT MODE
+                         MOV                    AX,3H
+                         INT                    10H
+                         retf
 EnterText ENDP
 
-EnterGraphics PROC far                                                                              ;ENTER GRAPHICS MODE
-                MOV              AX,4F02H
-                MOV              BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
-                INT              10H
-                retf
+EnterGraphics PROC far                                                                                                    ;ENTER GRAPHICS MODE
+                         MOV                    AX,4F02H
+                         MOV                    BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
+                         INT                    10H
+                         retf
 EnterGraphics ENDP
 
-waitkey PROC    far                                                                                 ;wait for key
-                MOV              AH , 0
-                INT              16h
-                retf
+waitkey PROC    far                                                                                                       ;wait for key
+                         MOV                    AH , 0
+                         INT                    16h
+                         retf
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                               ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                                                     ;CHECKING THE FREEZE OF 3 SECONDS
        
-                mov              al,0
-                mov              ah,0
-  Nloop9:       
-                mov              AL,0
-  Nloop10:      
-                mov              BYTE PTR  dummyData1,al
-                mov              BYTE PTR  dummyData2,ah
-                pusha
-                GETARINDEXBYBYTE dummyData1,dummyData2
+                         mov                    al,0
+                         mov                    ah,0
+  Nloop9:                
+                         mov                    AL,0
+  Nloop10:               
+                         mov                    BYTE PTR  dummyData1,al
+                         mov                    BYTE PTR  dummyData2,ah
+                         pusha
+                         GETARINDEXBYBYTE       dummyData1,dummyData2
                 
   ; Code for checking the freeze  ----------------------------------------------------------
-                mov              SI,BX
+                         mov                    SI,BX
                  
-                GETTIME
-                mov              ax,si
-                mov              cl,2D
-                mul              cl
-                mov              si,ax
-                CMP              word ptr timeState[si],0
-                JE               LEAVEIT
-                dec              BX
-                dec              BX
-                dec              BX
-                CMP              word ptr timeState[si],BX
+                         GETTIME
+                         mov                    ax,si
+                         mov                    cl,2D
+                         mul                    cl
+                         mov                    si,ax
+                         CMP                    word ptr timeState[si],0
+                         JE                     LEAVEIT
+                         dec                    BX
+                         dec                    BX
+                         dec                    BX
+                         CMP                    word ptr timeState[si],BX
                  
-                Jle              temp151
+                         Jle                    temp151
   ; U STILL IN FREEZE DUDE
-                pusha
-                DRAWWITHSOURCE   freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
-                popa
-  LEAVEIT:      
-                JMP              nbreak6
-  temp151:      
-                mov              word ptr timeState[si],0D
-                popa
+                         pusha
+                         DRAWWITHSOURCE         freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
+                         popa
+  LEAVEIT:               
+                         JMP                    nbreak6
+  temp151:               
+                         mov                    word ptr timeState[si],0D
+                         popa
   ; Converting byte to word coz dummydata 1 , 2 are bytes
           
-                MOV              BYTE PTR  dummyData3,0D
-                MOV              BYTE PTR  dummyData4,0D
-                ADD              BYTE PTR  dummyData3,al
-                ADD              BYTE PTR  dummyData4,ah
+                         MOV                    BYTE PTR  dummyData3,0D
+                         MOV                    BYTE PTR  dummyData4,0D
+                         ADD                    BYTE PTR  dummyData3,al
+                         ADD                    BYTE PTR  dummyData4,ah
 
-                PUSHA
-                PUSHA
-                UPDATECELL       dummyData3,dummyData4,150D,0D
-                POPA
+                         PUSHA
+                         PUSHA
+                         UPDATECELL             dummyData3,dummyData4,150D,0D
+                         POPA
                  
   ; ---------------------------------------------------------------------------------------------
-  Nbreak6:      
-                popa
-                inc              al
-                cmp              al,8
-                je               TMP2
-                JMP              far ptr                   Nloop10
-  TMP2:         
-                inc              ah
-                cmp              ah,8
-                je               TMP3
-                JMP              far ptr          Nloop9
-  TMP3:         
-  BREAK80:      
-                retf
+  Nbreak6:               
+                         popa
+                         inc                    al
+                         cmp                    al,8
+                         je                     TMP2
+                         JMP                    far ptr                   Nloop10
+  TMP2:                  
+                         inc                    ah
+                         cmp                    ah,8
+                         je                     TMP3
+                         JMP                    far ptr          Nloop9
+  TMP3:                  
+  BREAK80:               
+                         retf
 FREEZEPROC ENDP
+
+CLEAR_AVAILABLE_PLACES PROC FAR
+
+                         mov                    al,0
+                         mov                    ah,0
+  Nloop91011:            
+                         mov                    AL,0
+  Nloop101112:           
+                         mov                    BYTE PTR  dummyData1,al
+                         mov                    BYTE PTR  dummyData2,ah
+                         pusha
+                         GETARINDEXBYBYTE       dummyData1,dummyData2
+                         cmp                    BYTE PTR  cursorState[bx],0
+                         JNE                    TMP123
+                         JMP                    Nbreak678
+  TMP123:                
+                         MOV                    BYTE PTR  cursorState[bx],0
+                         popa
+                         MOV                    BYTE PTR  dummyData3,0D
+                         MOV                    BYTE PTR  dummyData4,0D
+                         ADD                    BYTE PTR  dummyData3,al
+                         ADD                    BYTE PTR  dummyData4,ah
+                         pusha
+                         UPDATECELL             dummyData3,dummyData4,150D,0D
+                  
+  Nbreak678:             
+                         popa
+                         inc                    al
+                         cmp                    al,8
+                         JE                     TMP245
+                         JMP                    Nloop101112
+  TMP245:                
+                         inc                    ah
+                         cmp                    ah,8
+                         JE                     TMP345
+                         JMP                    Nloop91011
+  TMP345:                
+
+                         DRAWWITHSOURCE         borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                         DRAWWITHSOURCE         border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+                         DRAW_AVAILABLE_PLACES2
+                         retf
+CLEAR_AVAILABLE_PLACES ENDP
 
 END MAIN
 
