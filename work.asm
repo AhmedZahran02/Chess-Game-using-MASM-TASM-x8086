@@ -4515,6 +4515,27 @@ ENDM STATUSLINE
 
 RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
 
+            LOCAL dead2
+            LOCAL mainloop2
+            LOCAL afterenter
+            local afterenter22
+            LOCAL deadmid2
+            local CHK2
+            local AGAINx
+            local skip1111x
+            LOCAL skippppppppppppppppppppppppppppppp
+            LOCAL outOfTheValidation
+            LOCAL biggerthana
+            LOCAL seeifbackspace
+            LOCAL deletchartransimited
+            LOCAL deletchar
+            local skip111x
+            LOCAL skip111xx
+            LOCAL skip111xxx
+            LOCAL skip111xxxxx
+            LOCAL skip111xxxxxx
+            LOCAL skip111xxxxxxx
+
 
     mov dx,3fbh           ; Line Control Register
     mov al,10000000b      ;Set Divisor Latch Access Bit
@@ -4539,39 +4560,186 @@ RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
     mov al,00011011b      ;011=> even parity 0=> one stop bit 11=> 8bits
     out dx,al
 
-; inc ah
-; lea si, PLAYERNAME1
-; lea di, PLAYERNAME2
-; loopxxx:
-;     ;Check that Transmitter Holding Register is Empty
-;     mov dx , 3FDH         ; Line Status Register
-;     In  al , dx           ;Read Line Status 
-;     AND al , 00100000b
-;     jnz VERYLATE2            ;jump untill it is empty
-;     jmp far ptr loopxxx
-;     VERYLATE2:
-;     ;If empty put the VALUE in Transmit data register
-;     mov dx , 3F8H         ; Transmit data register
-;     mov al,[bx]   ; al,VALUE
-;     out dx , al
+    mov dh ,30
+    mov dl,10
+    push dx
+    mov si,0
+    mov di,0
+    mainloop2:    
+                  mov bl,NAMEFLAG
+                  cmp bl,2
+                  jnz skip111xxxxxxx
+                  JMP far ptr   dead2
+                  skip111xxxxxxx:
+                
 
 
-;     ;Check that Data Ready
-;     mov dx , 3FDH         ; Line Status Register
-;     in  al , dx
-;     AND al , 00000001b
-;     jnz VERYLATE1
-;     jmp far ptr loopxx   ;jump IF NOT  it recive data
-;     VERYLATE1:
-;     ;If Ready read the VALUE in Receive data register
-;     mov dx , 03F8H
-;     in  al , dx
-;     mov [bx],al
+                  mov         ah,01
+                  int         16h
+                  jnz          skippppppppppppppppppppppppppppppp
+                  JMP far ptr         AGAINx
+                  skippppppppppppppppppppppppppppppp:
+                  mov         ah,0
+                  int         16h
 
 
+                  mov         bl,al
+
+                  ; ;;;;;;;;;;;;;;;;;;;;;;;; see if si greater than one
+                  cmp         si,0
+                  jnz         seeifbackspace
+                  cmp         bl,08
+                  jz mainloop2
+                  seeifbackspace:
 
 
+                  cmp         bl,08
+                  jnz         skip111xxxx
+                  jmp  far ptr deletchar
+                  skip111xxxx:
 
+                  ;;;;;;;;;;;;;;;;;;;;;;;; see if si is 15 stop adding name length
+                  cmp         si,15
+                  jc         skip111xxx
+                  jmp  far ptr mainloop2
+                  skip111xxx:
+
+
+                  ;;;;;;;;;;;;;;;;;;;;;;;;; see if enter pressed;;;;;;;;;;;;
+                  cmp         bl,13
+                  jne         skip111xx
+                  cmp si,0
+                  jz skip111xx
+                  jmp  far ptr afterenterx
+                  skip111xx:
+
+
+                  mov cl,122;;== z 
+                  cmp cl,al;;if greater than z jmp
+                  jc mainloop2
+                  cmp al,65;;== A
+                  jc mainloop2;;if less than A jmp
+                  mov cl,90;;== Z 
+                  cmp cl,al;;if greater than Z jmp
+                  jc biggerthana
+                  jmp outOfTheValidation
+                  biggerthana:
+                  cmp al,97;;== a
+                  jc mainloop2;;if less than a jmp
+                  outOfTheValidation:
+
+                  pop         dx
+                  push        dx
+                  push        ax
+                  movecursorWithPageNumber  dh,dl,0
+                  pop         ax
+                  pop         dx
+                  inc         dh
+                  push        dx
+
+                  push        ax
+
+                  mov         ah,2
+                  mov         dl,al
+                  int         21h
+
+                  pop         ax
+                  JMP far ptr  afterenterx
+
+                  deletchar:
+                  pop         dx
+                  dec dh
+                  push        dx
+                  push        ax
+
+                  movecursorWithPageNumber  dh,dl,0
+                  pop         ax
+                  pop         dx
+
+                  push        dx
+                  push        ax
+
+                  mov         ah,2
+                  mov         dl,0
+                  int         21h
+
+                  pop         ax
+
+
+    afterenterx:   
+    ;Sending a value
+
+    ;Check that Transmitter Holding Register is Empty
+                  mov         dx , 3FDH         ; Line Status Register
+
+                  In          al , dx           ;Read Line Status
+                  AND         al , 00100000b
+                  JZ          AGAINx             ;jump untill it is empty
+
+    ;If empty put the VALUE in Transmit data register
+
+                  cmp         ah,13            ; enter key
+                  jne          skip111x
+                  jmp deadmid2
+                  skip111x:
+
+                  mov         dx , 3F8H         ; Transmit data register
+                  mov         al,bl
+                  out         dx , al
+                  
+                  cmp al,13
+                  jnz skip111xxxxx
+                  inc NAMEFLAG
+                  skip111xxxxx:
+
+                  cmp al,08
+                  jz deletchartransimited
+                  
+                  mov PLAYERNAME1[si + 2],al
+                  inc si
+                  jmp         AGAINx
+
+                  deletchartransimited:
+                  dec si
+                  mov PLAYERNAME1[si + 2],0
+                  jmp         AGAINx
+           
+    ;Receiving a value
+    deadmid2:      
+                  jmp         dead2
+                  
+    AGAINx:        
+    ;Check that Data Ready
+                  mov         dx , 3FDH         ; Line Status Register
+          
+                  in          al , dx
+                  AND         al , 00000001b
+                  JZ          CHK2              ;jump untill it recive data
+
+    ;If Ready read the VALUE in Receive data register
+                  mov         dx , 03F8H
+                  in          al , dx
+
+                  cmp al,13
+                  jnz skip111xxxxxx
+                  inc NAMEFLAG
+                  skip111xxxxxx:
+
+                  cmp al,08
+                  jz deletcharafterrecive
+                  mov PLAYERNAME2[di + 2], al
+                  inc di
+                  JMP far ptr CHK2
+                  deletcharafterrecive:
+
+                  dec di
+                  mov PLAYERNAME2[di + 2], 0
+
+                  
+    CHK2:          
+
+                  jmp         mainloop2
+    dead2:  
 
 ENDM RECIVENAME
 
@@ -5340,6 +5508,7 @@ connect MACRO
   op3               db  'To end the program press ESC','$'
   F1_INVITATION     DB  'SENT YOU A CHAT INVITATION PRESS F1 TO PROCCED','$'
   F2_INVITATION     DB  'SENT YOU A GAME INVITATION PRESS F2 TO PROCCED','$'
+  NAMEFLAG          DB  0
   INVITE            DB  0
   senttf1           DB  0
   recivedf1         DB  0
@@ -5596,11 +5765,14 @@ MAIN PROC FAR
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                          validateName             nameq,thename,erroname                                                 ;Veryyyyyyyyyyyyyyyy STABLE
-                          movecursor               17H,0AH
+                          movecursor               30d,7d
+                          ShowMessage              nameq
+                          movecursor               30d,10d
+                          RECIVENAME               thename,theOthername
+  ;validateName             nameq,thename,erroname
+                          movecursor               30d,11d
                           ShowMessage              proceed
                           call                     far ptr       waitkey
-                          RECIVENAME               thename,theOthername
                 
   ;CHOICE MENU
   faraway:                
