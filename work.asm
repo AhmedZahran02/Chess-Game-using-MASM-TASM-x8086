@@ -4185,6 +4185,9 @@ ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B ;This Macro is Responsible for initializig the first state of the grid as the initial location of pieces and the color of the cells (A,B)
 
+local white
+local black
+
 mov colorState[0],A
 mov colorState[1],B
 mov colorState[2],A
@@ -4313,10 +4316,15 @@ mov gridState[55],7 ;white pawn
 mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
 mov gridState[58],10 ;white bishop
-;if player 0 11 -> 12 else 12->11
-mov gridState[59],12 ;white queen
-mov gridState[60],11 ;white king
-
+cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
+jne black
+mov gridState[59],11 ;white queen
+mov gridState[60],12 ;white king
+jmp white
+black:
+mov gridState[59],12 ;white king
+mov gridState[60],11 ;white queen
+white:
 mov gridState[61],10 ;white bishop
 mov gridState[62],9  ;white knight
 mov gridState[63],8  ;white rook
@@ -5042,6 +5050,34 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     LOCAL B10
     LOCAL B11
     LOCAL B12
+    local white
+    local black
+    local temp1
+    local temp2
+    local temp3
+    local temp4
+    local temp5
+    local temp6
+    local temp7
+    local temp8
+    local temp9
+    local temp10
+    local temp11
+    local temp12
+    local temp13
+    local temp14
+    local temp15
+    local temp16
+    local temp17
+    local temp18
+    local temp19
+    local temp20
+    local temp21
+    local temp22
+    local temp23
+    local temp24
+    local temp25
+    
 
     ; GETS THE NUMBER IN GRID[X][Y]
     ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
@@ -5060,7 +5096,9 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     MOV AH,0H
 
     CMP AX,0
-    JE EMPTY2
+    jne temp1
+    jmp EMPTY2
+    temp1:
     
     ; DEC AX 
     ; MOV BX,360D
@@ -5072,32 +5110,110 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
 
     ; MOV BX,SI
     ; JMP RETURN 
-    
-    CMP AX,1D
-    JE B1
 
+cmp senttf2,1  
+je white
+jmp black
+white:
+   CMP AX,1D
+   jne temp2
+   jmp B1
+   temp2:
    CMP AX,2D
-   JE B2
+   jne temp3
+   jmp B2
+   temp3:
    CMP AX,3D
-   JE B3
+   jne temp4
+   jmp B3
+   temp4:
    CMP AX,4D
-   JE B4
+   jne temp5
+   jmp B4
+   temp5:
    CMP AX,5D
-   JE B5
+   jne temp6
+   jmp B5
+   temp6:
    CMP AX,6D
-   JE B6
+   jne temp7
+   jmp B6
+   temp7:
    CMP AX,7D
-   JE B7
+   jne temp8
+   jmp B7
+   temp8:
    CMP AX,8D
-   JE B8
+   jne temp9
+   jmp B8
+   temp9:
    CMP AX,9D
-   JE B9
+   jne temp10
+   jmp B9
+   temp10:
    CMP AX,10D
-   JE B10
+   jne temp11
+   jmp B10
+   temp11:
    CMP AX,11D
-   JE B11
+   jne temp12
+   jmp B11
+   temp12:
    CMP AX,12D
-   JE B12
+   jne temp13
+   jmp B12
+   temp13:
+jmp EMPTY2
+
+black:
+   CMP AX,8D
+   jne temp14
+   jmp B1
+   temp14:
+   CMP AX,9D
+   jne temp15
+   jmp B2
+   temp15:
+   CMP AX,10D
+   jne temp16
+   jmp B3
+   temp16:
+   CMP AX,11D
+   jne temp17
+   jmp B4
+   temp17:
+   CMP AX,12D
+   jne temp18
+   jmp B5
+   temp18:
+   CMP AX,7D
+   jne temp19
+   jmp B6
+   temp19:
+   CMP AX,6D
+   jne temp20
+   jmp B7
+   temp20:
+   CMP AX,1D
+   jne temp21
+   jmp B8
+   temp21:
+   CMP AX,2D
+   jne temp22
+   jmp B9
+   temp22:
+   CMP AX,3D
+   jne temp23
+   jmp B10
+   temp23:
+   CMP AX,4D
+   jne temp24
+   jmp B11
+   temp24:
+   CMP AX,5D
+   jne temp25
+   jmp B12
+   temp25:
 
    EMPTY2: JMP EMPTY
        
