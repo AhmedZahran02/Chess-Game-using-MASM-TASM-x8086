@@ -4627,7 +4627,8 @@ RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
                   jmp  far ptr afterenterx
                   skip111xx:
 
-
+                  cmp si,0
+                  jnz outOfTheValidation
                   mov cl,122;;== z 
                   cmp cl,al;;if greater than z jmp
                   jc mainloop2
