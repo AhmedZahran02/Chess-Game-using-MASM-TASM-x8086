@@ -4060,12 +4060,12 @@ mov gridState[2],3 ;black bishop
 
 cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
 jne black2
-mov gridState[3],4 ;white queen
-mov gridState[4],5 ;white king
+mov gridState[3],4 ;black queen
+mov gridState[4],5 ;black king
 jmp white2
 black2:
-mov gridState[3],5 ;white king
-mov gridState[4],4 ;white queen
+mov gridState[3],5 ;black king
+mov gridState[4],4 ;black queen
 white2:
 
 mov gridState[5],3 ;black bishop
@@ -4410,7 +4410,7 @@ SEEIFRECIVING:
     movthree:
 
     ;;;;;;;;;print message
-    ShowMessage player2Name + 2
+    ShowMessage player2Name+2
     movecursor  25,20
     ShowMessage F1_INVITATION
 ;;;;;;;;;;;;;;;;;;;;;; FOR SCROLLING 
@@ -6019,11 +6019,11 @@ DRAW_AVAILABLE_PLACES PROC far
                           popa
                           PUSHA
                           GETARINDEXBYBYTE         dummyData1,dummyData2
-                          ; CMP                      BYTE PTR gridState[BX],5D
-                          ; JE                       BREAK8dd
+  ; CMP                      BYTE PTR gridState[BX],5D
+  ; JE                       BREAK8dd
   BREAK7dd:               
                           JMP                      BREAK6dd
-  ; BREAK8dd:               
+  ; BREAK8dd:
   ;                         pusha
   ;                         movecursorWithPageNumber 2d,31d,1D
   ;                         ShowMessage              CHECKSTRING
