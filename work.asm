@@ -3225,17 +3225,32 @@ LOCAL LOOPAGAIN2
 LOCAL CONTINUOUEGAME2
 LOCAL not4f
 LOCAL not4f2
+LOCAL AFTEROTHERPLAYER
+LOCAL OTHERPLAYER
+
+; HANDLING WHO IS THE WINNER ? 
+MOV CL , 5D
+MOV CH ,12D
+
+CMP senttf2 , 1
+JNE OTHERPLAYER
+JMP AFTEROTHERPLAYER
+OTHERPLAYER:
+XCHG CL , CH
+AFTEROTHERPLAYER:
+; -----------------------------
+
 MOV BX, 64
 LOOPAGAIN1:
 DEC BX
-CMP gridState[BX],5 ; BLACK KING
+CMP gridState[BX],CL ; BLACK KING
 JZ CONTINUOUEGAME1
 CMP BX,0
 JNZ LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
-  movecursor 37,30
+  movecursorWithPageNumber 37,30,1D
   ShowMessage WINNERISWHITE
   not4f:
   mov ah,0
@@ -3248,13 +3263,15 @@ CONTINUOUEGAME1:
 MOV BX, 64
 LOOPAGAIN2:
 DEC BX
-CMP gridState[BX],12 ; WHITE KING
+CMP gridState[BX],CH ; WHITE KING
 JZ CONTINUOUEGAME2
 CMP BX,0
 JNZ LOOPAGAIN2
+
+
 MOV AL,2
 MOV WINNER,AL
-  movecursor 37,30
+  movecursorWithPageNumber 37,30,1D
   ShowMessage WINNERISBLACK
   not4f2:
   mov ah,0
@@ -4565,7 +4582,8 @@ RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
                   jmp  far ptr afterenterx
                   skip111xx:
 
-
+                  cmp si,0
+                  jnz outOfTheValidation
                   mov cl,122;;== z 
                   cmp cl,al;;if greater than z jmp
                   jc mainloop2
