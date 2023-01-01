@@ -3954,7 +3954,7 @@ BREAK7:
 JMP BREAK6
 BREAK8:
          pusha
-        movecursor 2d,31d
+        movecursorWithPageNumber 2d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4006,7 +4006,7 @@ BREAK7:
 JMP break6
 BREAK8:
          pusha
-        movecursor 80d,31d
+        movecursorWithPageNumber 80d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4105,7 +4105,7 @@ BREAK7:
 JMP break6
 BREAK8:
          pusha
-        movecursor 80d,31d
+        movecursorWithPageNumber 80d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4310,8 +4310,8 @@ mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
 mov gridState[58],10 ;white bishop
 ;if player 0 11 -> 12 else 12->11
-mov gridState[59],11 ;white queen
-mov gridState[60],12 ;white king
+mov gridState[59],12 ;white queen
+mov gridState[60],11 ;white king
 
 mov gridState[61],10 ;white bishop
 mov gridState[62],9  ;white knight
