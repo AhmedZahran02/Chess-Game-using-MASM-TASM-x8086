@@ -3472,6 +3472,10 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
   local receive
 
                   connect
+                  INITIALIZEGRID   42H,06H                                                                ;0FH,08H
+                  DrawGrid         150D,0D,colorState[1],colorState[0]
+                  DrawPiecies      150D,0D
+                  DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                   INITIALIZEGAMECHAT thename,thename
     cursorLoop:
                   PRINTCURRTIMER
@@ -3954,7 +3958,7 @@ BREAK7:
 JMP BREAK6
 BREAK8:
          pusha
-        movecursor 2d,31d
+        movecursorWithPageNumber 2d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4006,7 +4010,7 @@ BREAK7:
 JMP break6
 BREAK8:
          pusha
-        movecursor 80d,31d
+        movecursorWithPageNumber 80d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4105,7 +4109,7 @@ BREAK7:
 JMP break6
 BREAK8:
          pusha
-        movecursor 80d,31d
+        movecursorWithPageNumber 80d,31d,1D
         ShowMessage CHECKSTRING
         popa
 break6:
@@ -4181,6 +4185,11 @@ ENDM getDrawPosition
 
 INITIALIZEGRID MACRO A,B ;This Macro is Responsible for initializig the first state of the grid as the initial location of pieces and the color of the cells (A,B)
 
+local white
+local black
+local black2
+local white2
+
 mov colorState[0],A
 mov colorState[1],B
 mov colorState[2],A
@@ -4249,8 +4258,17 @@ mov colorState[63],A
 mov gridState[0],1 ;black rook
 mov gridState[1],2 ;black knight
 mov gridState[2],3 ;black bishop
-mov gridState[3],4 ;black queen
-mov gridState[4],5 ;black king
+
+cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
+jne black2
+mov gridState[3],4 ;white queen
+mov gridState[4],5 ;white king
+jmp white2
+black2:
+mov gridState[3],5 ;white king
+mov gridState[4],4 ;white queen
+white2:
+
 mov gridState[5],3 ;black bishop
 mov gridState[6],2 ;black knight
 mov gridState[7],1 ;black rook
@@ -4309,10 +4327,15 @@ mov gridState[55],7 ;white pawn
 mov gridState[56],8  ;white rook
 mov gridState[57],9  ;white knight
 mov gridState[58],10 ;white bishop
-;if player 0 11 -> 12 else 12->11
+cmp senttf2,1         ;if player 0 11 -> 12 else 12->11
+jne black
 mov gridState[59],11 ;white queen
 mov gridState[60],12 ;white king
-
+jmp white
+black:
+mov gridState[59],12 ;white king
+mov gridState[60],11 ;white queen
+white:
 mov gridState[61],10 ;white bishop
 mov gridState[62],9  ;white knight
 mov gridState[63],8  ;white rook
@@ -4351,7 +4374,7 @@ validateName MACRO entermsg,name,strFailed ;This Macro is Responsible for valida
 ;---------fist check with enter message-----------;
     repeatt:
 
-    CALL CLS
+    CALL far ptr CLS
 
     movecursor  17H,05H
     ShowMessage strFailed
@@ -4976,6 +4999,29 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     LOCAL B10
     LOCAL B11
     LOCAL B12
+    local white
+    local black
+    local temp1
+    local temp2
+    local temp3
+    local temp4
+    local temp5
+    local temp6
+    local temp7
+    local temp8
+    local temp9
+    local temp10
+    local temp11
+    local temp12
+    local temp13
+    local temp14
+    local temp15
+    local temp16
+    local temp17
+    local temp18
+    local temp19
+    local temp20
+    local temp21
 
     ; GETS THE NUMBER IN GRID[X][Y]
     ; GETS THE IMGDATA REQUIRED FOR THE ICON IN GRID[X][Y]
@@ -4994,7 +5040,9 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
     MOV AH,0H
 
     CMP AX,0
-    JE EMPTY2
+    jne temp1
+    jmp EMPTY2
+    temp1:
     
     ; DEC AX 
     ; MOV BX,360D
@@ -5006,32 +5054,90 @@ GETIMGDATA MACRO X,Y  ;This Macro is Responsible for getting image data and stor
 
     ; MOV BX,SI
     ; JMP RETURN 
-    
-    CMP AX,1D
-    JE B1
 
+cmp senttf2,1  
+je white
+jmp black
+white:
+   CMP AX,1D
+   jne temp2
+   jmp B1
+   temp2:
    CMP AX,2D
-   JE B2
+   jne temp3
+   jmp B2
+   temp3:
    CMP AX,3D
-   JE B3
+   jne temp4
+   jmp B3
+   temp4:
    CMP AX,4D
-   JE B4
+   jne temp5
+   jmp B4
+   temp5:
    CMP AX,5D
-   JE B5
+   jne temp6
+   jmp B5
+   temp6:
    CMP AX,6D
-   JE B6
+   jne temp7
+   jmp B6
+   temp7:
    CMP AX,7D
-   JE B7
+   jne temp8
+   jmp B7
+   temp8:
    CMP AX,8D
-   JE B8
+   jne temp9
+   jmp B8
+   temp9:
    CMP AX,9D
-   JE B9
+   jne temp10
+   jmp B9
+   temp10:
    CMP AX,10D
-   JE B10
+   jne temp11
+   jmp B10
+   temp11:
    CMP AX,11D
-   JE B11
+   jne temp12
+   jmp B11
+   temp12:
    CMP AX,12D
-   JE B12
+   jne temp13
+   jmp B12
+   temp13:
+jmp EMPTY2
+
+black:
+   CMP AX,8D
+   jne temp14
+   jmp B1
+   temp14:
+   CMP AX,9D
+   jne temp15
+   jmp B2
+   temp15:
+   CMP AX,10D
+   je far ptr B3
+   CMP AX,11D
+   je far ptr B4
+   CMP AX,12D
+   je far ptr B5
+   CMP AX,7D
+   je far ptr B6
+   CMP AX,6D
+   je far ptr B7
+   CMP AX,1D
+   je far ptr B8
+   CMP AX,2D
+   je far ptr B9
+   CMP AX,3D
+   je far ptr B10
+   CMP AX,4D
+   je far ptr B11
+   CMP AX,5D
+   je far ptr B12
 
    EMPTY2: JMP EMPTY
        
@@ -5526,8 +5632,8 @@ connect MACRO
 .CODE
 MAIN PROC FAR
   ;INITIALIZING
-                call             GETDATA
-                CALL             CLS
+                call             far ptr       GETDATA
+                CALL             far ptr      CLS
   ;OPENING AND READING AND CLOSING BIN FILES
                 OpenFile         bbishopfilename, bbishopfilehandle
                 ReadData         bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
@@ -5604,7 +5710,7 @@ MAIN PROC FAR
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                validateName     nameq,thename,erroname                                                 ;Veryyyyyyyyyyyyyyyy STABLE
+                validateName     nameq,thename,erroname                                             ;Veryyyyyyyyyyyyyyyy STABLE
                 movecursor       17H,0AH
                 ShowMessage      proceed
                 call             waitkey
@@ -5627,7 +5733,7 @@ MAIN PROC FAR
                 MAINMAINSERIAL   thename,theOthername
   ;GAME SCREEN
   play:         
-                CALL             EnterGraphics
+                CALL             far ptr       EnterGraphics
                 mov              curColCursor,00h
                 mov              curRowCursor,07h
                 mov              curColCursor2,00h
@@ -5636,29 +5742,7 @@ MAIN PROC FAR
                 mov              whitecol,0D
                 mov              blackrow,0D
                 mov              blackcol,10D
-                INITIALIZEGRID   42H,06H                                                                ;0FH,08H
-                DrawGrid         150D,0D,colorState[1],colorState[0]
-                DrawPiecies      150D,0D
 
-                DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-  ; DRAWWITHSOURCE   border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
-
-  ;----------------------
-  ; getDrawPosition 30d,0d,whiterow,whitecol
-  ; DRAWCELL        cx,dx,0fh
-  ; GETIMGDATA      0,0
-  ; DRAWWITHSOURCE  [bx],borderwidth,borderheight,whiterow,whitecol,30D,0D
-  ; mov             al,whitecol
-  ; inc             al
-  ; mov             whitecol,al
-
-  ; getDrawPosition 30d,0d,blackrow,blackcol
-  ; DRAWCELL        cx,dx,0fh
-  ; GETIMGDATA      0,0
-  ; DRAWWITHSOURCE  [bx],borderwidth,borderheight,blackrow,blackcol,30D,0D
-  ; mov             al,blackcol
-  ; inc             al
-  ; mov             blackcol,al
   ;---------------------
                 INITIALIZETIME
   curs:         
@@ -5672,38 +5756,38 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC                                                                                            ;GET DATA
+GETDATA PROC    far                                                                                 ;GET DATA
                 MOV              AX,@DATA
                 MOV              DS,AX
-                ret
+                retf
 GETDATA ENDP
 
-CLS PROC                                                                                                ;CLEAR SCREEN
-                MOV              AX,0003H                                                               ;;ah == 0 set to graph mod the al = 3 return to text mode
+CLS PROC far
+                MOV              AX,0003H
                 INT              10H
-                ret
+                retf
 CLS ENDP
 
-EnterText PROC                                                                                          ;ENTER TEXT MODE
+EnterText PROC far                                                                                  ;ENTER TEXT MODE
                 MOV              AX,3H
                 INT              10H
-                ret
+                retf
 EnterText ENDP
 
-EnterGraphics PROC                                                                                      ;ENTER GRAPHICS MODE
+EnterGraphics PROC far                                                                              ;ENTER GRAPHICS MODE
                 MOV              AX,4F02H
-                MOV              BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
+                MOV              BX,103H                                                            ;(800x600) pixel ;grid =480*480; char=60*60
                 INT              10H
-                ret
+                retf
 EnterGraphics ENDP
 
-waitkey PROC                                                                                            ;wait for key
+waitkey PROC    far                                                                                 ;wait for key
                 MOV              AH , 0
                 INT              16h
-                ret
+                retf
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                                   ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                               ;CHECKING THE FREEZE OF 3 SECONDS
        
                 mov              al,0
                 mov              ah,0
@@ -5768,7 +5852,6 @@ FREEZEPROC PROC   FAR                                                           
   BREAK80:      
                 retf
 FREEZEPROC ENDP
-
 
 END MAIN
 
