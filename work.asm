@@ -776,7 +776,7 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   MOV BYTE PTR colorState[bx],0CH 
                   pusha
                   UPDATECELL     curRowCursor2,curColCursor2,150D,0D
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D 
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D 
                   popa
                   mov bl,BYTE PTR stateOfQ2
 
@@ -3254,7 +3254,7 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
                   call far ptr CLEAR_AVAILABLE_PLACES2
                   POPA
 
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,endRowCursor2,endColCursor2,150D,0D    ; col,row
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,endRowCursor2,endColCursor2,150D,0D    ; col,row
 
                   mov bl,BYTE PTR stateOfQ2
                   dec bl
@@ -3452,7 +3452,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
   pusha
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
@@ -3496,7 +3496,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
  pusha
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
@@ -3537,7 +3537,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
  pusha
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
@@ -3578,7 +3578,7 @@ CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move t
                   UPDATECELL     curRowCursor,curColCursor,150D,0D
                   popa
  pusha
-                  DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
                   popa
                   pusha
                   GETARINDEXBYBYTE curRowCursor,curColCursor
@@ -5596,7 +5596,7 @@ MAIN PROC FAR
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                          validateName             nameq,thename,erroname                                                    ;Veryyyyyyyyyyyyyyyy STABLE
+                          validateName             nameq,thename,erroname                                                 ;Veryyyyyyyyyyyyyyyy STABLE
                           movecursor               17H,0AH
                           ShowMessage              proceed
                           call                     far ptr       waitkey
@@ -5642,7 +5642,7 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC    far                                                                                                          ;GET DATA
+GETDATA PROC    far                                                                                                       ;GET DATA
                           MOV                      AX,@DATA
                           MOV                      DS,AX
                           retf
@@ -5654,26 +5654,26 @@ CLS PROC far
                           retf
 CLS ENDP
 
-EnterText PROC far                                                                                                           ;ENTER TEXT MODE
+EnterText PROC far                                                                                                        ;ENTER TEXT MODE
                           MOV                      AX,3H
                           INT                      10H
                           retf
 EnterText ENDP
 
-EnterGraphics PROC far                                                                                                       ;ENTER GRAPHICS MODE
+EnterGraphics PROC far                                                                                                    ;ENTER GRAPHICS MODE
                           MOV                      AX,4F02H
-                          MOV                      BX,103H                                                                   ;(800x600) pixel ;grid =480*480; char=60*60
+                          MOV                      BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
                           INT                      10H
                           retf
 EnterGraphics ENDP
 
-waitkey PROC    far                                                                                                          ;wait for key
+waitkey PROC    far                                                                                                       ;wait for key
                           MOV                      AH , 0
                           INT                      16h
                           retf
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                                                        ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                                                     ;CHECKING THE FREEZE OF 3 SECONDS
        
                           mov                      al,0
                           mov                      ah,0
@@ -5736,6 +5736,7 @@ FREEZEPROC PROC   FAR                                                           
                           JMP                      far ptr          Nloop9
   TMP3:                   
   BREAK80:                
+                          DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                           retf
 FREEZEPROC ENDP
 
@@ -5777,7 +5778,7 @@ CLEAR_AVAILABLE_PLACES PROC FAR
   TMP345:                 
 
                           DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                          DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+  ; DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
                           call                     far ptr DRAW_AVAILABLE_PLACES2
                           retf
 CLEAR_AVAILABLE_PLACES ENDP
@@ -5818,7 +5819,7 @@ CLEAR_AVAILABLE_PLACES2 PROC far
                           JMP                      Nloop9zz
   TMP3zz:                 
                           DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                          DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
+  ; DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
                           call                     far ptr DRAW_AVAILABLE_PLACES
                           retf
 CLEAR_AVAILABLE_PLACES2 ENDP
