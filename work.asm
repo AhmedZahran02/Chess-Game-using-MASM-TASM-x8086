@@ -2907,31 +2907,59 @@ mov al,dummyData5
 temp23:
 
 GETARINDEXBYBYTE dummyData5,dummyData6
-                  CMP BYTE PTR gridState[BX],1d
-                  JNE PAWNTEMP
-                  JMP ROOK
-                  PAWNTEMP:
-                  CMP BYTE PTR gridState[BX],2d
-                  JNE ROOKTEMP
-                  JMP KNIGHT
-                  ROOKTEMP:
-                  CMP BYTE PTR gridState[BX],3d
-                  JNE KNIGHTTEMP
-                  JMP BISHOP
-                  KNIGHTTEMP:
-                  CMP BYTE PTR gridState[BX],4d
-                  JNE BISHOPTEMP
-                  JMP QUEEN
-                  BISHOPTEMP:
-                  CMP BYTE PTR gridState[BX],5d
-                  JNE QUEENTEMP
-                  JMP KING
-                  QUEENTEMP:
+                  ; CMP BYTE PTR gridState[BX],1d
+                  ; JNE PAWNTEMP
+                  ; JMP ROOK
+                  ; PAWNTEMP:
+                  ; CMP BYTE PTR gridState[BX],2d
+                  ; JNE ROOKTEMP
+                  ; JMP KNIGHT
+                  ; ROOKTEMP:
+                  ; CMP BYTE PTR gridState[BX],3d
+                  ; JNE KNIGHTTEMP
+                  ; JMP BISHOP
+                  ; KNIGHTTEMP:
+                  ; CMP BYTE PTR gridState[BX],4d
+                  ; JNE BISHOPTEMP
+                  ; JMP QUEEN
+                  ; BISHOPTEMP:
+                  ; CMP BYTE PTR gridState[BX],5d
+                  ; JNE QUEENTEMP
+                  ; JMP KING
+                  ; QUEENTEMP:
+                  ; CMP BYTE PTR gridState[BX],6d
+                  ; JNE KINGTEMP
+                  ; JMP PAWN
+                  ; KINGTEMP:
+                  ; JMP NOACTION
+
                   CMP BYTE PTR gridState[BX],6d
-                  JNE KINGTEMP
+                  JNE PAWNTEMP
                   JMP PAWN
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],1d
+                  JNE ROOKTEMP
+                  JMP ROOK
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],2d
+                  JNE KNIGHTTEMP
+                  JMP KNIGHT
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],3d
+                  JNE BISHOPTEMP
+                  JMP BISHOP
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],4d
+                  JNE QUEENTEMP
+                  JMP QUEEN
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],5d
+                  JNE KINGTEMP
+                  JMP KING
                   KINGTEMP:
                   JMP NOACTION
+
+
                 PAWN:
                   pusha
                   HANDLEPAWN2 dummyData5,dummyData6
