@@ -839,201 +839,6 @@ FIRSTQHANDLE2 MACRO ;This Macro is Responsible for handling when second player p
                   
 ENDM FIRSTQHANDLE2
 
-checkqhandle MACRO 
-    LOCAL PAWNTEMP
-    local ROOKTEMP
-    local KNIGHTTEMP
-    local BISHOPTEMP
-    local QUEENTEMP
-    local KINGTEMP
-    local PAWN
-    local ROOK
-    local KNIGHT
-    local BISHOP
-    local QUEEN
-    local KING
-    local NOACTION
-    local outterr
-    local break80
-    local temp151
-    local temp150
-    local temp100
-
-                  GETARINDEX curRowCursor,curColCursor
-
-                  pusha
-                  ISEMPTY curRowCursor,curColCursor
-                    cmp bx,1
-                    jne temp100
-                    jmp break80
-                    temp100:
-                    popa
-
-                  pusha
-                  ISWHITEBYTE curRowCursor,curColCursor
-                  cmp bx,0
-                  jne temp150
-                  jmp break80
-                  temp150:
-                  popa
-                 
-                  mov cl,BYTE PTR curRowCursor
-                  mov ch,BYTE PTR curColCursor
-                  mov BYTE PTR curRowCursor,cl
-                  mov BYTE PTR curColCursor,ch
-
-                ;------------------------
-                  GETARINDEX curRowCursor,curColCursor
-                  CMP BYTE PTR gridState[BX],7d
-                  JNE PAWNTEMP
-                  JMP PAWN
-                  PAWNTEMP:
-                  CMP BYTE PTR gridState[BX],8d
-                  JNE ROOKTEMP
-                  JMP ROOK
-                  ROOKTEMP:
-                  CMP BYTE PTR gridState[BX],9d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
-                  KNIGHTTEMP:
-                  CMP BYTE PTR gridState[BX],10d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
-                  BISHOPTEMP:
-                  CMP BYTE PTR gridState[BX],11d
-                  JNE QUEENTEMP
-                  JMP QUEEN
-                  QUEENTEMP:
-                  CMP BYTE PTR gridState[BX],12d
-                  JNE KINGTEMP
-                  JMP KING
-                  KINGTEMP:
-                  JMP NOACTION
-                PAWN:
-                  HANDLEPAWN curRowCursor,curColCursor
-                  JMP NOACTION
-                ROOK:
-                  HANDLEROOK curRowCursor,curColCursor
-                  JMP NOACTION
-                KNIGHT:
-                  HANDLEKNIGHT curRowCursor,curColCursor
-                  JMP NOACTION
-                BISHOP:
-                  HANDLEBISHOP curRowCursor,curColCursor
-                  JMP NOACTION
-                QUEEN:
-                  HANDLEQUEEN curRowCursor,curColCursor
-                  JMP NOACTION
-                KING:
-                  HANDLEKING curRowCursor,curColCursor
-                  JMP NOACTION
-                NOACTION:
-                check_AVAILABLE_PLACES
-                call far ptr CLEAR_AVAILABLE_PLACES
-                ;------------------------------
-                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  outterr:
-                  break80:
-                  
-ENDM checkqhandle
-
-checkqhandle2 MACRO 
-    LOCAL PAWNTEMP
-    local ROOKTEMP
-    local KNIGHTTEMP
-    local BISHOPTEMP
-    local QUEENTEMP
-    local KINGTEMP
-    local PAWN
-    local ROOK
-    local KNIGHT
-    local BISHOP
-    local QUEEN
-    local KING
-    local NOACTION
-    local outterr
-    local break80
-    local temp151
-    local temp150
-    local temp100
-
-                  GETARINDEX curRowCursor2,curColCursor2
-
-                  pusha
-                  ISEMPTY curRowCursor2,curColCursor2
-                    cmp bx,1
-                    jne temp100
-                    popa
-                    jmp break80
-                    temp100:
-                    popa
-
-                  pusha
-                  ISWHITEBYTE curRowCursor2,curColCursor2
-                  cmp bx,1
-                  jne temp150
-                  popa
-                  jmp break80
-                  temp150:
-                  popa
-             
-                ;------------------------
-                  GETARINDEX curRowCursor2,curColCursor2
-                  CMP BYTE PTR gridState[BX],6d
-                  JNE PAWNTEMP
-                  JMP PAWN
-                  PAWNTEMP:
-                  CMP BYTE PTR gridState[BX],1d
-                  JNE ROOKTEMP
-                  JMP ROOK
-                  ROOKTEMP:
-                  CMP BYTE PTR gridState[BX],2d
-                  JNE KNIGHTTEMP
-                  JMP KNIGHT
-                  KNIGHTTEMP:
-                  CMP BYTE PTR gridState[BX],3d
-                  JNE BISHOPTEMP
-                  JMP BISHOP
-                  BISHOPTEMP:
-                  CMP BYTE PTR gridState[BX],4d
-                  JNE QUEENTEMP
-                  JMP QUEEN
-                  QUEENTEMP:
-                  CMP BYTE PTR gridState[BX],5d
-                  JNE KINGTEMP
-                  JMP KING
-                  KINGTEMP:
-                  JMP NOACTION
-
-
-                PAWN:
-                  HANDLEPAWN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                ROOK:
-                  HANDLEROOK2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                KNIGHT:
-                  HANDLEKNIGHT2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                BISHOP:
-                  HANDLEBISHOP2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                QUEEN:
-                  HANDLEQUEEN2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                KING:
-                  HANDLEKING2 curRowCursor2,curColCursor2
-                  JMP NOACTION
-                NOACTION:
-                ;---------------------------------------------------
-                check_AVAILABLE_PLACES2
-                call far ptr CLEAR_AVAILABLE_PLACES2
-                ;------------------------------
-                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  outterr:
-                  break80:
-                  
-ENDM checkqhandle2
 
 ;This Macro is FIRSTQHANDLE2 but modified and Responsible for handling some 
 ;corner cases when second player press his second ENTER to select a place he want to move the selected piece tos
@@ -2022,7 +1827,7 @@ HANDLEKNIGHT2 MACRO X,Y ;This Macro is Responsible for handling Black KNIGHT Mov
                         
                         skp:
                           POPA
-                          mov cursorState2[bx],0
+                          ;mov cursorState2[bx],0
 
                         NOTVALID:
                           CMP CX,0
@@ -3047,6 +2852,181 @@ GETARINDEXBYBYTE MACRO X,Y ;This Macro is another version from GETARINDEX but by
     MOV BH,0
 ENDM GETARINDEXBYBYTE
 
+checkqhandle MACRO 
+    LOCAL PAWNTEMP
+    local ROOKTEMP
+    local KNIGHTTEMP
+    local BISHOPTEMP
+    local QUEENTEMP
+    local KINGTEMP
+    local PAWN
+    local ROOK
+    local KNIGHT
+    local BISHOP
+    local QUEEN
+    local KING
+    local NOACTION
+    LOCAL loop93
+    LOCAL loop103
+    local beforeloop93
+    local beforeloop103
+    LOCAL loop92
+    LOCAL loop102
+    local beforeloop92
+    local beforeloop102
+    local break80
+    local printSpace
+    local break565
+    local break90
+    local temp23
+    local temp2
+    local break909
+
+
+
+
+
+
+
+mov al,0
+mov ah,0
+mov dummyData5,0
+mov dummyData6,0
+loop93:
+mov dummyData5,0
+loop103:
+mov al,dummyData5
+ mov BYTE PTR dummyData1,al
+ mov ah,dummyData6
+ mov BYTE PTR dummyData2,ah
+ pusha
+ ISWHITEBYTE2 dummyData1,dummyData2
+ cmp bx,1
+ jne temp23
+ jmp break80
+temp23:
+
+GETARINDEXBYBYTE dummyData5,dummyData6
+                  CMP BYTE PTR gridState[BX],1d
+                  JNE PAWNTEMP
+                  JMP ROOK
+                  PAWNTEMP:
+                  CMP BYTE PTR gridState[BX],2d
+                  JNE ROOKTEMP
+                  JMP KNIGHT
+                  ROOKTEMP:
+                  CMP BYTE PTR gridState[BX],3d
+                  JNE KNIGHTTEMP
+                  JMP BISHOP
+                  KNIGHTTEMP:
+                  CMP BYTE PTR gridState[BX],4d
+                  JNE BISHOPTEMP
+                  JMP QUEEN
+                  BISHOPTEMP:
+                  CMP BYTE PTR gridState[BX],5d
+                  JNE QUEENTEMP
+                  JMP KING
+                  QUEENTEMP:
+                  CMP BYTE PTR gridState[BX],6d
+                  JNE KINGTEMP
+                  JMP PAWN
+                  KINGTEMP:
+                  JMP NOACTION
+                PAWN:
+                  pusha
+                  HANDLEPAWN2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                ROOK:
+                pusha
+                  HANDLEROOK2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                KNIGHT:
+                  pusha
+                  HANDLEKNIGHT2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                BISHOP:
+                pusha
+                  HANDLEBISHOP2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                QUEEN:
+                pusha
+                  HANDLEQUEEN2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                KING:
+                  pusha
+                  HANDLEKING2 dummyData5,dummyData6
+                  popa
+                  JMP NOACTION
+                NOACTION:
+break80:
+
+popa
+mov al,dummyData5
+inc al
+mov dummyData5,al
+cmp dummyData5,8
+je beforeloop103
+jmp loop103
+beforeloop103:
+mov ah ,dummyData6
+inc ah
+mov dummyData6,ah
+cmp dummyData6,8
+je beforeloop93
+jmp loop93
+beforeloop93:
+
+
+
+mov al,0
+mov ah,0
+loop92:
+mov al,0
+loop102:
+ mov BYTE PTR dummyData1,al
+ mov BYTE PTR dummyData2,ah
+ pusha
+GETARINDEXBYBYTE dummyData1,dummyData2
+CMP BYTE PTR gridState[BX],12D
+jne temp2
+jmp break909
+temp2:
+popa
+inc al
+cmp al,8
+je beforeloop102
+jmp loop102
+beforeloop102:
+inc ah
+cmp ah,8
+je beforeloop92
+jmp loop92
+beforeloop92:
+jmp break90
+break909:
+popa
+break90:
+
+GETARINDEXBYBYTE dummyData1,dummyData2
+cmp cursorState2[bx],1
+jne printSpace
+movecursorWithPageNumber 80d,31d,1D
+ShowMessage CHECKSTRING
+jmp break565
+printSpace:
+movecursorWithPageNumber 80d,31d,1D
+ShowMessage clear  
+break565:   
+
+call far ptr CLEAR_AVAILABLE_PLACES2
+
+ENDM checkqhandle
+
 SECONDQHANDLE MACRO ;This Macro is Responsible for handling when first player press his second Q to move a selected piece to another cell
             LOCAL SKIP
             local blabla
@@ -3262,7 +3242,7 @@ SECONDQHANDLE2 MACRO ;This Macro is Responsible for handling when second player 
 
                   FIRSTQHANDLEM
 
-                  checkqhandle2   
+                  checkqhandle   
                   CHECKMATE            
 ENDM SECONDQHANDLE2
 
@@ -3273,17 +3253,32 @@ LOCAL LOOPAGAIN2
 LOCAL CONTINUOUEGAME2
 LOCAL not4f
 LOCAL not4f2
+LOCAL AFTEROTHERPLAYER
+LOCAL OTHERPLAYER
+
+; HANDLING WHO IS THE WINNER ? 
+MOV CL , 5D
+MOV CH ,12D
+
+CMP senttf2 , 1
+JNE OTHERPLAYER
+JMP AFTEROTHERPLAYER
+OTHERPLAYER:
+XCHG CL , CH
+AFTEROTHERPLAYER:
+; -----------------------------
+
 MOV BX, 64
 LOOPAGAIN1:
 DEC BX
-CMP gridState[BX],5 ; BLACK KING
+CMP gridState[BX],CL ; BLACK KING
 JZ CONTINUOUEGAME1
 CMP BX,0
 JNZ LOOPAGAIN1
 
 MOV AL,1
 MOV WINNER,AL ;;;;;;;;;;;if white wins print it as winner and wait for f4 key
-  movecursor 37,30
+  movecursorWithPageNumber 37,30,1D
   ShowMessage WINNERISWHITE
   not4f:
   mov ah,0
@@ -3296,13 +3291,15 @@ CONTINUOUEGAME1:
 MOV BX, 64
 LOOPAGAIN2:
 DEC BX
-CMP gridState[BX],12 ; WHITE KING
+CMP gridState[BX],CH ; WHITE KING
 JZ CONTINUOUEGAME2
 CMP BX,0
 JNZ LOOPAGAIN2
+
+
 MOV AL,2
 MOV WINNER,AL
-  movecursor 37,30
+  movecursorWithPageNumber 37,30,1D
   ShowMessage WINNERISBLACK
   not4f2:
   mov ah,0
@@ -3313,326 +3310,6 @@ JMP faraway
 CONTINUOUEGAME2:
 
 ENDM CHECKMATE
-
-CURSORMOV MACRO ;This Macro is Responsible for Game Logic When any player move the cursor or press Q or ENTER or other thing
-  LOCAL tmplabel10
-  LOCAL label6
-  LOCAL label7
-  LOCAL label8
-  LOCAL label9
-  LOCAL left
-  LOCAL temp20
-  LOCAL label5
-  LOCAL right
-  LOCAL temp22
-  LOCAL label4
-  LOCAL up
-  LOCAL label10
-  LOCAL label2
-  LOCAL down
-  LOCAL label11
-  LOCAL label1
-  LOCAL qpressed
-  LOCAL tmplabel20
-  LOCAL firsrQ
-  LOCAL temp23
-  LOCAL temp24
-  LOCAL tmplabel102
-  LOCAL tmplabel202
-  LOCAL qpressed2
-  LOCAL firsrQ2
-  LOCAL label62
-  LOCAL label72
-  LOCAL label82
-  LOCAL label92
-  LOCAL up2
-  LOCAL left2
-  LOCAL right2
-  LOCAL down2
-  LOCAL label52
-  LOCAL skip12
-  LOCAL temp202
-  LOCAL label42
-  LOCAL skip22
-  LOCAL temp222
-  LOCAL label22
-  LOCAL skip32
-  LOCAL label102
-  LOCAL label12
-  LOCAL skip42
-  LOCAL label112
-  local skip1e
-  LOCAL skip12e
-  LOCAL skip2e
-  LOCAL skip22e
-  LOCAL skip3e
-  LOCAL skip32e
-  LOCAL skip4e
-  LOCAL skip42e
-  LOCAL skip42e
-  local chat
-  local label102
-  local receive
-
-                  connect
-                  INITIALIZEGRID   42H,06H                                                                ;0FH,08H
-                  DrawGrid         150D,0D,colorState[1],colorState[0]
-                  DrawPiecies      150D,0D
-                  DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
-                  INITIALIZEGAMECHAT thename,theOthername
-    cursorLoop:
-                  PRINTCURRTIMER
-                  CALL FAR PTR FREEZEPROC
-                  mov         ah,01
-                  int         16h
-                  JNZ temp24
-                  jmp          receive                 ;need to be changed to jump to recieve
-                temp24:
-                  mov         ah,0
-                  int         16h
-
-                  SEEIFRECIVING22:
-                  ;if f4 is pressed return to main screen  
-                  cmp ah,3Eh
-                  jnz dontexit
-
-                  ;Check that Transmitter Holding Register is Empty
-                  mov dx , 3FDH         ; Line Status Register
-                  In  al , dx           ;Read Line Status 
-                  AND al , 00100000b
-                  jz SEEIFRECIVING22             ;jump untill it is empty
-                  ;If empty put the VALUE in Transmit data register
-                  mov dx , 3F8H         ; Transmit data register
-                  add ah,100d
-                  mov al,AH   ; al,VALUE
-                  out dx , al
-                  jmp faraway  
-                  dontexit: 
-
-                  cmp ah,4FH ;enter key
-                  jnz             tmplabel102
-                  jmp qpressed
-                  tmplabel102:
-
-       cmp             ah,48h                              ;up
-                  jnz             label62
-                  jmp             up
-    label62:
-
-                  cmp             ah,4bh                              ;left
-                  jnz             label72
-                  jmp             left
-    label72:
-
-                  cmp             ah,4dh                              ;right
-                  jnz             label82
-                  jmp             right
-    label82:
-
-                  cmp             ah,50h                              ;down
-                  jnz             label92
-                  jmp             down
-    label92:
-
-    cmp             ah,127d                              ;chat
-                  JG             label102
-                  jmp             chat
-    label102:      
-
-                  jmp             receive                  
-
-    left:
-                  mov             dx,curColCursor
-                  cmp             dx,0D
-                  jnz             temp20
-
-                  jmp             receive
-    temp20:
- pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
-  pusha
-                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor,curColCursor
-                  mov firstIndex,bx
-                  popa
-
-                
-
-                  mov bx,firstIndex
-                  cmp cursorState[bx],0
-                  je skip1
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip1:
-
-                  cmp cursorState2[bx],0
-                  je skip1e
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip1e:
-
-                  sub             dx,1D
-
-                  mov             curColCursor,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp             ah,11h
-                  jz              label5
-
-                  jmp             receive
-    label5:
-
-    right:
-                  mov             dx,curColCursor
-                  cmp             dx,7d
-                  jnz             temp22
-                  jmp             receive
-    temp22:
-  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
- pusha
-                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor,curColCursor
-                  mov firstIndex,bx
-                  popa
-                  mov bx,firstIndex
-
-                  cmp cursorState[bx],0
-                  je skip2
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip2:
-
-                  cmp cursorState2[bx],0
-                  je skip2e
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip2e:
-
-                  add             dx,1
-                  mov             curColCursor,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp             ah,20h
-                  jz              label4
-                  jmp             receive
-    label4:
-
-    up:
-                  mov             dx,curRowCursor
-                  cmp             dx,0D
-                  jnz             label10
-                  jmp             receive
-    label10:
-
-  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
- pusha
-                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor,curColCursor
-                  mov firstIndex,bx
-                  popa
-                  mov bx,firstIndex
-
-                  cmp cursorState[bx],0
-                  je skip3
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip3:
-
-                  cmp cursorState2[bx],0
-                  je skip3e
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip3e:
-
-                  sub             dx,1D
-                  mov             curRowCursor,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp             ah,11h
-                  jz              label2
-
-                  jmp             receive
-    label2:
-
-    down:
-                  mov             dx,curRowCursor
-                  cmp             dx,7D
-                  jnz             label11
-                  jmp             receive
-    label11:
-                  pusha
-                  UPDATECELL     curRowCursor,curColCursor,150D,0D
-                  popa
- pusha
-                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
-                  popa
-                  pusha
-                  GETARINDEXBYBYTE curRowCursor,curColCursor
-                  mov firstIndex,bx
-                  popa
-                  mov bx,firstIndex
-                  cmp cursorState[bx],0
-                  je skip4
-                  pusha
-                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip4:
-
-                  cmp cursorState2[bx],0
-                  je skip4e
-                  pusha
-                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  popa
-                  skip4e:
-
-                  add             dx,1
-                  mov             curRowCursor,dx
-                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
-                  cmp             ah,1fh
-                  jz              label1
-                  jmp             receive
-    label1:
-
-    qpressed:
-    mov bl,stateOfQ
-    cmp bl,0
-    jnz tmplabel20
-    jmp firsrQ
-    tmplabel20:
-
-    SECONDQHANDLE
-    jmp   receive   
-
-    firsrQ:
-    FIRSTQHANDLE
-                 jmp             receive   
-;--------------------------------------------------
-    chat:
-    ;TODO make chat send
-        sendyou
-    jmp             receive   
-;--------------------------------------------------
-receive:
-;TODO make recieve chat and game
-handlereceive
-;--------------------------------------------------
-jmp cursorLoop
-
-ENDM CURSORMOV
 
 handlereceive MACRO
   local quit
@@ -3828,6 +3505,327 @@ sendyou MACRO
                   afterenter:   
 ENDM sendyou
 
+CURSORMOV MACRO 
+    ;This Macro is Responsible for Game Logic When any player move the cursor or press Q or ENTER or other thing
+    LOCAL tmplabel10
+    LOCAL label6
+    LOCAL label7
+    LOCAL label8
+    LOCAL label9
+    LOCAL left
+    LOCAL temp20
+    LOCAL label5
+    LOCAL right
+    LOCAL temp22
+    LOCAL label4
+    LOCAL up
+    LOCAL label10
+    LOCAL label2
+    LOCAL down
+    LOCAL label11
+    LOCAL label1
+    LOCAL qpressed
+    LOCAL tmplabel20
+    LOCAL firsrQ
+    LOCAL temp23
+    LOCAL temp24
+    LOCAL tmplabel102
+    LOCAL tmplabel202
+    LOCAL qpressed2
+    LOCAL firsrQ2
+    LOCAL label62
+    LOCAL label72
+    LOCAL label82
+    LOCAL label92
+    LOCAL up2
+    LOCAL left2
+    LOCAL right2
+    LOCAL down2
+    LOCAL label52
+    LOCAL skip12
+    LOCAL temp202
+    LOCAL label42
+    LOCAL skip22
+    LOCAL temp222
+    LOCAL label22
+    LOCAL skip32
+    LOCAL label102
+    LOCAL label12
+    LOCAL skip42
+    LOCAL label112
+    local skip1e
+    LOCAL skip12e
+    LOCAL skip2e
+    LOCAL skip22e
+    LOCAL skip3e
+    LOCAL skip32e
+    LOCAL skip4e
+    LOCAL skip42e
+    LOCAL skip42e
+    local chat
+    local label102
+    local receive
+
+                  connect
+                  INITIALIZEGRID   42H,06H                                                                ;0FH,08H
+                  DrawGrid         150D,0D,colorState[1],colorState[0]
+                  DrawPiecies      150D,0D
+                  DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                  INITIALIZEGAMECHAT thename,theOthername
+    cursorLoop:
+                  PRINTCURRTIMER
+                  CALL FAR PTR FREEZEPROC
+                  mov         ah,01
+                  int         16h
+                  JNZ temp24
+                  jmp          receive                 ;need to be changed to jump to recieve
+                temp24:
+                  mov         ah,0
+                  int         16h
+
+                  SEEIFRECIVING22:
+                  ;if f4 is pressed return to main screen  
+                  cmp ah,3Eh
+                  jnz dontexit
+
+                  ;Check that Transmitter Holding Register is Empty
+                  mov dx , 3FDH         ; Line Status Register
+                  In  al , dx           ;Read Line Status 
+                  AND al , 00100000b
+                  jz SEEIFRECIVING22             ;jump untill it is empty
+                  ;If empty put the VALUE in Transmit data register
+                  mov dx , 3F8H         ; Transmit data register
+                  add ah,100d
+                  mov al,AH   ; al,VALUE
+                  out dx , al
+                  jmp faraway  
+                  dontexit: 
+
+                  cmp ah,4FH ;enter key
+                  jnz             tmplabel102
+                  jmp qpressed
+                  tmplabel102:
+
+       cmp             ah,48h                              ;up
+                  jnz             label62
+                  jmp             up
+    label62:
+
+                  cmp             ah,4bh                              ;left
+                  jnz             label72
+                  jmp             left
+    label72:
+
+                  cmp             ah,4dh                              ;right
+                  jnz             label82
+                  jmp             right
+    label82:
+
+                  cmp             ah,50h                              ;down
+                  jnz             label92
+                  jmp             down
+    label92:
+
+    cmp             ah,127d                              ;chat
+                  JG             label102
+                  jmp             chat
+    label102:      
+
+                  jmp             receive                  
+
+    left:
+                  mov             dx,curColCursor
+                  cmp             dx,0D
+                  jnz             temp20
+
+                  jmp             receive
+    temp20:
+  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+  pusha
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+
+                
+
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip1
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip1:
+
+                  cmp cursorState2[bx],0
+                  je skip1e
+                  pusha
+                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip1e:
+
+                  sub             dx,1D
+
+                  mov             curColCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,11h
+                  jz              label5
+
+                  jmp             receive
+    label5:
+
+    right:
+                  mov             dx,curColCursor
+                  cmp             dx,7d
+                  jnz             temp22
+                  jmp             receive
+    temp22:
+  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+  pusha
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+
+                  cmp cursorState[bx],0
+                  je skip2
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip2:
+
+                  cmp cursorState2[bx],0
+                  je skip2e
+                  pusha
+                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip2e:
+
+                  add             dx,1
+                  mov             curColCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,20h
+                  jz              label4
+                  jmp             receive
+    label4:
+
+    up:
+                  mov             dx,curRowCursor
+                  cmp             dx,0D
+                  jnz             label10
+                  jmp             receive
+    label10:
+
+  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+  pusha
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+
+                  cmp cursorState[bx],0
+                  je skip3
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip3:
+
+                  cmp cursorState2[bx],0
+                  je skip3e
+                  pusha
+                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip3e:
+
+                  sub             dx,1D
+                  mov             curRowCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,11h
+                  jz              label2
+
+                  jmp             receive
+    label2:
+
+    down:
+                  mov             dx,curRowCursor
+                  cmp             dx,7D
+                  jnz             label11
+                  jmp             receive
+    label11:
+                  pusha
+                  UPDATECELL     curRowCursor,curColCursor,150D,0D
+                  popa
+  pusha
+                  ; DRAWWITHSOURCE       border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D    ; col,row
+                  popa
+                  pusha
+                  GETARINDEXBYBYTE curRowCursor,curColCursor
+                  mov firstIndex,bx
+                  popa
+                  mov bx,firstIndex
+                  cmp cursorState[bx],0
+                  je skip4
+                  pusha
+                  DRAWWITHSOURCE       selectdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip4:
+
+                  cmp cursorState2[bx],0
+                  je skip4e
+                  pusha
+                  DRAWWITHSOURCE       select2data,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  popa
+                  skip4e:
+
+                  add             dx,1
+                  mov             curRowCursor,dx
+                  DRAWWITHSOURCE       borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D    ; col,row
+                  cmp             ah,1fh
+                  jz              label1
+                  jmp             receive
+    label1:
+
+    qpressed:
+    mov bl,stateOfQ
+    cmp bl,0
+    jnz tmplabel20
+    jmp firsrQ
+    tmplabel20:
+
+    SECONDQHANDLE
+    jmp   receive   
+
+    firsrQ:
+    FIRSTQHANDLE
+                 jmp             receive   
+    ;--------------------------------------------------
+        chat:
+        ;TODO make chat send
+            sendyou
+        jmp             receive   
+    ;--------------------------------------------------
+    receive:
+    ;TODO make recieve chat and game
+    handlereceive
+    ;--------------------------------------------------
+    jmp cursorLoop
+
+ENDM CURSORMOV
+
 check_AVAILABLE_PLACES MACRO ;This Macro is Responsible for draw marks on the cells that the selected white piece can move to 
 LOCAL loop9
 LOCAL loop10
@@ -3907,10 +3905,10 @@ JE BREAK8
 BREAK7:
 JMP break6
 BREAK8:
-         pusha
-        movecursorWithPageNumber 80d,31d,1D
-        ShowMessage CHECKSTRING
-        popa
+        ; pusha
+        ; movecursorWithPageNumber 80d,31d,1D
+        ; ShowMessage CHECKSTRING
+        ; popa
 break6:
 popa
 inc al
@@ -4613,7 +4611,8 @@ RECIVENAME MACRO PLAYERNAME1,PLAYERNAME2
                   jmp  far ptr afterenterx
                   skip111xx:
 
-
+                  cmp si,0
+                  jnz outOfTheValidation
                   mov cl,122;;== z 
                   cmp cl,al;;if greater than z jmp
                   jc mainloop2
@@ -5681,6 +5680,8 @@ connect MACRO
   p2cy              db  23H
 
   char              db  ?
+  dummyData5        db  0
+  dummyData6        db  0
   ;---------------------------------------------------------------------------------------------------
  
 
@@ -5688,126 +5689,126 @@ connect MACRO
 .CODE
 MAIN PROC FAR
   ;INITIALIZING
-                          call                     far ptr       GETDATA
-                          CALL                     far ptr      CLS
+                          call             far ptr       GETDATA
+                          CALL             far ptr      CLS
   ;OPENING AND READING AND CLOSING BIN FILES
-                          OpenFile                 bbishopfilename, bbishopfilehandle
-                          ReadData                 bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
-                          CloseFile                bbishopfilehandle
+                          OpenFile         bbishopfilename, bbishopfilehandle
+                          ReadData         bbishopfilehandle ,bbishopwidth,bbishopheight,bbishopdata
+                          CloseFile        bbishopfilehandle
 
-                          OpenFile                 bkingfilename, bkingfilehandle
-                          ReadData                 bkingfilehandle ,bkingwidth,bkingheight,bkingdata
-                          CloseFile                bkingfilehandle
+                          OpenFile         bkingfilename, bkingfilehandle
+                          ReadData         bkingfilehandle ,bkingwidth,bkingheight,bkingdata
+                          CloseFile        bkingfilehandle
 
-                          OpenFile                 bknightfilename, bknightfilehandle
-                          ReadData                 bknightfilehandle ,bknightwidth,bknightheight,bknightdata
-                          CloseFile                bknightfilehandle
+                          OpenFile         bknightfilename, bknightfilehandle
+                          ReadData         bknightfilehandle ,bknightwidth,bknightheight,bknightdata
+                          CloseFile        bknightfilehandle
 
-                          OpenFile                 bpawnfilename, bpawnfilehandle
-                          ReadData                 bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
-                          CloseFile                bpawnfilehandle
+                          OpenFile         bpawnfilename, bpawnfilehandle
+                          ReadData         bpawnfilehandle ,bpawnwidth,bpawnheight,bpawndata
+                          CloseFile        bpawnfilehandle
 
-                          OpenFile                 bqueenfilename, bqueenfilehandle
-                          ReadData                 bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
-                          CloseFile                bqueenfilehandle
+                          OpenFile         bqueenfilename, bqueenfilehandle
+                          ReadData         bqueenfilehandle ,bqueenwidth,bqueenheight,bqueendata
+                          CloseFile        bqueenfilehandle
 
-                          OpenFile                 brockfilename, brockfilehandle
-                          ReadData                 brockfilehandle ,brockwidth,brockheight,brockdata
-                          CloseFile                brockfilehandle
+                          OpenFile         brockfilename, brockfilehandle
+                          ReadData         brockfilehandle ,brockwidth,brockheight,brockdata
+                          CloseFile        brockfilehandle
 
   ;--white piecies----
-                          OpenFile                 wbishopfilename, wbishopfilehandle
-                          ReadData                 wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
-                          CloseFile                wbishopfilehandle
+                          OpenFile         wbishopfilename, wbishopfilehandle
+                          ReadData         wbishopfilehandle ,wbishopwidth,bbishopheight,wbishopdata
+                          CloseFile        wbishopfilehandle
 
-                          OpenFile                 wkingfilename, wkingfilehandle
-                          ReadData                 wkingfilehandle ,wkingwidth,wkingheight,wkingdata
-                          CloseFile                wkingfilehandle
+                          OpenFile         wkingfilename, wkingfilehandle
+                          ReadData         wkingfilehandle ,wkingwidth,wkingheight,wkingdata
+                          CloseFile        wkingfilehandle
 
-                          OpenFile                 wknightfilename, wknightfilehandle
-                          ReadData                 wknightfilehandle ,wknightwidth,wknightheight,wknightdata
-                          CloseFile                wknightfilehandle
+                          OpenFile         wknightfilename, wknightfilehandle
+                          ReadData         wknightfilehandle ,wknightwidth,wknightheight,wknightdata
+                          CloseFile        wknightfilehandle
 
-                          OpenFile                 wpawnfilename, wpawnfilehandle
-                          ReadData                 wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
-                          CloseFile                wpawnfilehandle
+                          OpenFile         wpawnfilename, wpawnfilehandle
+                          ReadData         wpawnfilehandle ,wpawnwidth,wpawnheight,wpawndata
+                          CloseFile        wpawnfilehandle
 
-                          OpenFile                 wqueenfilename, wqueenfilehandle
-                          ReadData                 wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
-                          CloseFile                wqueenfilehandle
+                          OpenFile         wqueenfilename, wqueenfilehandle
+                          ReadData         wqueenfilehandle ,wqueenwidth,wqueenheight,wqueendata
+                          CloseFile        wqueenfilehandle
 
-                          OpenFile                 wrockfilename, wrockfilehandle
-                          ReadData                 wrockfilehandle ,wrockwidth,wrockheight,wrockdata
-                          CloseFile                wrockfilehandle
+                          OpenFile         wrockfilename, wrockfilehandle
+                          ReadData         wrockfilehandle ,wrockwidth,wrockheight,wrockdata
+                          CloseFile        wrockfilehandle
 
   ;--border-----
-                          OpenFile                 borderfilename, borderfilehandle
-                          ReadData                 borderfilehandle ,borderwidth,borderheight,borderdata
-                          CloseFile                borderfilehandle
+                          OpenFile         borderfilename, borderfilehandle
+                          ReadData         borderfilehandle ,borderwidth,borderheight,borderdata
+                          CloseFile        borderfilehandle
 
-                          OpenFile                 border2filename, border2filehandle
-                          ReadData                 border2filehandle ,border2width,border2height,border2data
-                          CloseFile                border2filehandle
+                          OpenFile         border2filename, border2filehandle
+                          ReadData         border2filehandle ,border2width,border2height,border2data
+                          CloseFile        border2filehandle
 
-                          OpenFile                 selectfilename, selectfilehandle
-                          ReadData                 selectfilehandle ,selectwidth,selectheight,selectdata
-                          CloseFile                selectfilehandle
+                          OpenFile         selectfilename, selectfilehandle
+                          ReadData         selectfilehandle ,selectwidth,selectheight,selectdata
+                          CloseFile        selectfilehandle
 
-                          OpenFile                 select2filename, select2filehandle
-                          ReadData                 select2filehandle ,select2width,select2height,select2data
-                          CloseFile                select2filehandle
+                          OpenFile         select2filename, select2filehandle
+                          ReadData         select2filehandle ,select2width,select2height,select2data
+                          CloseFile        select2filehandle
 
-                          OpenFile                 freezefilename, freezefilehandle
-                          ReadData                 freezefilehandle ,freezewidth,freezeheight,freezedata
-                          CloseFile                freezefilehandle
+                          OpenFile         freezefilename, freezefilehandle
+                          ReadData         freezefilehandle ,freezewidth,freezeheight,freezedata
+                          CloseFile        freezefilehandle
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
   ;------------------------------------------------------------------------------------------------
 
   ;START MENU
-                          movecursor               30d,7d
-                          ShowMessage              nameq
-                          movecursor               30d,10d
-                          RECIVENAME               thename,theOthername
+                          movecursor       30d,7d
+                          ShowMessage      nameq
+                          movecursor       30d,10d
+                          RECIVENAME       thename,theOthername
   ;validateName             nameq,thename,erroname
-                          movecursor               30d,11d
-                          ShowMessage              proceed
-                          call                     far ptr       waitkey
+                          movecursor       30d,11d
+                          ShowMessage      proceed
+                          call             far ptr       waitkey
                 
   ;CHOICE MENU
   faraway:                
 
-                          call                     far ptr     CLS
-                          movecursor               17H,03H
-                          ShowMessage              op1
-                          movecursor               17H,08H
-                          ShowMessage              op2
-                          movecursor               17H,0DH
-                          ShowMessage              op3
+                          call             far ptr     CLS
+                          movecursor       17H,03H
+                          ShowMessage      op1
+                          movecursor       17H,08H
+                          ShowMessage      op2
+                          movecursor       17H,0DH
+                          ShowMessage      op3
                           STATUSLINE
   ;MAINMAIN       thename,thename
   
-                          RESETMAINFLAGS           INVITE,senttf1,recivedf1,senttf2,recivedf2
-                          MAINMAINSERIAL           thename,theOthername
+                          RESETMAINFLAGS   INVITE,senttf1,recivedf1,senttf2,recivedf2
+                          MAINMAINSERIAL   thename,theOthername
   ;GAME SCREEN
   play:                   
-                          CALL                     far ptr       EnterGraphics
-                          mov                      curColCursor,00h
-                          mov                      curRowCursor,07h
-                          mov                      curColCursor2,00h
-                          mov                      curRowCursor2,00h
-                          mov                      whiterow,0D
-                          mov                      whitecol,0D
-                          mov                      blackrow,0D
-                          mov                      blackcol,10D
+                          CALL             far ptr       EnterGraphics
+                          mov              curColCursor,00h
+                          mov              curRowCursor,07h
+                          mov              curColCursor2,00h
+                          mov              curRowCursor2,00h
+                          mov              whiterow,0D
+                          mov              whitecol,0D
+                          mov              blackrow,0D
+                          mov              blackcol,10D
 
   ;---------------------
                           INITIALIZETIME
   curs:                   
                           CURSORMOV
 
-                          JMP                      curs
+                          JMP              curs
 
                           EXT
 MAIN ENDP
@@ -5815,213 +5816,213 @@ MAIN ENDP
 
 
   ;--------------------------------------------------Functions---------------------------------------------------------
-GETDATA PROC    far                                                                                                       ;GET DATA
-                          MOV                      AX,@DATA
-                          MOV                      DS,AX
+GETDATA PROC    far                                                                                               ;GET DATA
+                          MOV              AX,@DATA
+                          MOV              DS,AX
                           retf
 GETDATA ENDP
 
 CLS PROC far
-                          MOV                      AX,0003H
-                          INT                      10H
+                          MOV              AX,0003H
+                          INT              10H
                           retf
 CLS ENDP
 
-EnterText PROC far                                                                                                        ;ENTER TEXT MODE
-                          MOV                      AX,3H
-                          INT                      10H
+EnterText PROC far                                                                                                ;ENTER TEXT MODE
+                          MOV              AX,3H
+                          INT              10H
                           retf
 EnterText ENDP
 
-EnterGraphics PROC far                                                                                                    ;ENTER GRAPHICS MODE
-                          MOV                      AX,4F02H
-                          MOV                      BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
-                          INT                      10H
+EnterGraphics PROC far                                                                                            ;ENTER GRAPHICS MODE
+                          MOV              AX,4F02H
+                          MOV              BX,103H                                                                ;(800x600) pixel ;grid =480*480; char=60*60
+                          INT              10H
                           retf
 EnterGraphics ENDP
 
-waitkey PROC    far                                                                                                       ;wait for key
-                          MOV                      AH , 0
-                          INT                      16h
+waitkey PROC    far                                                                                               ;wait for key
+                          MOV              AH , 0
+                          INT              16h
                           retf
 waitkey ENDP
 
-FREEZEPROC PROC   FAR                                                                                                     ;CHECKING THE FREEZE OF 3 SECONDS
+FREEZEPROC PROC   FAR                                                                                             ;CHECKING THE FREEZE OF 3 SECONDS
        
-                          mov                      al,0
-                          mov                      ah,0
+                          mov              al,0
+                          mov              ah,0
   Nloop9:                 
-                          mov                      AL,0
+                          mov              AL,0
   Nloop10:                
-                          mov                      BYTE PTR  dummyData1,al
-                          mov                      BYTE PTR  dummyData2,ah
+                          mov              BYTE PTR  dummyData1,al
+                          mov              BYTE PTR  dummyData2,ah
                           pusha
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
+                          GETARINDEXBYBYTE dummyData1,dummyData2
                 
   ; Code for checking the freeze  ----------------------------------------------------------
-                          mov                      SI,BX
+                          mov              SI,BX
                  
                           GETTIME
-                          mov                      ax,si
-                          mov                      cl,2D
-                          mul                      cl
-                          mov                      si,ax
-                          CMP                      word ptr timeState[si],0
-                          JE                       LEAVEIT
-                          dec                      BX
-                          dec                      BX
-                          dec                      BX
-                          CMP                      word ptr timeState[si],BX
+                          mov              ax,si
+                          mov              cl,2D
+                          mul              cl
+                          mov              si,ax
+                          CMP              word ptr timeState[si],0
+                          JE               LEAVEIT
+                          dec              BX
+                          dec              BX
+                          dec              BX
+                          CMP              word ptr timeState[si],BX
                  
-                          Jle                      temp151
+                          Jle              temp151
   ; U STILL IN FREEZE DUDE
                           pusha
-                          DRAWWITHSOURCE           freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
+                          DRAWWITHSOURCE   freezedata,borderwidth,borderheight,dummyData1,dummyData2,150D,0D
                           popa
   LEAVEIT:                
-                          JMP                      nbreak6
+                          JMP              nbreak6
   temp151:                
-                          mov                      word ptr timeState[si],0D
+                          mov              word ptr timeState[si],0D
                           popa
   ; Converting byte to word coz dummydata 1 , 2 are bytes
           
-                          MOV                      BYTE PTR  dummyData3,0D
-                          MOV                      BYTE PTR  dummyData4,0D
-                          ADD                      BYTE PTR  dummyData3,al
-                          ADD                      BYTE PTR  dummyData4,ah
+                          MOV              BYTE PTR  dummyData3,0D
+                          MOV              BYTE PTR  dummyData4,0D
+                          ADD              BYTE PTR  dummyData3,al
+                          ADD              BYTE PTR  dummyData4,ah
 
                           PUSHA
                           PUSHA
-                          UPDATECELL               dummyData3,dummyData4,150D,0D
+                          UPDATECELL       dummyData3,dummyData4,150D,0D
                           POPA
                  
   ; ---------------------------------------------------------------------------------------------
   Nbreak6:                
                           popa
-                          inc                      al
-                          cmp                      al,8
-                          je                       TMP2
-                          JMP                      far ptr                   Nloop10
+                          inc              al
+                          cmp              al,8
+                          je               TMP2
+                          JMP              far ptr                   Nloop10
   TMP2:                   
-                          inc                      ah
-                          cmp                      ah,8
-                          je                       TMP3
-                          JMP                      far ptr          Nloop9
+                          inc              ah
+                          cmp              ah,8
+                          je               TMP3
+                          JMP              far ptr          Nloop9
   TMP3:                   
   BREAK80:                
-                          DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                          DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
                           retf
 FREEZEPROC ENDP
 
 CLEAR_AVAILABLE_PLACES PROC FAR
 
-                          mov                      al,0
-                          mov                      ah,0
+                          mov              al,0
+                          mov              ah,0
   Nloop91011:             
-                          mov                      AL,0
+                          mov              AL,0
   Nloop101112:            
-                          mov                      BYTE PTR  dummyData1,al
-                          mov                      BYTE PTR  dummyData2,ah
+                          mov              BYTE PTR  dummyData1,al
+                          mov              BYTE PTR  dummyData2,ah
                           pusha
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
-                          cmp                      BYTE PTR  cursorState[bx],0
-                          JNE                      TMP123
-                          JMP                      Nbreak678
+                          GETARINDEXBYBYTE dummyData1,dummyData2
+                          cmp              BYTE PTR  cursorState[bx],0
+                          JNE              TMP123
+                          JMP              Nbreak678
   TMP123:                 
-                          MOV                      BYTE PTR  cursorState[bx],0
+                          MOV              BYTE PTR  cursorState[bx],0
                           popa
-                          MOV                      BYTE PTR  dummyData3,0D
-                          MOV                      BYTE PTR  dummyData4,0D
-                          ADD                      BYTE PTR  dummyData3,al
-                          ADD                      BYTE PTR  dummyData4,ah
+                          MOV              BYTE PTR  dummyData3,0D
+                          MOV              BYTE PTR  dummyData4,0D
+                          ADD              BYTE PTR  dummyData3,al
+                          ADD              BYTE PTR  dummyData4,ah
                           pusha
-                          UPDATECELL               dummyData3,dummyData4,150D,0D
+                          UPDATECELL       dummyData3,dummyData4,150D,0D
                   
   Nbreak678:              
                           popa
-                          inc                      al
-                          cmp                      al,8
-                          JE                       TMP245
-                          JMP                      Nloop101112
+                          inc              al
+                          cmp              al,8
+                          JE               TMP245
+                          JMP              Nloop101112
   TMP245:                 
-                          inc                      ah
-                          cmp                      ah,8
-                          JE                       TMP345
-                          JMP                      Nloop91011
+                          inc              ah
+                          cmp              ah,8
+                          JE               TMP345
+                          JMP              Nloop91011
   TMP345:                 
 
-                          DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                          DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
   ; DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
-                          call                     far ptr DRAW_AVAILABLE_PLACES2
+                          call             far ptr DRAW_AVAILABLE_PLACES2
                           retf
 CLEAR_AVAILABLE_PLACES ENDP
 
 CLEAR_AVAILABLE_PLACES2 PROC far
-                          mov                      al,0
-                          mov                      ah,0
+                          mov              al,0
+                          mov              ah,0
   Nloop9zz:               
-                          mov                      AL,0
+                          mov              AL,0
   Nloop10zz:              
-                          mov                      BYTE PTR  dummyData1,al
-                          mov                      BYTE PTR  dummyData2,ah
+                          mov              BYTE PTR  dummyData1,al
+                          mov              BYTE PTR  dummyData2,ah
                           pusha
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
-                          cmp                      BYTE PTR  cursorState2[bx],0
-                          JNE                      TMP
-                          JMP                      Nbreak6zz
+                          GETARINDEXBYBYTE dummyData1,dummyData2
+                          cmp              BYTE PTR  cursorState2[bx],0
+                          JNE              TMP
+                          JMP              Nbreak6zz
   TMP:                    
-                          MOV                      BYTE PTR  cursorState2[bx],0
+                          MOV              BYTE PTR  cursorState2[bx],0
                           popa
-                          MOV                      BYTE PTR  dummyData3,0D
-                          MOV                      BYTE PTR  dummyData4,0D
-                          ADD                      BYTE PTR  dummyData3,al
-                          ADD                      BYTE PTR   dummyData4,ah
+                          MOV              BYTE PTR  dummyData3,0D
+                          MOV              BYTE PTR  dummyData4,0D
+                          ADD              BYTE PTR  dummyData3,al
+                          ADD              BYTE PTR   dummyData4,ah
                           pusha
-                          UPDATECELL               dummyData3,dummyData4,150D,0D
+                          UPDATECELL       dummyData3,dummyData4,150D,0D
                   
   Nbreak6zz:              
                           popa
-                          inc                      al
-                          cmp                      al,8
-                          JE                       TMP2zz
-                          JMP                      Nloop10zz
+                          inc              al
+                          cmp              al,8
+                          JE               TMP2zz
+                          JMP              Nloop10zz
   TMP2zz:                 
-                          inc                      ah
-                          cmp                      ah,8
-                          JE                       TMP3zz
-                          JMP                      Nloop9zz
+                          inc              ah
+                          cmp              ah,8
+                          JE               TMP3zz
+                          JMP              Nloop9zz
   TMP3zz:                 
-                          DRAWWITHSOURCE           borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
+                          DRAWWITHSOURCE   borderdata,borderwidth,borderheight,curRowCursor,curColCursor,150D,0D
   ; DRAWWITHSOURCE           border2data,borderwidth,borderheight,curRowCursor2,curColCursor2,150D,0D
-                          call                     far ptr DRAW_AVAILABLE_PLACES
+                          call             far ptr DRAW_AVAILABLE_PLACES
                           retf
 CLEAR_AVAILABLE_PLACES2 ENDP
 
 DRAW_AVAILABLE_PLACES PROC far
 
-                          mov                      al,0
-                          mov                      ah,0
+                          mov              al,0
+                          mov              ah,0
   loop9dd:                
-                          mov                      al,0
+                          mov              al,0
   loop10dd:               
-                          mov                      BYTE PTR dummyData1,al
-                          mov                      BYTE PTR dummyData2,ah
+                          mov              BYTE PTR dummyData1,al
+                          mov              BYTE PTR dummyData2,ah
                           pusha
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
-                          cmp                      BYTE PTR cursorState[bx],0
-                          je                       BREAK7dd
+                          GETARINDEXBYBYTE dummyData1,dummyData2
+                          cmp              BYTE PTR cursorState[bx],0
+                          je               BREAK7dd
                           popa
-                          mov                      BYTE PTR dummyData1,al
-                          mov                      BYTE PTR dummyData2,ah
+                          mov              BYTE PTR dummyData1,al
+                          mov              BYTE PTR dummyData2,ah
                           pusha
-                          DRAWWITHSOURCE           selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D
+                          DRAWWITHSOURCE   selectdata,selectwidth,selectheight,dummyData1,dummyData2,150D,0D
                           popa
                           PUSHA
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
+                          GETARINDEXBYBYTE dummyData1,dummyData2
   ; CMP                      BYTE PTR gridState[BX],5D
   ; JE                       BREAK8dd
   BREAK7dd:               
-                          JMP                      BREAK6dd
+                          JMP              BREAK6dd
   ; BREAK8dd:
   ;                         pusha
   ;                         movecursorWithPageNumber 2d,31d,1D
@@ -6029,60 +6030,60 @@ DRAW_AVAILABLE_PLACES PROC far
   ;                         popa
   break6dd:               
                           popa
-                          inc                      al
-                          cmp                      al,8
-                          je                       beforeloop10dd
-                          jmp                      loop10dd
+                          inc              al
+                          cmp              al,8
+                          je               beforeloop10dd
+                          jmp              loop10dd
   beforeloop10dd:         
-                          inc                      ah
-                          cmp                      ah,8
-                          je                       beforeloop9dd
-                          jmp                      loop9dd
+                          inc              ah
+                          cmp              ah,8
+                          je               beforeloop9dd
+                          jmp              loop9dd
   beforeloop9dd:          
                           retf
 DRAW_AVAILABLE_PLACES ENDP
 
 DRAW_AVAILABLE_PLACES2 PROC far
 
-                          mov                      al,0
-                          mov                      ah,0
+                          mov              al,0
+                          mov              ah,0
   loop9ee:                
-                          mov                      al,0
+                          mov              al,0
   loop10ee:               
-                          mov                      BYTE PTR dummyData1,al
-                          mov                      BYTE PTR dummyData2,ah
+                          mov              BYTE PTR dummyData1,al
+                          mov              BYTE PTR dummyData2,ah
                           pusha
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
-                          cmp                      BYTE PTR cursorState2[bx],0
-                          je                       BREAK7ee
+                          GETARINDEXBYBYTE dummyData1,dummyData2
+                          cmp              BYTE PTR cursorState2[bx],0
+                          je               BREAK7ee
                           popa
-                          mov                      BYTE PTR dummyData1,al
-                          mov                      BYTE PTR dummyData2,ah
+                          mov              BYTE PTR dummyData1,al
+                          mov              BYTE PTR dummyData2,ah
                           pusha
-                          DRAWWITHSOURCE           select2data,select2width,select2height,dummyData1,dummyData2,150D,0D
+                          DRAWWITHSOURCE   select2data,select2width,select2height,dummyData1,dummyData2,150D,0D
                           popa
                           PUSHA
-                          GETARINDEXBYBYTE         dummyData1,dummyData2
-                          CMP                      BYTE PTR gridState[BX],12D
-                          JE                       BREAK8ee
+                          GETARINDEXBYBYTE dummyData1,dummyData2
+                          CMP              BYTE PTR gridState[BX],12D
+                          JE               BREAK8ee
   BREAK7ee:               
-                          JMP                      break6ee
+                          JMP              break6ee
   BREAK8ee:               
-                          pusha
-                          movecursorWithPageNumber 80d,31d,1D
-                          ShowMessage              CHECKSTRING
-                          popa
+  ; pusha
+  ; movecursorWithPageNumber 80d,31d,1D
+  ; ShowMessage              CHECKSTRING
+  ; popa
   break6ee:               
                           popa
-                          inc                      al
-                          cmp                      al,8
-                          je                       beforeloop10ee
-                          jmp                      loop10ee
+                          inc              al
+                          cmp              al,8
+                          je               beforeloop10ee
+                          jmp              loop10ee
   beforeloop10ee:         
-                          inc                      ah
-                          cmp                      ah,8
-                          je                       beforeloop9ee
-                          jmp                      loop9ee
+                          inc              ah
+                          cmp              ah,8
+                          je               beforeloop9ee
+                          jmp              loop9ee
   beforeloop9ee:          
 
                           retf

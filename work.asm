@@ -2938,7 +2938,7 @@ GETARINDEXBYBYTE dummyData5,dummyData6
                   popa
                   JMP NOACTION
                 ROOK:
-                pusha
+                  pusha
                   HANDLEROOK2 dummyData5,dummyData6
                   popa
                   JMP NOACTION
@@ -2948,12 +2948,12 @@ GETARINDEXBYBYTE dummyData5,dummyData6
                   popa
                   JMP NOACTION
                 BISHOP:
-                pusha
+                  pusha
                   HANDLEBISHOP2 dummyData5,dummyData6
                   popa
                   JMP NOACTION
                 QUEEN:
-                pusha
+                  pusha
                   HANDLEQUEEN2 dummyData5,dummyData6
                   popa
                   JMP NOACTION
