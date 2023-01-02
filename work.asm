@@ -2890,7 +2890,7 @@ loop10:
 mov BYTE PTR dummyData1,al
 mov BYTE PTR dummyData2,ah
 pusha
-ISWHITEBYTE22 dummyData1,dummyData2
+ISWHITEBYTE2 dummyData1,dummyData2
 cmp bx,1
 jne temp1
 jmp break80
