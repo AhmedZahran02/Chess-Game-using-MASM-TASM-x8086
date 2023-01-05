@@ -3048,7 +3048,7 @@ ShowMessage CHECKSTRING
 jmp break565
 printSpace:
 movecursorWithPageNumber 80d,31d,1D
-ShowMessage clear  
+ShowMessage clear2  
 break565:   
 
 call far ptr CLEAR_AVAILABLE_PLACES2
@@ -5500,6 +5500,7 @@ connect MACRO
   nameq             db  'Please enter your name:','$'
   erroname          db  'Please write a valid name :','$'
   clear             db  '                                                                                                    ','$'
+  clear2            db  '                 ','$'
   line              db  '---------------------------------------------------','$'
   WINNERISBLACK     db  'winner is black','$'
   WINNERISWHITE     db  'winner is white','$'
